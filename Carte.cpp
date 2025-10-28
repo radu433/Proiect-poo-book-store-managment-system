@@ -22,11 +22,11 @@ cantitate(obj.cantitate),an_publicare(obj.an_publicare), numar_vanzari(obj.numar
             using std::swap; // Permite ADL (Argument-Dependent Lookup)
             swap(titlu, other.titlu);
             swap(autor, other.autor);
+            swap(rating, other.rating);
             swap(pret, other.pret);
             swap(cantitate, other.cantitate);
             swap(an_publicare, other.an_publicare);
             swap(numar_vanzari, other.numar_vanzari);
-            swap(rating, other.rating);
 
 
     }
