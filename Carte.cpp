@@ -16,7 +16,7 @@ Carte::Carte(const std::string& titlu, const Autor& autor, double pret, int cant
 
 //constructor de copiere
     Carte::Carte(const Carte& obj):titlu(obj.titlu),autor(obj.autor),pret(obj.pret),
-cantitate(obj.cantitate),an_publicare(obj.an_publicare), numar_vanzari(obj.numar_vanzari){};
+cantitate(obj.cantitate),an_publicare(obj.an_publicare), numar_vanzari(obj.numar_vanzari),rating(0){};
 // operator de atribuire
     void Carte:: swap (Carte& other) noexcept {
             using std::swap; // Permite ADL (Argument-Dependent Lookup)
