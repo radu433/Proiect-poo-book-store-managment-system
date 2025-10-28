@@ -35,6 +35,8 @@ public:
 
     //functii
 
+    [[nodiscard]] double getSold() const;
+
     void adaugacumparaturi(double suma);
 
     double calcdiscountpersonalizat() const;

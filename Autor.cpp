@@ -32,6 +32,9 @@ std::ostream & operator<<(std::ostream &out, const Autor &obj) {
 
 // fuctii
 
+size_t Autor::getcarti_scrise() const { return carti_scrise.size();
+}
+
 void Autor::adauga_carte(const std::string &isbn) {
     for (const auto& c :carti_scrise) {
         if (c==isbn) {

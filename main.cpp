@@ -91,5 +91,23 @@ int main() {
     client.adaugaComanda(150.0, {"ISBN123", "ISBN456"});
     client.foloseste_pct_fidelitate(10);
 
+    std::cout << "Inainte de adaugare carte, autorul 1 avea: " << autor1.getcarti_scrise() << " carti." << std::endl;
+    std::cout << "Autorul 1 avea " << autor1.getcarti_scrise() << " carti inainte." << std::endl;
+    autor1.adauga_carte("978-0-306-40615-7");
+    std::cout << "Autorul 1 are " << autor1.getcarti_scrise() << " carti acum." << std::endl;
+
+    std::cout << "\nComparare popularitate (carte1 vs carte2):" << std::endl;
+    int rezultat_comparare = carte1.cumparaDupaPopularitate(carte2);
+
+    if (rezultat_comparare == 1) {
+        std::cout << carte1.gettitlu() << " e mai populara." << std::endl;
+    } else if (rezultat_comparare == -1) {
+        std::cout << carte2.gettitlu() << " e mai populara." << std::endl;
+    } else {
+        std::cout << "Cartile au popularitate egala." << std::endl;
+    }
+
+    std::cout << "Soldul initial al clientului: " << client.getSold() << " RON" << std::endl;
+
     return 0;
 };

@@ -33,6 +33,8 @@ public:
 
     //functii
 
+    [[nodiscard]] size_t getcarti_scrise()const;
+
     void adauga_carte(const std::string& isbn);
 
     double calcproductivitate()const;

@@ -22,6 +22,8 @@ std::ostream & operator<<(std::ostream &out, const Client &obj) {
 }
 //functii
 
+double Client::getSold() const { return sold;}
+
 void Client::adaugacumparaturi(double suma) {
     if (suma >0) {
         totalcumparaturi+=suma;
@@ -83,9 +85,9 @@ void Client::adaugaComanda(double valoare, const std::vector<std::string> &isbn_
     for (const auto& isbn : isbn_list) {
         istoric_isbn.push_back(isbn);
     }
-    std::cout<<"Comandă adăugată pentru " << username
+    std::cout<<"Comanda adaugata pentru " << username
               << " - Valoare: " << valoare << " RON\n"
-              << "Puncte fidelitate câștigate: " << static_cast<int>(valoare / 10)
+              << "Puncte fidelitate castigate: " << static_cast<int>(valoare / 10)
               << " (Total: " << pct_fidelitate << ")\n";
 }
 
