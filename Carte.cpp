@@ -27,6 +27,8 @@ cantitate(obj.cantitate),an_publicare(obj.an_publicare), numar_vanzari(obj.numar
             swap(an_publicare, other.an_publicare);
             swap(numar_vanzari, other.numar_vanzari);
             swap(rating, other.rating);
+
+
     }
 Carte& Carte::operator=(Carte obj) noexcept{
         swap(obj);
