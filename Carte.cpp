@@ -9,7 +9,7 @@
 
 Carte::Carte(const std::string& titlu, const Autor& autor, double pret, int cantitate, int an_publicare)
     : titlu(titlu), autor(autor), pret(pret),
-      cantitate(cantitate), an_publicare(an_publicare), numar_vanzari(0)
+      cantitate(cantitate), an_publicare(an_publicare), numar_vanzari(0), rating(0)
       {
     std::cout << "Carte creată: " << titlu << std::endl;
 }
@@ -71,6 +71,8 @@ bool Carte::este_disponibila() const {
 double Carte::getpret() const {return pret;}
 
 double Carte::getstoc() const {return cantitate;}
+
+double Carte::getrating() const { return rating;}
 
 
 const std::string & Carte::gettitlu() const {return titlu;}

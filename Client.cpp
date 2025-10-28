@@ -6,7 +6,7 @@
 
 Client::Client(const std::string &username, const std::string &email, const std::string &adresa,
 const std::string &telefon) : username(username), email(email),
-    adresa(adresa), telefon(telefon),sold(0.0),numarcomenzi(0),totalcumparaturi(0) {
+    adresa(adresa), telefon(telefon),sold(0.0),numarcomenzi(0),totalcumparaturi(0),pct_fidelitate(0) {
 }
 // destructor
 Client::~Client() {

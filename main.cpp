@@ -80,6 +80,16 @@ int main() {
 
     std::cout<<"Clientul se afla pe scara ierarhica :"<<client.ierarhie_clienti()<<std::endl;
 
+    Titlu("Test functii neutilizate");
+
+    std::cout << "Productivitate autor: " << autor1.calcproductivitate() << std::endl;
+    std::cout << "Ierarhie autor: " << autor1.ierarhie_a() << std::endl;
+
+    carte1.adauga_rating(5);
+    std::cout << "Rating nou carte1: " << carte1.getrating() << std::endl;
+
+    client.adaugaComanda(150.0, {"ISBN123", "ISBN456"});
+    client.foloseste_pct_fidelitate(10);
 
     return 0;
 };

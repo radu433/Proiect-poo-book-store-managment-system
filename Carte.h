@@ -20,6 +20,7 @@ private:
     int numar_vanzari;
     std::vector <int> rating_clienti;
     std::string isbn;
+    double rating;
 public:
     // constructor cu parametrii
 
@@ -51,6 +52,8 @@ public:
     [[nodiscard]] double getpret()const ;
 
     [[nodiscard]] double getstoc()const ;
+
+    [[nodiscard]] double getrating()const ;
 
     [[nodiscard]] const std::string& gettitlu()const;
 
