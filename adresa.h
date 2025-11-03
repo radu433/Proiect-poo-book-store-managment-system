@@ -20,10 +20,10 @@ class Adresa {
     friend std::ostream& operator<<(std::ostream& out, const Adresa& a);
     // functii
 
+    bool esteValida() const;
+
     void modificaAdreasa(const std::string& judet, const std::string& oras,
                       const std::string& strada, const std::string& cod_postal);
-
-    bool esteValida() const;
 
     [[nodiscard]] std::string getAdresaCompleta() const;
 
