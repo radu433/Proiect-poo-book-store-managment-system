@@ -13,7 +13,8 @@ class Adresa {
     std::string cod_postal;
     public:
     // constructor
-    Adresa(const std::string &judet, const std::string &oras, const std::string &strada, const std::string &cond_postal);
+    Adresa(const std::string &judet, const std::string &oras, const std::string &strada,
+        const std::string &cond_postal);
 
     // operator <<
 

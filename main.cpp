@@ -24,7 +24,7 @@ int main() {
     // creare obiect carete
     Carte carte1("morometii",autor1, 65,1200,1966);
     Carte carte2("Baltagul",autor2, 85,200,1976);
-
+    Carte carte3("amintiri din copilarie",autor1,55,13,1999);
     // operator <<
     std::cout<<carte1<<std::endl;
     std::cout<<carte2<<std::endl;

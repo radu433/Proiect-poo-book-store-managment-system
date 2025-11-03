@@ -12,6 +12,8 @@ std::ostream & operator<<(std::ostream &out, const Adresa &a) {
 }
 // functii
 
+
+
 void Adresa::modificaAdreasa(const std::string &jud, const std::string &o, const std::string &str,
     const std::string &cp) {
     this->strada = str;
