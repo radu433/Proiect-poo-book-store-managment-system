@@ -1,12 +1,10 @@
-//
-// Created by sindicat on 10/28/2025.
-//
+
 #include "Client.h"
 // constructori cu parametrii
 
-Client::Client(const std::string &username, const std::string &email, const std::string &adresa,
+Client::Client(const std::string &username, const std::string &email, const Adresa &adresa,
 const std::string &telefon) : username(username), email(email),
-    adresa(adresa), telefon(telefon),sold(0.0),numarcomenzi(0),totalcumparaturi(0),pct_fidelitate(0) {
+    adresa_livrare(adresa), telefon(telefon),sold(0.0),numarcomenzi(0),totalcumparaturi(0),pct_fidelitate(0) {
 }
 // destructor
 Client::~Client() {
@@ -15,7 +13,7 @@ Client::~Client() {
 // operator <<
 std::ostream & operator<<(std::ostream &out, const Client &obj) {
     out << "Client: " << obj.username << " (" << obj.email << ")\n"
-        << "Adresa: " << obj.adresa << ", Tel: " << obj.telefon << "\n"
+        << "Adresa: " << obj.adresa_livrare << ", Tel: " << obj.telefon << "\n"
         << "Istoric: " << obj.numarcomenzi << " comenzi, "
         << obj.totalcumparaturi << " RON cheltuiti.";
     return out;

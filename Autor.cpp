@@ -1,6 +1,4 @@
-//
-// Created by sindicat on 10/28/2025.
-//
+
 #include "Autor.h"
 #include<iostream>
 // constructor cu parametrii

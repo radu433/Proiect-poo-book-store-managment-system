@@ -4,6 +4,7 @@
 #include "Autor.h"
 #include "Carte.h"
 #include "Client.h"
+#include  "adresa.h"
 
 void Titlu(const std::string& titlu) {
     std::cout<<"\n---"<<titlu<<"---"<<std::endl;
@@ -57,8 +58,19 @@ int main() {
     std::cout<<"dupa atribuire:"<<carte_atribuire<<std::endl;
 
     Titlu("test client si functii");
-    // constructor
-    Client client("radu43","mradu43@test.ro","bucuresti","076666666");
+    // constructor de adresa
+    Adresa adresa1("Bucuresti", "Sector 3", "Str. Exemplu nr. 10","011010");
+    //functii pt clasa adresa
+    std::cout << "Test adresa valida: "
+              << (adresa1.esteValida() ? "Valid" : "Invalid") << std::endl;
+
+    std::cout << "--- Eticheta de livrare ---" << std::endl;
+    std::cout << adresa1.getAdresaCompleta() << std::endl;
+    std::cout << "--------------------------" << std::endl;
+
+    //constructor client
+    Client client("radu43", "mradu43@test.ro", adresa1,"07666658");
+
     //opretaor <<
     std::cout << "Stare initiala client:\n" << client << std::endl;
 

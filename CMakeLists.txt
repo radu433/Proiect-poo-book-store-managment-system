@@ -56,6 +56,8 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         Carte.cpp
         Autor.cpp
         Client.cpp
+        adresa.h
+        adresa.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )

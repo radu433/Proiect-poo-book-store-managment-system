@@ -7,12 +7,13 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "adresa.h"
 
 class Client {
 private:
     std::string username;
     std::string email;
-    std::string adresa;
+    Adresa adresa_livrare;
     std::string telefon;
     double sold;
     int numarcomenzi;
@@ -22,7 +23,7 @@ private:
 public:
     // constrctor cu parametrii
 
-    Client(const std::string& username, const std::string& email, const std::string& adresa,
+    Client(const std::string& username, const std::string& email, const Adresa& adresa,
         const std::string& telefon);
 
     // destructor
