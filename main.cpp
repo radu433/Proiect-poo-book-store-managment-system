@@ -61,6 +61,12 @@ int main() {
     // constructor de adresa
     Adresa adresa1("Bucuresti", "Sector 3", "Str. Exemplu nr. 10","011010");
     //functii pt clasa adresa
+    std::cout << "Adresa inainte de modificare:\n" << adresa1 << std::endl;
+
+    adresa1.modificaAdreasa("Ilfov", "Otopeni", "Str. Aeroportului 1", "077190");
+
+    std::cout << "Adresa dupa modificare:\n" << adresa1 << std::endl;
+
     std::cout << "Test adresa valida: "
               << (adresa1.esteValida() ? "Valid" : "Invalid") << std::endl;
 

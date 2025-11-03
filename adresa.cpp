@@ -10,7 +10,7 @@ void Adresa::modificaAdreasa(const std::string &jud, const std::string &o, const
     this->strada = str;
     this->oras = o;
     this->cod_postal = cp;
-    this->judet = judet;
+    this->judet = jud;
 }
 
 bool Adresa::esteValida() const {
