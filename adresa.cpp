@@ -5,6 +5,13 @@ Adresa::Adresa(std::string const &judet, const std::string &oras, const std::str
 oras(oras), strada(strada), cod_postal(cod_postal){
 }
 
+// operator <<
+std::ostream & operator<<(std::ostream &out, const Adresa &a) {
+    out << a.strada << ", " << a.oras << ", " << a.cod_postal;
+    return out;
+}
+// functii
+
 void Adresa::modificaAdreasa(const std::string &jud, const std::string &o, const std::string &str,
     const std::string &cp) {
     this->strada = str;
@@ -43,7 +50,3 @@ std::string Adresa::getAdresaCompleta() const {
 
 
 
-std::ostream & operator<<(std::ostream &out, const Adresa &a) {
-    out << a.strada << ", " << a.oras << ", " << a.cod_postal;
-    return out;
-}
