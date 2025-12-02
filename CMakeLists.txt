@@ -49,15 +49,41 @@ include(cmake/CopyHelper.cmake)
 
 # NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
 add_executable(${MAIN_EXECUTABLE_NAME}
-    main.cpp
-        Autor.h
-        Carte.h
-        Client.h
-        Carte.cpp
-        Autor.cpp
-        Client.cpp
-        adresa.h
-        adresa.cpp
+        "main.cpp"
+        files/headere/Autor.h
+        files/headere/Carte.h
+        files/headere/Client.h
+        "files/fisiere executabile/Carte.cpp"
+        "files/fisiere executabile/Autor.cpp"
+        "files/fisiere executabile/Client.cpp"
+        files/headere/adresa.h
+        "files/fisiere executabile/adresa.cpp"
+        files/headere/Manual.h
+        "files/fisiere executabile/Manual.cpp"
+        files/headere/CarteStiintifica.h
+        "files/fisiere executabile/CarteStiintifica.cpp"
+        files/headere/Revista.h
+        "files/fisiere executabile/Revista.cpp"
+        files/headere/UnitateVanzare.h
+        "files/fisiere executabile/UnitateVanzare.cpp"
+        files/headere/CarteIndividuala.h
+        files/headere/Comanda.h
+        "files/fisiere executabile/Comanda.cpp"
+        "files/fisiere executabile/CarteIndividuala.cpp"
+        files/headere/PachetSerie.h
+        "files/fisiere executabile/PachetSerie.cpp"
+        "files/exceptii/exceptii_headere/LibrarieException.h"
+        "files/exceptii/exceptii executabile/LibrarieException.cpp"
+        "files/exceptii/exceptii_headere/StocException.h"
+        "files/exceptii/exceptii executabile/StocException.cpp"
+        files/exceptii/exceptii_headere/ComandaExceptions.h
+        "files/exceptii/exceptii executabile/ComandaExceptions.cpp"
+        files/exceptii/exceptii_headere/ClientExceptions.h
+        "files/exceptii/exceptii executabile/ClientExceptions.cpp"
+        files/exceptii/exceptii_headere/DateInvalideException.h
+        "files/exceptii/exceptii executabile/DateInvalideException.cpp"
+        files/exceptii/exceptii_headere/AutorException.h
+        "files/exceptii/exceptii executabile/AutorException.cpp"
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )

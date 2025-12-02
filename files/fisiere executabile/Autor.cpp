@@ -1,9 +1,26 @@
 
-#include "Autor.h"
+#include "../headere/Autor.h"
+#include "../exceptii/exceptii_headere/LibrarieException.h"
+#include "../exceptii/exceptii_headere/DateInvalideException.h"
+#include "../exceptii/exceptii_headere/AutorException.h"
 #include<iostream>
+// constructor fara parametrii
+Autor::Autor():nume("NECUNOSCUT"),prenume("NECUNOSCUT"),varsta(0),numar_premii(0) {
+}
+
 // constructor cu parametrii
 Autor::Autor(const std::string &nume, const std::string &prenume, int varsta):nume(nume),
-    prenume(prenume), varsta(varsta),numar_premii(0) {}
+    prenume(prenume), varsta(varsta),numar_premii(0) {
+    if (nume.empty() || prenume.empty()) {
+        throw AutorInvalidException("Numele si prenumele autorului nu pot fi goale!");
+    }
+    if (varsta < 0) {
+        throw AutorInvalidException("Varsta autorului nu poate fi negativa (" + std::to_string(varsta) + ")!");
+    }
+    if (varsta > 120) {
+        throw AutorInvalidException("Varsta autorului este nerealista (" + std::to_string(varsta) + ")!");
+    }
+}
 // getteri
 const std::string& Autor::getNume() const {
     return nume;
@@ -33,14 +50,15 @@ std::ostream & operator<<(std::ostream &out, const Autor &obj) {
 size_t Autor::getcarti_scrise() const { return carti_scrise.size();
 }
 
-void Autor::adauga_carte(const std::string &isbn) {
+bool Autor::adauga_carte(const std::string &isbn) {
     for (const auto& c :carti_scrise) {
         if (c==isbn) {
-            std::cout<<"Cartea deja exista !\n ";
-            return;
+            return false;
         }
+
     }
     carti_scrise.push_back(isbn);
+    return true;
 }
 
 double Autor::calcproductivitate() const {

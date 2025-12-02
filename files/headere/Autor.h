@@ -7,6 +7,8 @@
 #include <string>
 #include <ostream>
 #include <vector>
+#include "../exceptii/exceptii_headere/LibrarieException.h"
+#include "../exceptii/exceptii_headere/DateInvalideException.h"
 
 class Autor {
 private:
@@ -17,6 +19,9 @@ private:
     int numar_premii;
 
 public:
+    //constructor fara parametrii
+    Autor();
+    // constructor cu parametrii
     Autor(  const std::string& nume, const std::string& prenume, int varsta);
 
     [[nodiscard]] const std::string& getNume() const;
@@ -35,7 +40,7 @@ public:
 
     [[nodiscard]] size_t getcarti_scrise()const;
 
-    void adauga_carte(const std::string& isbn);
+    [[nodiscard]] bool adauga_carte(const std::string& isbn);
 
     double calcproductivitate()const;
 

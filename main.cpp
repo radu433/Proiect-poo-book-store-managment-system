@@ -1,131 +1,233 @@
 #include <iostream>
-#include <array>
-#include <iomanip>
-#include "Autor.h"
-#include "Carte.h"
-#include "Client.h"
-#include  "adresa.h"
+#include <vector>
+#include <memory>
+#include <cassert>
+#include "files/headere/Adresa.h"
+#include "files/headere/Autor.h"
+#include "files/headere/Carte.h"
+#include "files/headere/Manual.h"
+#include "files/headere/CarteStiintifica.h"
+#include "files/headere/Revista.h"
+#include "files/headere/Client.h"
+#include "files/headere/Comanda.h"
+#include "files/headere/UnitateVanzare.h"
+#include "files/headere/CarteIndividuala.h"
+#include "files/headere/PachetSerie.h"
+// exceptii
+#include "files/exceptii/exceptii_headere/LibrarieException.h"
+#include "files/exceptii/exceptii_headere/DateInvalideException.h"
+#include "files/exceptii/exceptii_headere/StocException.h"
+#include "files/exceptii/exceptii_headere/ClientExceptions.h"
+#include "files/exceptii/exceptii_headere/ComandaExceptions.h"
 
 void Titlu(const std::string& titlu) {
     std::cout<<"\n---"<<titlu<<"---"<<std::endl;
 }
+void testProiect() {
+    Titlu("1. Crearea Autori si Carti (Polimorfism Ierarhia 1)");
+
+    // Cream autori
+    auto autor1 = std::make_shared<Autor>("Mihai", "Eminescu", 75);
+    auto autor2 = std::make_shared<Autor>("Albert", "Einstein", 120);
+
+    std::cout << *autor1 << std::endl;
+    // Cream Carti Concrete
+    // 1. Manual
+    auto manual = std::make_shared<Manual>(
+        "Matematica M1", autor1,
+        50.0, 100, 2023, "ISBN-MAN-001",
+        300, "Matematica", 12
+    );
+
+    // 2. Carte Stiintifica
+    auto carte_stiinta = std::make_shared<CarteStiintifia>(
+        "Teoria Relativitatii", autor2,
+        200, 1920, "ISBN-FIZ-999",175.50 ,
+        500, "Fizica", "Cercetare", 5000, true
+    );
+
+    // 3. Revista
+    auto revista = std::make_shared<Revista>(
+        "Nature", nullptr,
+        30, 2025, "ISSN-NAT-01", 20.0,
+        100, "Lunara", 200, true, "Stiintifica"
+    );
+
+    // Afisare Polimorfica (NVI)
+    std::cout << *manual << std::endl;
+    std::cout << *carte_stiinta << std::endl;
+
+
+    Titlu("2. Test Functii Carte & Logica Specifica");
+
+    std::cout << "Titlu: " << manual->gettitlu() << "\n";
+    std::cout << "Pret Baza: " << manual->getpret_baza() << " RON\n";
+    std::cout << "Pret Final (cu adaos): " << manual->getPretFinal() << " RON\n"; // Polimorfism
+
+    // Functii specifice Manual
+    std::cout << "Stare Aprobare: " << manual->StareAprobare(2025) << "\n";
+
+    // Functii specifice Carte Stiintifica
+    std::cout << "Factor Impact: " << carte_stiinta->calculeazaFactorImpact() << "\n";
+
+    // Modificare stoc manual
+    manual->adauga_stoc(20);
+    std::cout << "Stoc dupa adaugare: " << manual->getcantitate() << "\n";
+
+
+    Titlu("3. Crearea Unitatilor de Vanzare (Ierarhia 2)");
+
+    // Carte Individuala (Noua)
+    auto unitate_manual = std::make_shared<CarteIndividuala>(manual, false, "Noua");
+
+    // Carte Individuala (Second Hand)
+    auto unitate_sh = std::make_shared<CarteIndividuala>(carte_stiinta, true, "Buna");
+
+    // Pachet Serie
+    std::vector<std::shared_ptr<Carte>> lista_pachet;
+    lista_pachet.push_back(manual);
+    lista_pachet.push_back(manual); // Pachet de 2 manuale
+
+    auto pachet = std::make_shared<PachetSerie>(
+        lista_pachet, "Kitul Elevului", "Bacalaureat", true
+    );
+
+    std::cout << "Pret Unitate SH: " << unitate_sh->getPretcomanda() << " RON (Redus)\n";
+    std::cout << "Pret Pachet: " << pachet->getPretcomanda() << " RON\n";
+    std::cout << "Descriere Pachet: " << pachet->getDescriere() << "\n";
+
+
+    Titlu("4. Test Client si Adresa");
+
+    Adresa adresa1("Bucuresti", "Sector 3", "Str. Exemplu nr. 10", "011010");
+    // Validare adresa prin constructor
+    std::cout << "Adresa: " << adresa1.getAdresaCompleta() << "\n";
+
+    auto client = std::make_shared<Client>("Radu", "radu@email.com", adresa1, "0766123456");
+
+    // Alimentam contul
+    client->alimenteazaCont(2000.0);
+    std::cout << *client << "\n";
+
+
+    Titlu("5. Procesare Comanda (Flux Complet)");
+
+    try {
+        Comanda comanda(client);
+
+        // Adaugam articole
+        std::cout << ">> Adaugare Manual (2 buc)...\n";
+        comanda.adaugaArticol(unitate_manual, 2);
+
+        std::cout << ">> Adaugare Pachet...\n";
+        comanda.adaugaArticol(pachet, 1);
+
+        // Afisam comanda inainte de finalizare
+        std::cout << comanda;
+
+        // Finalizare
+        std::cout << ">> Finalizare...\n";
+        double total = comanda.finalizareComanda();
+
+        std::cout << "Comanda finalizata! Total platit: " << total << " RON\n";
+
+    } catch (const StocInsuficientException& e) {
+        std::cout << "[EROARE STOC] " << e.what() << "\n";
+
+    } catch (const SoldInsuficientException& e) {
+        std::cout << "[EROARE BANI] " << e.what() << "\n";
+
+    } catch (const ComandaException& e) {
+        std::cout << "[EROARE COMANDA] " << e.what() << "\n";
+
+    } catch (const ClientException& e) {
+        std::cout << "[EROARE CLIENT] " << e.what() << "\n";
+
+    } catch (const LibrarieException& e) {
+        std::cout << "[EROARE LIBRARIE] " << e.what() << "\n";
+
+    } catch (const std::exception& e) {
+        std::cout << "[EROARE NECUNOSCUTA] " << e.what() << "\n";
+    }
+
+    Titlu("6. Test Trade-In");
+
+    // Testam daca putem da la schimb cartea SH pe una Noua
+    if (unitate_sh->esteEligibilaPtTrade(*unitate_manual)) {
+        std::cout << "Trade-In Acceptat!\n";
+    } else {
+        std::cout << "Trade-In Respins.\n";
+    }
+
+    Titlu("7. Testare Exceptii");
+
+    try {
+        // Incercam sa cream un manual cu clasa negativa
+        Manual manual_gresit("Gresit", autor1, 10, 10, 2020, "ISBN", 100, "X", -5);
+    } catch (const DateInvalideException& e) {
+        std::cout << "[PRINS] " << e.what() << "\n";
+    }
+
+    std::cout << "\nSold ramas client: " << client->getSold() << " RON\n";
+}
+void testfunctiiavansate() {
+    Titlu("8. TESTARE FUNCTIONALITATI AVANSATE & ADMINISTRARE");
+
+    auto autor = std::make_shared<Autor>("Demo", "Autor", 89);
+    Adresa adresa("Iasi", "Copou", "Str. Universitatii", "700500");
+    auto client = std::make_shared<Client>("Student Eminescu", "student@edu.ro", adresa, "0799123456");
+    client->alimenteazaCont(5000);
+
+    auto manual = std::make_shared<Manual>("Info Intensiv", autor, 80.0, 50, 2024, "ISBN-INFO", 400, "Informatica", 11);
+
+    auto revista = std::make_shared<Revista>("National Geographic", nullptr, 20,
+        2025, "ISSN-NG", 40.0, 120, "Lunara", 300, true, "Stiintifica");
+
+
+    auto unitate_manual = std::make_shared<CarteIndividuala>(manual, false, "Noua");
+    auto unitate_revista = std::make_shared<CarteIndividuala>(revista, false, "Noua");
+
+   // test sugestii este declansat la cumparare
+    Comanda comanda_recomandare(client);
+    comanda_recomandare.adaugaArticol(unitate_manual, 1);
+    comanda_recomandare.adaugaArticol(unitate_revista, 1);
+
+    comanda_recomandare.finalizareComanda();
+
+    // scor relevanta
+    std::vector<std::string> preferinte = {"Informatica", "Fizica"};
+    double scor = manual->CalculeazaRelevanta(11, preferinte, 2025);
+
+    std::cout << "Scor Relevanta Manual (Cls 11, Info): " << scor << "/100\n";
+    std::cout << "Este materie de examen? " << (manual->getTip().find("Informatica") != std::string::npos ? "Da" : "Nu") << "\n";
+
+    // Test revista
+    std::cout << "Scor Frecventa Citire Revista: " << revista->calculeaza_frecventa_citire() << "\n";
+
+    auto revista_veche = std::make_shared<Revista>("Times Vechi", nullptr, 100, 2025, "ISSN-OLD" ,10.0, 50, "Lunara", 500, false, "Istorie");
+    revista_veche->adauga_rating(5);
+    std::cout << "Revista veche este colectionabila? " << (revista_veche->este_colectionabila() ? "Da" : "Nu") << "\n";
+
+    // Testare anulare comanda
+    std::cout << "\n>> Testare Anulare Comanda...\n";
+    Comanda cmd_anulare(client);
+    cmd_anulare.adaugaArticol(unitate_manual, 1);
+    std::cout << "Stare initiala: " << cmd_anulare.getStare() << "\n";
+
+    cmd_anulare.anuleazaComanda();
+    std::cout << "Stare dupa anulare: " << cmd_anulare.getStare() << "\n";
+}
+
 
 int main() {
-    Titlu("1. Crearea autori si carti");
+try {
+    testProiect();
+    testfunctiiavansate();
 
-    // capelarea constructorilor / creare de obiecte
-    Autor autor1("Mihai", "Ion",1945);
-    Autor autor2("Popescu", "Mihnea",1955);
-
-    // operatorul <<
-    std::cout<<autor1<<std::endl;
-    std::cout<<autor2<<std::endl;
-
-    // creare obiect carete
-    Carte carte1("morometii",autor1, 65,1200,1966);
-    Carte carte2("Baltagul",autor2, 85,200,1976);
-    Carte carte3("amintiri din copilarie",autor1,55,13,1999);
-    // operator <<
-    std::cout<<carte1<<std::endl;
-    std::cout<<carte2<<std::endl;
-
-    Titlu("Test functii Carte");
-
-    std::cout << "Titlul cartii 1: " << carte1.gettitlu() << std::endl;
-    std::cout << "Pretul cartii 1: " << carte1.getpret() << " RON" << std::endl;
-
-    carte1.reducere(10);
-    std::cout<<"pretul cartii redus este: " << carte1.getpret() << std::endl;
-
-    carte1.adauga_stoc(20);
-    std::cout<<"Dupa adaugarea de stoc:"<<carte1.getstoc()<<std::endl;
-
-    if (carte1.Scade_Stoc(45)==true)
-    std::cout<<"Dupa reducerea stocului: "<<carte1.getstoc()<<std::endl;
-    else
-        std::cout<<"iposibil\n";
-    if (carte1.este_disponibila()) {
-        std::cout << "Cartea este inca disponibila." << std::endl;
-    }
-
-    // constructor de copiere si opertor=
-    Carte carte_copiere=carte1;
-    std::cout<<"copia creata"<<carte_copiere<<std::endl;
-
-    Carte carte_atribuire("Test",autor1,150,44,1999);
-    std::cout<<"Inainte de atribuire:"<< carte_atribuire<<std::endl;
-    carte_atribuire=carte2;
-    std::cout<<"dupa atribuire:"<<carte_atribuire<<std::endl;
-
-    Titlu("test client si functii");
-    // constructor de adresa
-    Adresa adresa1("Bucuresti", "Sector 3", "Str. Exemplu nr. 10","011010");
-    //functii pt clasa adresa
-    std::cout << "Adresa inainte de modificare:\n" << adresa1 << std::endl;
-
-    adresa1.modificaAdreasa("Ilfov", "Otopeni", "Str. Aeroportului 1", "077190");
-
-    std::cout << "Adresa dupa modificare:\n" << adresa1 << std::endl;
-
-    std::cout << "Test adresa valida: "
-              << (adresa1.esteValida() ? "Valid" : "Invalid") << std::endl;
-
-    std::cout << "--- Eticheta de livrare ---" << std::endl;
-    std::cout << adresa1.getAdresaCompleta() << std::endl;
-    std::cout << "--------------------------" << std::endl;
-
-    //constructor client
-    Client client("radu43", "mradu43@test.ro", adresa1,"07666658");
-
-    //opretaor <<
-    std::cout << "Stare initiala client:\n" << client << std::endl;
-
-    double suma1=carte1.getpret()*2;
-    carte1.Scade_Stoc(2);
-
-    client.adaugacumparaturi(suma1);
-    std::cout << "\nDupa prima comanda (" << suma1 << " RON):\n" << client << std::endl;
-
-    client.adaugacumparaturi(600.0);
-    std::cout << "\nDupa a doua comanda (600 RON):\n" << client << std::endl;
-
-    int discount=client.calcdiscountpersonalizat();
-    std::cout << "Discountul calculat al clientului: " << discount << "%" << std::endl;
-    if (client.esteVIP())
-        std::cout << "VIP este!" << std::endl;
-    else
-        std::cout << "Nu este VIP!" << std::endl;
-
-    std::cout<<"Clientul se afla pe scara ierarhica :"<<client.ierarhie_clienti()<<std::endl;
-
-    Titlu("Test functii neutilizate");
-
-    std::cout << "Productivitate autor: " << autor1.calcproductivitate() << std::endl;
-    std::cout << "Ierarhie autor: " << autor1.ierarhie_a() << std::endl;
-
-    carte1.adauga_rating(5);
-    std::cout << "Rating nou carte1: " << carte1.getrating() << std::endl;
-
-    client.adaugaComanda(150.0, {"ISBN123", "ISBN456"});
-    client.foloseste_pct_fidelitate(10);
-
-    std::cout << "Inainte de adaugare carte, autorul 1 avea: " << autor1.getcarti_scrise() << " carti." << std::endl;
-    std::cout << "Autorul 1 avea " << autor1.getcarti_scrise() << " carti inainte." << std::endl;
-    autor1.adauga_carte("978-0-306-40615-7");
-    std::cout << "Autorul 1 are " << autor1.getcarti_scrise() << " carti acum." << std::endl;
-
-    std::cout << "\nComparare popularitate (carte1 vs carte2):" << std::endl;
-    int rezultat_comparare = carte1.cumparaDupaPopularitate(carte2);
-
-    if (rezultat_comparare == 1) {
-        std::cout << carte1.gettitlu() << " e mai populara." << std::endl;
-    } else if (rezultat_comparare == -1) {
-        std::cout << carte2.gettitlu() << " e mai populara." << std::endl;
-    } else {
-        std::cout << "Cartile au popularitate egala." << std::endl;
-    }
-
-    std::cout << "Soldul initial al clientului: " << client.getSold() << " RON" << std::endl;
-
+}catch (const std::exception& e) {
+    std::cerr<<"Eroare critica main:"<<e.what() << std::endl;
+    return 1;
+}
+    std::cout << "\n\n program finalizat cu suuces!\n";
     return 0;
 };

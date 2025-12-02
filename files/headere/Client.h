@@ -1,13 +1,13 @@
-//
-// Created by sindicat on 10/28/2025.
-//
 
 #ifndef OOP_CLIENT_H
 #define OOP_CLIENT_H
+#include "Carte.h"
+#include <map>
 #include <iostream>
 #include <string>
 #include <vector>
 #include "adresa.h"
+#include "../exceptii/exceptii_headere/LibrarieException.h"
 
 class Client {
 private:
@@ -20,6 +20,7 @@ private:
     double totalcumparaturi;
     std::vector<std::string> istoric_isbn;
     int pct_fidelitate;
+    std::vector<std::shared_ptr<Carte>> istoric_cumparaturi;
 public:
     // constrctor cu parametrii
 
@@ -35,6 +36,9 @@ public:
     friend std::ostream& operator<<(std::ostream& out, const Client& obj);
 
     //functii
+    void alimenteazaCont(double suma);
+
+    void plateste(double suma);
 
     [[nodiscard]] double getSold() const;
 
@@ -46,7 +50,7 @@ public:
 
     std::string ierarhie_clienti() const;
 
-    void adaugaComanda(double valoare, const std::vector<std::string>& isbn_list);
+    void adaugaComanda(double valoare, const std::vector<std::shared_ptr<Carte>>& carti_cumparate);
 
     double foloseste_pct_fidelitate(int pct_utilizate) ;
 
