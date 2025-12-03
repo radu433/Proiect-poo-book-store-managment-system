@@ -117,7 +117,7 @@ std::ostream & operator<<(std::ostream &out, const Comanda &cmd) {
 }
 
 // getteri
- const std::string Comanda::getStare() const {
+ const std::string& Comanda::getStare() const {
     return stare_comanda;
 }
 

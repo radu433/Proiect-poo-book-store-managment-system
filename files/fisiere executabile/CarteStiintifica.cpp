@@ -39,7 +39,7 @@ double CarteStiintifia::getPretFinal() const {
 std::string CarteStiintifia::getTip() const { return nivel_academic; }
 
 
- const std::string CarteStiintifia::getDomeniu() const {return domeniu;}
+ const std::string& CarteStiintifia::getDomeniu() const {return domeniu;}
 
 bool CarteStiintifia::esteDeActualitate(const int an_curent) const {
     int vechime = an_curent - an_publicare;

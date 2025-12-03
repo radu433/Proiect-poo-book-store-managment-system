@@ -53,7 +53,7 @@ public:
      friend std::ostream& operator<<(std::ostream& out, const Comanda& cmd);
 
      // getteri
-     [[nodiscard]] const std::string getStare() const;
+     [[nodiscard]] const std::string& getStare() const;
      [[nodiscard]] int getId() const;
      [[nodiscard]] std::string getDataFormatata() const;
      [[nodiscard]] int getNumarArticole() const;
