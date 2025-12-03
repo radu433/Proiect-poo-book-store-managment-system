@@ -27,11 +27,14 @@ Client::~Client() {
 // operator <<
 std::ostream & operator<<(std::ostream &out, const Client &obj) {
     out << "Client: " << obj.username << " (" << obj.email << ")\n"
+        << "Sold: " << obj.sold << " RON\n"
         << "Adresa: " << obj.adresa_livrare << ", Tel: " << obj.telefon << "\n"
+        << "Status: " << obj.ierarhie_clienti() << " (Pct: " << obj.pct_fidelitate << ")\n"
         << "Istoric: " << obj.numarcomenzi << " comenzi, "
         << obj.totalcumparaturi << " RON cheltuiti.";
     return out;
 }
+
 //functii
 void Client::alimenteazaCont(double suma) {
     if (suma <= 0) {

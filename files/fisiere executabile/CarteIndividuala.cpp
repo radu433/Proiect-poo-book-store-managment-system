@@ -101,7 +101,7 @@ void CarteIndividuala::scadeStoc(const int cantitate) {
     }
     else if (const auto stiintifica = std::dynamic_pointer_cast<CarteStiintifia>(carte)) {
         if (!stiintifica->esteDeActualitate(2025)) {
-            std::cout << " Carte științifică veche. Verificați dacă există ediții noi.\n";
+            std::cout << " Carte stiintifica veche. Verificati daca exista editii noi.\n";
         }
     }
 
