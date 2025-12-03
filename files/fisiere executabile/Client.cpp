@@ -29,7 +29,17 @@ std::ostream & operator<<(std::ostream &out, const Client &obj) {
     out << "Client: " << obj.username << " (" << obj.email << ")\n"
         << "Sold: " << obj.sold << " RON\n"
         << "Adresa: " << obj.adresa_livrare << ", Tel: " << obj.telefon << "\n"
-        << "Status: " << obj.ierarhie_clienti() << " (Pct: " << obj.pct_fidelitate << ")\n"
+        << "Status: ";
+    if (obj.totalcumparaturi >= 1000.0)
+        out << "Gold";
+    else if (obj.totalcumparaturi >= 500.0)
+        out << "Silver";
+    else if (obj.numarcomenzi >= 3)
+        out << "Bronze";
+    else
+        out << "Standard";
+
+    out << " (Pct: " << obj.pct_fidelitate << ")\n"
         << "Istoric: " << obj.numarcomenzi << " comenzi, "
         << obj.totalcumparaturi << " RON cheltuiti.";
     return out;
