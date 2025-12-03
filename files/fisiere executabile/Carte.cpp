@@ -128,7 +128,7 @@ int Carte::getAnPublicare() const {
     return an_publicare;
 }
 
-std::string Carte::getISBN() const {
+const std::string Carte::getISBN() const {
     return isbn;
 }
 

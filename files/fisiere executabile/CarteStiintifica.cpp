@@ -39,7 +39,7 @@ double CarteStiintifia::getPretFinal() const {
 std::string CarteStiintifia::getTip() const { return nivel_academic; }
 
 
-std::string CarteStiintifia::getDomeniu() const {return domeniu;}
+ const std::string CarteStiintifia::getDomeniu() const {return domeniu;}
 
 bool CarteStiintifia::esteDeActualitate(const int an_curent) const {
     int vechime = an_curent - an_publicare;
@@ -90,7 +90,7 @@ double CarteStiintifia::calculeazaFactorImpact() const {
 
     if (nr_referinte>100)
         scor+=3.0;
-    else if (nr_referinte>50 && nr_referinte<=100)
+    else if (nr_referinte>50 )
         scor+=2.0;
     else
         scor+=1.0;

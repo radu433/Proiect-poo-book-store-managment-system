@@ -12,7 +12,7 @@ class ComandaException : public LibrarieException {
 };
 class ComandaInvalidaException : public ComandaException {
 public:
-    ComandaInvalidaException(const std::string& actiune);
+   explicit  ComandaInvalidaException(const std::string& actiune);
 };
 class ComandaFinalizataException : public ComandaException {
     public:

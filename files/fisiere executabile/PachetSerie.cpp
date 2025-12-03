@@ -55,9 +55,9 @@ double PachetSerie::calculeazaReducerePachet() const {
 
     if (const int nr_vol=static_cast<int>(volume.size()); nr_vol>=15)
         reducere_baza+=0.15;
-    else if (nr_vol>=10 && nr_vol<=15)
+    else if (nr_vol>=10 )
         reducere_baza+=0.1;
-    else if (nr_vol>=5 && nr_vol<=10)
+    else if (nr_vol>=5 )
         reducere_baza+=0.05;
 
     if (este_complet) {

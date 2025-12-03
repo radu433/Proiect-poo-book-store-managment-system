@@ -41,7 +41,7 @@ double Revista::getPretFinal() const {
         pret*=1.1;
     if (tip == "Tehnologie" || tip == "Business" || tip == "Psihologie Practica")
         pret*=1.2;
-    if (tip == "Tehnologie" || tip == "Business" || tip == "Psihologie Practica")
+    if (tip == "Auto" || tip == "IT Consumer"|| tip == "Casa si Gradina")
         pret*=1.4;
     if (tip == "Medicala" || tip == "Stiintifica" || tip == "Juridica")
         pret*=1.5;

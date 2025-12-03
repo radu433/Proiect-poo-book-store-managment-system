@@ -58,10 +58,11 @@ void ruleazaTestLibrarie() {
         20.0, 100, "Lunara", 200, true, "Stiintifica"
     );
 
-    // functii neutilizate -> folosite acum
     std::cout << "ISBN manual: " << manual->getISBN() << "\n";
     manual->reducere(10);
     manual->adauga_stoc(15);
+
+    std::cout << "Comparatie popularitate: " << carte_stiinta->cumparaDupaPopularitate(*revista) << "\n";
 
     std::cout << "Compatibilitate liceu carte stiintifica: "
               << (carte_stiinta->CopatibilaCuNivel("liceu") ? "Da" : "Nu") << "\n";
@@ -69,6 +70,9 @@ void ruleazaTestLibrarie() {
     revista->adauga_rating(4);
     std::cout << "Frecventa citire revista: "
               << revista->calculeaza_frecventa_citire() << "\n";
+
+    std::cout << "Colectionabila? " << revista->este_colectionabila() << "\n";
+
 
     // 2. UNITATI VANZARE
     Titlu("2. Unitati de vanzare & pachete");
@@ -112,11 +116,18 @@ void ruleazaTestLibrarie() {
         // extragere ISBN – functie neutilizata
         auto lista_isbn = c.extrageISBN();
         std::cout << "ISBN-uri in comanda: ";
-        for (auto& i : lista_isbn) std::cout << i << " ";
+        for ( const auto& i : lista_isbn) std::cout << i << " ";
         std::cout << "\n";
 
         double total = c.finalizareComanda();
         std::cout << "Total platit: " << total << "\n";
+
+        c.adaugaArticol(pachet, 1);
+
+        std::cout << "Stare comanda inainte: " << c.getStare() << "\n";
+        std::cout << "Numar articole in cos: " << c.getNumarArticole() << "\n";
+
+
 
         // testare anulare
         Comanda c2(client);

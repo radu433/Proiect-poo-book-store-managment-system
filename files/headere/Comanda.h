@@ -36,7 +36,7 @@ public:
      std::vector<std::string> extrageISBN() const;
 
      // constructor cu parametruu
-     Comanda(std::shared_ptr<Client> client);
+     explicit Comanda(std::shared_ptr<Client> client);
 
      // destructor
      ~Comanda();
@@ -53,7 +53,7 @@ public:
      friend std::ostream& operator<<(std::ostream& out, const Comanda& cmd);
 
      // getteri
-     [[nodiscard]] std::string getStare() const;
+     [[nodiscard]] const std::string getStare() const;
      [[nodiscard]] int getId() const;
      [[nodiscard]] std::string getDataFormatata() const;
      [[nodiscard]] int getNumarArticole() const;

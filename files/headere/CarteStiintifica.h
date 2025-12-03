@@ -30,7 +30,7 @@ public:
     [[nodiscard]] double calculeaza_valoarea_academica() const override;
 
     // functii
-    [[nodiscard]] std::string getDomeniu()const;
+    [[nodiscard]] const  std::string getDomeniu()const;
 
     [[nodiscard]] bool esteDeActualitate(int an_curent) const;
 

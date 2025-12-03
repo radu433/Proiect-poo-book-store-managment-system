@@ -72,7 +72,7 @@ public:
 
     int getAnPublicare() const;
 
-    [[nodiscard]] std::string getISBN()const;
+    [[nodiscard]]  const std::string getISBN() const;
 
 // functii virtuale
     [[nodiscard]] virtual double getPretFinal()const=0;
