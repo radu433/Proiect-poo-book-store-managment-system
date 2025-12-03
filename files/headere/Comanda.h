@@ -24,7 +24,7 @@ private:
      static int global_id_comanda;
      time_t data_comanda;
 // healper
-     std::vector<std::string> extrageISBN() const;
+
      std::vector<std::shared_ptr<Carte>> extrageCarti() const;
 
 protected:
@@ -32,6 +32,8 @@ protected:
      void Curata_articole();
 
 public:
+
+     std::vector<std::string> extrageISBN() const;
 
      // constructor cu parametruu
      Comanda(std::shared_ptr<Client> client);
