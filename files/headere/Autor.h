@@ -40,7 +40,7 @@ public:
 
     [[nodiscard]] size_t getcarti_scrise()const;
 
-    [[nodiscard]] bool adauga_carte(const std::string& isbn);
+    bool adauga_carte(const std::string& isbn);
 
     double calcproductivitate()const;
 
