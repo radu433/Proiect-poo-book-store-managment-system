@@ -12,15 +12,15 @@
 #include <iomanip>
 #include <utility>
 #include <memory>
+#include <ctime>
 
 #include "../headere/CarteIndividuala.h"
-
 int Comanda::global_id_comanda=0;
 // healper
 std::vector<std::string> Comanda::extrageISBN() const {
     std::vector<std::string> isbn_list;
     for (const auto& art : articole) {
-        std::vector<std::string> isbn_uri_articol = art->getListaISBN();
+        std::vector<std::string> isbn_uri_articol = art->getListaIdentificatori();
         isbn_list.insert(
            isbn_list.end(),
            isbn_uri_articol.begin(),
@@ -32,20 +32,30 @@ std::vector<std::string> Comanda::extrageISBN() const {
 std::vector<std::shared_ptr<Carte>> Comanda::extrageCarti() const {
     std::vector<std::shared_ptr<Carte>> lista_carti;
 
-    for (const auto& unitate: articole) {
-        if (auto carte=unitate->getProdusPrincipal())
-            lista_carti.insert(lista_carti.end(),carte);
+    for (const auto &unitate: articole) {
+        // CAZ 1: PACHET
+        if (auto pachet = std::dynamic_pointer_cast<PachetSerie>(unitate)) {
+            for (const auto &pub: pachet->getContinut()) {
+                if (auto carte = std::dynamic_pointer_cast<Carte>(pub)) {
+                    lista_carti.push_back(carte);
+                }
+            }
+        }
+        // CAZ 2: ARTICOL INDIVIDUAL
+        else {
+            auto pub = unitate->getProdusPrincipal();
+            if (auto carte = std::dynamic_pointer_cast<Carte>(pub)) {
+                lista_carti.push_back(carte);
+            }
+        }
     }
+
     return lista_carti;
 }
 
-void Comanda::Curata_articole() {
-    articole.clear();
-}
-
 // constructor cu parametrii
-Comanda::Comanda(std::shared_ptr<Client> client):client(std::move(client)), stare_comanda("Noua"),
-                                                id_comanda(++global_id_comanda),data_comanda(std::time(nullptr)) {
+Comanda::Comanda(const std::shared_ptr<Client> &client) : client(std::move(client)), stare_comanda("Noua"),
+                                                          id_comanda(++global_id_comanda),data_comanda(std::time(nullptr)) {
     if (!this->client)
     { throw ClientInvalidException("u se poate crea o comanda fara un client valid!");}
     std::cout << "Comanda #" << id_comanda << " creata la " << getDataFormatata() << "\n";
@@ -85,37 +95,26 @@ Comanda& Comanda::operator=(Comanda other) {
 
 
 // operator <<
-std::ostream & operator<<(std::ostream &out, const Comanda &cmd) {
+std::ostream &operator<<(std::ostream &out, const Comanda &cmd) {
     out << "========== COMANDA #" << cmd.id_comanda << " ==========\n";
     out << "Data: " << cmd.getDataFormatata() << "\n";
     out << "Status: " << cmd.stare_comanda << "\n";
-    out << "Client: " << *cmd.client << "\n";
-    out << "Articole comandate: " << cmd.articole.size() << "\n";
 
-    int index = 1;
-    for (const auto& art : cmd.articole) {
-        out << "  " << index++ << ". " << *art << "\n";
-
-        if (auto pachet=std::dynamic_pointer_cast<PachetSerie>(art)) {
-        out<<"PACHET: "<< pachet->getDescriere()<<"(Reducere: "<<(pachet->calculeazaReducerePachet() * 100) << "%)\n";
-        } else if (auto carte_ind=std::dynamic_pointer_cast<CarteIndividuala>(art)) {
-            out<<"CARTE: "<< carte_ind->getDescriere()<<"\n";
-
-            if (carte_ind->esteEligibilaPtTrade(*carte_ind)) {
-                out<<"[Trade-in disponibil!]";
-            }
-            out<<"\n";
-
-        } else {
-            out<<*art << "\n";
-        }
+    if (cmd.client) {
+        out << "Client: " << *cmd.client << "\n";
     }
+
+    out << "Articole in cos: " << cmd.articole.size() << "\n";
+
+    for (size_t i = 0; i < cmd.articole.size(); ++i) {
+        out << "  [" << i << "] " << *cmd.articole[i] << "\n";
+        out << "     [DETALII]: " << cmd.articole[i]->getDescriere() << "\n";
+    }
+
     out << "TOTAL COMANDA: " << cmd.calculeazaTotal() << " RON\n";
     out << "====================================\n";
-
     return out;
 }
-
 // getteri
  const std::string& Comanda::getStare() const {
     return stare_comanda;
@@ -158,7 +157,16 @@ void Comanda::valideazaComanda() const {
 
     }
     std::cout << "Comanda #" << id_comanda << " este valida!\n";
+}
 
+void Comanda::stergeArticol(int idx) {
+    if (idx < 0 || idx >= static_cast<int>(articole.size())) {
+        throw DateInvalideException("Index articol invalid!");
+    }
+    articole[idx]->getProdusPrincipal()->cresteCantitatea(1);
+
+    // eliminam articolul din cos
+    articole.erase(articole.begin() + idx);
 }
 
 void Comanda::anuleazaComanda() {
@@ -171,7 +179,10 @@ void Comanda::anuleazaComanda() {
     stare_comanda="Anulata";
     std::cout<<"Comanda #"<<id_comanda<<"a fost anulata! ";
     std::cout<<"Articole anulate:"<<articole.size()<<"\n";
+}
 
+std::shared_ptr<Client> Comanda::getClient() const {
+    return client;
 }
 
 void Comanda::adaugaArticol(const std::shared_ptr<UnitateVanzare> &articol, int cantitate) {
@@ -207,8 +218,8 @@ double Comanda::calculeazaTotal() const {
         }
         total+=pret_articol;
     }
-    if (numar_pachete>=3) {
-        double reducere_multipachete=0.0;
+    if (numar_pachete >= 3) {
+        double reducere_multipachete = 50.0;
         total-=reducere_multipachete;
         std::cout<<"Bonus 3+ pachete: -"<< reducere_multipachete << "RON\n";
     }
@@ -277,3 +288,4 @@ double Comanda::finalizareComanda() {
 
     return total;
 }
+//...

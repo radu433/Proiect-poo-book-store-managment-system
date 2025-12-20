@@ -1,12 +1,18 @@
 #include "../headere/CarteStiintifica.h"
 #include <string>
+#include <ctime>
 #include "../exceptii/exceptii_headere/DateInvalideException.h"
 
 // constructor cu parametrii
-CarteStiintifia::CarteStiintifia(const std::string &titlu, const std::shared_ptr<Autor> &autor, int cantitate, int an_publicare,
-    const std::string &isbn, double pret_baza,const int numar_pagini,const std::string &domeniu, const std::string &nivel_academic,
-    int nr_referinte, const bool are_formule_diagrame): Carte(titlu,autor,cantitate,an_publicare,isbn,pret_baza,numar_pagini),
-domeniu(domeniu),nivel_academic(nivel_academic),nr_referinte(nr_referinte),are_formule_diagrame(are_formule_diagrame){
+CarteStiintifica::CarteStiintifica(const std::string &titlu, const std::shared_ptr<Autor> &autor, int cantitate,
+                                   const std::string &data_publicatie,
+                                   const std::string &isbn, double pret_baza, const int numar_pagini,
+                                   const std::string &editura, const std::string &domeniu,
+                                   const std::string &nivel_academic,
+                                   const int nr_referinte, const bool are_formule_diagrame) : Carte(titlu, autor,
+        cantitate, data_publicatie, isbn, pret_baza, numar_pagini, editura),
+    domeniu(domeniu), nivel_academic(nivel_academic), nr_referinte(nr_referinte),
+    are_formule_diagrame(are_formule_diagrame) {
     if (domeniu.empty()) {
         throw DateInvalideException("Domeniul cartii stiintifice nu poate fi gol!");
     }
@@ -19,128 +25,147 @@ domeniu(domeniu),nivel_academic(nivel_academic),nr_referinte(nr_referinte),are_f
     }
 }
 
-int CarteStiintifia::timp_estimat_lecturii() const {
-    int minute_per_pagina=8;
-    if (nivel_academic=="Cercetare" || nivel_academic=="Doctorat")
-        minute_per_pagina=15;
-    return numar_pagini*minute_per_pagina;
+int scorNivel(const std::string &nivel) {
+    if (nivel == "Generala") return 1;
+    if (nivel == "Liceu") return 2;
+    if (nivel == "Universitar") return 3;
+    if (nivel == "Masterat") return 4;
+    if (nivel == "Doctorat") return 5;
+    if (nivel == "Cercetare") return 6;
+
+    return 0;
 }
 
-double CarteStiintifia::getPretFinal() const {
-    double pret= pret_baza;
-    const double impact=calculeazaFactorImpact();
-    pret*=1.3;
-    if (impact>=5 && impact<=10)
-        pret+=50;
-    else pret+=10;
+int CarteStiintifica::timp_estimat_lecturii() const {
+    int minute_per_pagina = 8;
+    if (scorNivel(nivel_academic) == 6 || scorNivel(nivel_academic) == 5)
+        minute_per_pagina = 15;
+    return nr_pagini * minute_per_pagina;
+}
+
+double CarteStiintifica::getPretFinal() const {
+    double pret = pret_baza;
+    const double impact = calculeazaFactorImpact();
+    pret *= 1.3;
+    if (impact >= 5 && impact <= 10)
+        pret += 50;
+    else pret += 10;
     return pret;
 }
 
-std::string CarteStiintifia::getTip() const { return nivel_academic; }
+std::string CarteStiintifica::getTip() const { return nivel_academic; }
 
 
- const std::string& CarteStiintifia::getDomeniu() const {return domeniu;}
+const std::string &CarteStiintifica::getDomeniu() const { return domeniu; }
 
-bool CarteStiintifia::esteDeActualitate(const int an_curent) const {
-    int vechime = an_curent - an_publicare;
+bool CarteStiintifica::esteDeActualitate() const {
+    const std::time_t t = std::time(nullptr);
+    const std::tm *tm_now = std::localtime(&t);
+
+    const int data_actuala = (tm_now->tm_year + 1900) * 10000
+                             + (tm_now->tm_mon + 1) * 100
+                             + tm_now->tm_mday;
+
+    const int data_aparitie = Data::parse(data_publicatie).toNumeric();
 
     if (domeniu == "Informatica" || domeniu == "Medicina" || domeniu == "Robotica") {
-        return vechime <= 5;
+        return (data_actuala - data_aparitie) <= 10000;
     }
 
-    return vechime <= 15;
-
+    return (data_actuala - data_aparitie) <= 150000;
 }
 
 
-double CarteStiintifia::calculeaza_valoarea_academica() const {
-double valoare=0.0;
+double CarteStiintifica::calculeaza_valoarea_academica() const {
+    double valoare = 0.0;
 
-    if (nivel_academic=="Cercetare" || nivel_academic=="Doctorat")
-        valoare+=40;
-    else if (nivel_academic=="Master" || nivel_academic=="Facultate")
-        valoare+=30;
-    else if (nivel_academic=="Liceu")
-        valoare+=15;
-    else valoare+=10;
+    if (scorNivel(nivel_academic) == 6 || scorNivel(nivel_academic) == 5)
+        valoare += 40;
+    else if (scorNivel(nivel_academic) == 4 || scorNivel(nivel_academic) == 3)
+        valoare += 30;
+    else if (scorNivel(nivel_academic) == 2)
+        valoare += 15;
+    else valoare += 10;
 
-    double impact=calculeazaFactorImpact();
-    valoare+=(impact*3.0);
+    double impact = calculeazaFactorImpact();
+    valoare += (impact * 3.0);
 
-    int an_curent=2025;
-    int vechime=an_curent-getAnPublicare();
+    const std::time_t t = std::time(nullptr);
+    const std::tm *tm_now = std::localtime(&t);
 
-if (domeniu=="IT" || domeniu=="Medicina") {
-        if (vechime<=2) valoare+=20;
-        else if (vechime<=5) valoare+=10;
+    const int data_actuala = (tm_now->tm_year + 1900) * 10000
+                             + (tm_now->tm_mon + 1) * 100
+                             + tm_now->tm_mday;
+
+    const int data_apritie = Data::parse(data_publicatie).toNumeric();
+
+    if (domeniu == "IT" || domeniu == "Medicina") {
+        if (data_actuala - data_apritie <= 20000) valoare += 20;
+        else if (data_actuala - data_apritie <= 50000) valoare += 10;
         else
-            valoare-=10;
+            valoare -= 10;
     } else {
-        if (vechime<=5) valoare+=20;
-        else if (vechime<=15) valoare+=10;
+        if (data_actuala - data_apritie <= 50000) valoare += 20;
+        else if (data_actuala - data_apritie <= 150000) valoare += 10;
         else
-            valoare+=5;
+            valoare += 5;
     }
-    return std::min(valoare,100.0);
-
+    return std::min(valoare, 100.0);
 }
 
-double CarteStiintifia::calculeazaFactorImpact() const {
-    double scor=0.0;
+void CarteStiintifica::seteazaReducere(int procent, int durata_zilei) {
+    Carte::seteazaReducere(procent, durata_zilei);
+}
 
-    if (nr_referinte>100)
-        scor+=3.0;
-    else if (nr_referinte>50 )
-        scor+=2.0;
+double CarteStiintifica::calculeazaFactorImpact() const {
+    double scor = 0.0;
+
+    if (nr_referinte > 100)
+        scor += 3.0;
+    else if (nr_referinte > 50)
+        scor += 2.0;
     else
-        scor+=1.0;
+        scor += 1.0;
     if (are_formule_diagrame)
-        scor+=1.5;
+        scor += 1.5;
 
-    if (nivel_academic=="Cercetare" || nivel_academic=="Doctorat")
-        scor+=4.5;
-    else if (nivel_academic=="Master" || nivel_academic=="Facultate")
-        scor+=3.5;
-    else if (nivel_academic=="Liceu")
-        scor+=2.5;
-    else scor+=1.1;
+    if (scorNivel(nivel_academic) == 6 || scorNivel(nivel_academic) == 5)
+        scor += 4.5;
+    else if (scorNivel(nivel_academic) == 4 || scorNivel(nivel_academic) == 3)
+        scor += 3.5;
+    else if (scorNivel(nivel_academic) == 2)
+        scor += 2.5;
+    else scor += 1.1;
 
-    if (are_formule_diagrame)
-        scor+=1.0;
 
     return scor;
 }
 
-bool CarteStiintifia::CopatibilaCuNivel(const std::string& nivel_studii) const {
-    // Verifică dacă cartea e potrivită pentru nivelul de studii dat
+bool CarteStiintifica::CompatibilaCuNivel(const std::string &nivel_studii) const {
+    int nivelCititor = scorNivel(nivel_studii);
+    int nivelCarte = scorNivel(nivel_academic);
 
-    if (nivel_studii == "liceu") {
-        return nivel_academic == "liceu" || nivel_academic == "popularizare";
-    } else if (nivel_studii == "universitar") {
-        return nivel_academic == "universitar" ||
-               nivel_academic == "liceu";  // Poate fi și liceu pentru bază
-    } else if (nivel_studii == "masterat" || nivel_studii == "doctorat") {
-        return nivel_academic == "cercetare" ||
-               nivel_academic == "universitar";
-    } else if (nivel_studii == "general") {
-        return nivel_academic == "popularizare";
+    if (nivelCititor == 0 || nivelCarte == 0) {
+        throw DateInvalideException("Nivel academic necunoscut!");
     }
 
-    return false;
+    // Cititorul trebuie sa aiba nivel >= nivelul cartii
+    return nivelCititor >= nivelCarte;
 }
 
-// operator<<
- void CarteStiintifia::afisare(std::ostream &out) const {
-     Carte::afisare(out);
-    out << "  Domeniu: " << domeniu << "\n"
-        << "  Nivel Academic: " << getTip() << "\n"
-        << "  Impact: " << nr_referinte << " citari (Scor: " << calculeazaFactorImpact() << ")\n";
+double CarteStiintifica::calculeazaPrioritateRestoc() const {
+    return Carte::calculeazaPrioritateRestoc();
+}
 
-    if (!esteDeActualitate(2025)) {
+
+// operator<<
+void CarteStiintifica::afisare(std::ostream &out) const {
+    Carte::afisare(out);
+    out << "  Domeniu: " << domeniu << "\n"
+            << "  Nivel Academic: " << getTip() << "\n"
+            << "  Impact: " << nr_referinte << " citari (Scor: " << calculeazaFactorImpact() << ")\n";
+
+    if (!esteDeActualitate()) {
         out << "  [ATENTIE]: Continut posibil invechit!\n";
     }
 }
-
-
-
-

@@ -86,41 +86,43 @@ void CarteIndividuala::scadeStoc(const int cantitate) {
         throw DateInvalideException("Nu se poate scadea stocul: Produs invalid!");
     }
     if (auto manual=std::dynamic_pointer_cast<Manual>(carte)) {
-    int an_curent=2025;
-    if (manual->StareAprobare(an_curent)=="Expirat") {
-        throw DateInvalideException(
-                "Blocare vanzare: Manualul '" + manual->gettitlu() +
+        if (manual->StareAprobare() == "Expirat") {
+            throw DateInvalideException(
+                "Blocare vanzare: Manualul '" + manual->getTitlu() +
                 "' este EXPIRAT si nu mai este aprobat de minister!"
             );
     }
 }
     if (auto revista=std::dynamic_pointer_cast<Revista>(carte)) {
         if (revista->esteEditieSpeciala()) {
-            std::cout<<"Nu se vinde o editie de colectie!";
+            throw DateInvalideException("Nu se poate vinde o editie de colectie (Revista)!");
         }
-    }
-    else if (const auto stiintifica = std::dynamic_pointer_cast<CarteStiintifia>(carte)) {
-        if (!stiintifica->esteDeActualitate(2025)) {
+    } else if (const auto stiintifica = std::dynamic_pointer_cast<CarteStiintifica>(carte)) {
+        if (!stiintifica->esteDeActualitate()) {
             std::cout << " Carte stiintifica veche. Verificati daca exista editii noi.\n";
         }
     }
 
-    if (!carte->Scade_Stoc(cantitate)) {
-        throw StocInsuficientException(carte->gettitlu(), carte->getcantitate(), cantitate);
+    if (!carte->Scade_stoc(cantitate)) {
+        throw StocInsuficientException(carte->getTitlu(), carte->getcantitate(), cantitate);
     }
 }
 
+std::string CarteIndividuala::getIdentificator() const {
+    return produs_principal->getIdentificator();
+}
+
 // Informații
-std::vector<std::string> CarteIndividuala::getListaISBN() const {
+std::vector<std::string> CarteIndividuala::getListaIdentificatori() const {
     if (const auto carte = getProdusPrincipal()) {
-        return { carte->getISBN() };
+        return {carte->getIdentificator()};
     }
     return {};
 }
 
 std::string CarteIndividuala::getDescriere() const {
     const auto carte = getProdusPrincipal();
-    return carte ? carte->gettitlu() : "Indisponibil";
+    return carte ? carte->getTitlu() : "Indisponibil";
 }
 
 //  Trade-In și Revânzare
@@ -143,7 +145,7 @@ bool CarteIndividuala::esteEligibilaPtTrade(const CarteIndividuala &carte_noua) 
         throw DateInvalideException("Nu se poate verifica trade-in: Carti invalide (NULL)!");
 
     // 3. Verificare ISBN
-    if (carte_mea->getISBN() != carte_target->getISBN()) {
+    if (carte_mea->getIdentificator() != carte_target->getIdentificator()) {
         std::cout << "Trade-in disponibil doar pentru aceeasi editie (ISBN diferit)\n";
         return false;
     }
@@ -189,13 +191,13 @@ double CarteIndividuala::calculeazaValoareRevanzare(const int luni_folosite) con
 
 
     if (const auto manual = std::dynamic_pointer_cast<Manual>(carte)) {
-        if (manual->StareAprobare(2025) == "APROBAT") {
+        if (manual->StareAprobare() == "Aprobat") {
             factor_depreciere *= 1.20;
         }
     }
 
     // Factor Rating (Nume corect)
-    if (carte->calculeaza_raitingmin() >= 4.0)
+    if (carte->getRatingMediu() >= 4.0)
         factor_depreciere *= 1.1;
 
     double valoare_revanzare = val_init * factor_depreciere;

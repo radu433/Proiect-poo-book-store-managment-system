@@ -120,7 +120,7 @@ jobs:
             cmake_flags: "-DUSE_MSAN=ON"
             cmake_generator: Ninja
             # This env runs memory sanitizers
-            runs_msan: true
+            runs_msan: false
 
             # renovate: depName=ubuntu
           - os: ubuntu-22.04

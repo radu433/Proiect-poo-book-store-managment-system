@@ -8,7 +8,7 @@ int UnitateVanzare::id_contor_global = 0;
 
 // --- CONSTRUCTORI ---
 
-UnitateVanzare::UnitateVanzare(std::shared_ptr<Carte> produs)
+UnitateVanzare::UnitateVanzare(std::shared_ptr<Publicatie> produs)
     : id_unic(++id_contor_global),
       produs_principal(std::move(produs))
 {
@@ -25,7 +25,7 @@ UnitateVanzare::UnitateVanzare(const UnitateVanzare &other)
 
 // --- GETTERE ---
 
-std::shared_ptr<Carte> UnitateVanzare::getProdusPrincipal() const {
+std::shared_ptr<Publicatie> UnitateVanzare::getProdusPrincipal() const {
     return produs_principal;
 }
 
@@ -34,19 +34,14 @@ int UnitateVanzare::getId() const {
 }
 
 std::string UnitateVanzare::getNumeProdus() const {
-    return produs_principal->gettitlu();
+    return produs_principal->getTitlu();
 }
 
 int UnitateVanzare::getCantitate() const { // Corectat typo
     return produs_principal->getcantitate();
 }
 
-std::string UnitateVanzare::getISBN() const {
-    if (produs_principal) {
-        return produs_principal->getISBN();
-    }
-    return "";
-}
+
 
 // --- LOGICĂ ---
 

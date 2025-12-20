@@ -1,5 +1,3 @@
-
-
 #ifndef OOP_CARTE_H
 #define OOP_CARTE_H
 #include <string>
@@ -8,79 +6,74 @@
 #include <utility>
 #include <vector>
 #include  <memory>
+#include <ctime>
+
+#include "Publicatie.h"
 #include "../exceptii/exceptii_headere/LibrarieException.h"
 #include "../exceptii/exceptii_headere/DateInvalideException.h"
 
-class Carte {
+class Carte : public Publicatie {
 private:
-    std::string titlu;
     std::shared_ptr<Autor> autor;
-    int cantitate;
-    int numar_vanzari;
-    std::vector <int> rating_clienti;
+    std::string isbn;
 
     // atribute statice
     static int total_carti_create;
     static double venituri_totale;
 
-protected:
-    int an_publicare;
-    std::string isbn;
-    double pret_baza;
-    int numar_pagini;
+    static bool vaidareisbn(const std::string &isbn);
 
+public:
     // constructor cu parametrii
 
-    Carte(const std::string& titlu, std::shared_ptr<Autor> autor, int cantitate, int an_publicare,
-       const  std::string& isbn,double pret_baza, const int numar_pagini);
- // opertorul <<
-    virtual void afisare(std::ostream& out)const;
-public:
-
-    friend std::ostream& operator<<(std::ostream& out, const Carte& obj);
-    //operator =
-    Carte& operator=(const Carte&)=delete;
-
-    // constructor de copiere
-    Carte(const Carte&)=delete;
+    Carte(const std::string &titlu, std::shared_ptr<Autor> autor, int cantitate, const std::string &data_publicatie,
+          const std::string &isbn, double pret_baza, int numar_pagini, const std::string &editura);
 
     // destructor virtual
-    virtual ~Carte()=default;
+    virtual ~Carte() override;
+
+    // opertorul << +afisare
+    virtual void afisare(std::ostream &out) const override;
+
+    friend std::ostream &operator<<(std::ostream &out, const Carte &obj);
+
+    //clone
+    [[nodiscard]] std::shared_ptr<Publicatie> clone() const override;
+
+
     // functii
 
-    bool Scade_Stoc(int bucati_de_sters);
-
-    double reducere(int discont );
-
-    [[nodiscard]] bool este_disponibila() const;
-
-    [[nodiscard]] double getpret_baza()const ;
-
-    [[nodiscard]] int getcantitate()const ;
-
-    [[nodiscard]] const std::string& gettitlu()const;
-
-    [[nodiscard]] bool esteBestseller() const;
 
     void adauga_stoc(int nr_buc);
 
-    void adauga_rating(int rating);
+    void adauga_rating(int rating) override;
 
-    [[nodiscard]] double calculeaza_raitingmin()const;
+    [[nodiscard]] int cumparaDupaPopularitate(const Carte &alta) const;
 
-    [[nodiscard]] int cumparaDupaPopularitate(const Carte& alta) const;
 
-    int getAnPublicare() const;
+    virtual double calculeazaPrioritateRestoc() const override;
 
-    [[nodiscard]]  const std::string& getISBN() const;
 
-// functii virtuale
-    [[nodiscard]] virtual double getPretFinal()const=0;
+    // functii virtuale
+    [[nodiscard]] double getPretFinal() const override;
 
-    [[nodiscard]] virtual std::string getTip() const =0;
+    [[nodiscard]] std::string getTip() const override;
 
-    [[nodiscard]] virtual double calculeaza_valoarea_academica() const=0;
+    [[nodiscard]] double calculeaza_valoarea_academica() const override;
 
-    [[nodiscard]] virtual int timp_estimat_lecturii() const=0;
+    [[nodiscard]] int timp_estimat_lecturii() const override;
+
+    [[nodiscard]] int getcantitate() const override;
+
+    [[nodiscard]] double getpretbaza() const override;
+
+    void seteazaReducere(int procent, int durata_zilei) override;
+
+    std::string getIdentificator() const override;
+
+    // gettere
+    [[nodiscard]] const std::string &getISBN() const;
+
+    [[nodiscard]] Autor &getAutor() const;
 };
 #endif //OOP_CARTE_H

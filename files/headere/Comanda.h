@@ -3,12 +3,12 @@
 #ifndef OOP_COMANDA_H
 #define OOP_COMANDA_H
 #include "../exceptii/exceptii_headere/LibrarieException.h"
-#include "Client.h"
 #include <string>
 #include <memory>
 #include <ctime>
 
 #include "UnitateVanzare.h"
+class Client;
 
 class Comanda {
 private:
@@ -36,7 +36,7 @@ public:
      std::vector<std::string> extrageISBN() const;
 
      // constructor cu parametruu
-     explicit Comanda(std::shared_ptr<Client> client);
+     explicit Comanda(const std::shared_ptr<Client> &client);
 
      // destructor
      ~Comanda();
@@ -67,11 +67,10 @@ public:
 
      void valideazaComanda() const;
 
+     void stergeArticol(int idx);
+
      void anuleazaComanda();
 
-
-
-
-
+     std::shared_ptr<Client> getClient() const;
 };
 #endif //OOP_COMANDA_H

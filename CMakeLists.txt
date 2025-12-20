@@ -84,6 +84,20 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         "files/exceptii/exceptii executabile/DateInvalideException.cpp"
         files/exceptii/exceptii_headere/AutorException.h
         "files/exceptii/exceptii executabile/AutorException.cpp"
+        "files/headere/Publicatie.h"
+        "files/fisiere executabile/Publicatie.cpp"
+        files/exceptii/exceptii_headere/DataException.h
+        files/exceptii/exceptii_headere/PaginareException.h
+        "files/exceptii/exceptii executabile/PaginareException.cpp"
+        files/exceptii/exceptii_headere/PublicatieException.h
+        "files/exceptii/exceptii executabile/PublicatieException.cpp"
+        files/headere/Reducere.h
+        "files/fisiere executabile/Reducere.cpp"
+        files/headere/RevistaIndividuala.h
+        "files/fisiere executabile/RevistaIndividuala.cpp"
+        files/headere/Review.h
+        files/headere/AppState.h
+        "files/fisiere executabile/AppState.cpp"
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )

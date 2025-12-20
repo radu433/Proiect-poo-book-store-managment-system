@@ -7,7 +7,7 @@
 class PachetSerie: public UnitateVanzare {
 private:
     std::string nume_pachet;
-    std::vector<std::shared_ptr<Carte>> volume;
+    std::vector<std::shared_ptr<Publicatie>> continut;
     std::string tip_pachet; // "Bacalaureat", "Trilogie", "Opere Complete"
     bool este_complet;
     protected:
@@ -17,7 +17,7 @@ private:
     public:
     // constructor cu parametrii
 
-    PachetSerie(const std::vector<std::shared_ptr<Carte>> &volume, const std::string &nume_pachet,
+    PachetSerie(const std::vector<std::shared_ptr<Publicatie>> &continut, const std::string &nume_pachet,
                 const std::string &tip_pachet, bool este_complet);
 
     // constrcutor de copiere
@@ -40,8 +40,12 @@ private:
 
     void adauga_volum(const std::shared_ptr<Carte> &carte);
 
+    const std::vector<std::shared_ptr<Publicatie>>& getContinut() const;
+
     // functii virtuale
-    [[nodiscard]] std::vector<std::string> getListaISBN() const override;
+    std::string getIdentificator() const override;
+
+    [[nodiscard]] std::vector<std::string> getListaIdentificatori() const override;
 
     [[nodiscard]] bool verificaStocSuficient(int cantitate_ceruta) const override;
 
