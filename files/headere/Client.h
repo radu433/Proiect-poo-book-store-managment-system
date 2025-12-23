@@ -20,9 +20,9 @@ private:
     double sold;
     int numarcomenzi;
     double totalcumparaturi;
-    std::vector<std::string> istoric_isbn;
+    std::vector<std::string> istoric_identificatori;
     int pct_fidelitate;
-    std::vector<std::shared_ptr<Carte> > istoric_cumparaturi;
+    std::vector<std::shared_ptr<Publicatie> > istoric_cumparaturi;
     std::shared_ptr<Comanda> comandaActiva = nullptr;
 
 public:
@@ -46,7 +46,7 @@ public:
 
     [[nodiscard]] double getSold() const;
 
-    void adaugacumparaturi(double suma);
+     void adaugacumparaturi(double suma);
 
     double calcdiscountpersonalizat() const;
 
@@ -73,6 +73,9 @@ public:
     bool verificaParola(const std::string &parolaIntrodusa) const;
 
     void seteazaParola(std::string &parolac);
+
+    [[nodiscard]] const std::vector<std::string>& getIstoricIdentificatori() const;
+
 };
 
 

@@ -368,43 +368,6 @@ int filtrareComanda(const AppState &app) {
     return idx;
 }
 
-// functie pt logs
-void Logsactivitateclients(const AppState &app) {
-    std::cout << "\n=== LOGURI SISTEM ===\n";
-    for (const auto &l: app.logs) {
-        std::cout << "[" << std::ctime(&l.timestamp) << "] ";
-
-        switch (l.tip) {
-            case Tiplog::CONT_CREAT:
-                std::cout << "CONT CREAT";
-                break;
-            case Tiplog::CONT_STERS:
-                std::cout << "CONT STERS";
-                break;
-            case Tiplog::LOGIN:
-                std::cout << "LOGIN";
-                break;
-            case Tiplog::COMANDA_FINALIZATA:
-                std::cout << "COMANDA FINALIZATA";
-                break;
-            case Tiplog::COMANDA_ANULATA:
-                std::cout << "COMANDA ANULATA";
-                break;
-        }
-
-        std::cout << " | " << l.email_client;
-        if (!l.detalii.empty())
-            std::cout << " | " << l.detalii;
-        std::cout << "\n";
-    }
-}
-
-// functie pt adaugare de loguri
-void adaugaLogs(AppState &app, const Tiplog tip, const std::string &email, const std::string &detalii = "") {
-    app.logs.push_back({
-        std::time(nullptr), tip, email, detalii
-    });
-}
 
 // functii pentru login si creare de cont + meniu autentificare
 std::shared_ptr<Client> cautaClientIdentificator(
@@ -1214,7 +1177,7 @@ void afiseazaPrioritatiRestoc(const AppState &app) {
     }
 }
 
-void restocheazaDinPrioritati(const AppState &app) {
+ {
     std::vector<std::shared_ptr<Publicatie> > lista = app.publicatii;
 
     std::ranges::sort(lista,

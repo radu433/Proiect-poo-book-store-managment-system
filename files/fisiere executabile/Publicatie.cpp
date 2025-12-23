@@ -47,7 +47,7 @@ Publicatie::Publicatie( const std::string &titlu,  double pret_baza, int cantita
     const int nr_pagini, const std::string& editura) : titlu(
                                                            titlu), pret_baza(pret_baza), cantitate(cantitate),
                                                        data_publicatie(data_publicatie), nr_pagini(nr_pagini),
-                                                       numar_vanzari(0), editura(editura) {
+                                                       numar_vanzari(0), editura(editura){
     if (nr_pagini <= 0) {
         throw NumarPaginiInvalidException(nr_pagini);
     }

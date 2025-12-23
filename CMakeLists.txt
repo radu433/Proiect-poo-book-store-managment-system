@@ -98,6 +98,14 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         files/headere/Review.h
         files/headere/AppState.h
         "files/fisiere executabile/AppState.cpp"
+        files/headere/Book_Store_manager.h
+        "files/fisiere executabile/Book_Store_manager.cpp"
+        files/headere/PublicatieService.h
+        "files/fisiere executabile/publicatieService.cpp"
+        files/headere/SerchService.h
+        "files/fisiere executabile/SerchService.cpp"
+        files/headere/InventoryService.h
+        "files/fisiere executabile/InventoryService.cpp"
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )

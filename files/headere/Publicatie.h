@@ -37,6 +37,7 @@ protected:
     int numar_vanzari;
     std::vector<int> rating_clienti;
     std::string editura;
+    bool activa=true;
 
 
     // membru static
@@ -125,6 +126,9 @@ public:
     virtual std::string getTitlu()const {
         return titlu;
     }
+    bool esteActiva() const {return activa;}
+    void dezactiveaza() { activa = false; }
+    void activeaza() { activa = true; }
 
 
 };

@@ -10,9 +10,13 @@
 #include "Review.h"
 class Publicatie;
 class Client;
+class Comanda;
+class Autor;
+class Reducere;
+class PachetSerie;
 
 enum class Tiplog {
-    CONT_CREAT, CONT_STERS, LOGIN, COMANDA_FINALIZATA, COMANDA_ANULATA, INCERCARI_MULTIPLE_AUTENTIFICARE_ESUATE
+    CONT_CREAT, CONT_STERS, LOGIN, COMANDA_FINALIZATA, COMANDA_ANULATA, INCERCARI_MULTIPLE_AUTENTIFICARE_ESUATE,REVIEW_ADAUGAT
 };
 
 struct LogEntry {
@@ -29,19 +33,24 @@ struct AppState {
     std::vector<std::shared_ptr<Autor> > autor;
     std::vector<Reducere> reduceri;
     std::vector<LogEntry> logs;
-    std::vector<std::shared_ptr<PachetSerie> > pachetePredefinite;
+    std::vector<std::shared_ptr<PachetSerie>> pachetePredefinite;
     std::vector<Review> reviews;
+// functii pt reviewuri
+   bool existaReview(const std::string& username, const std::string& identificator_publicatie) const;
 
-    bool getReviewuriPublicatie(const std::string &username, const std::string &identificator_publicatie) const;
+    void adaugaReview(const std::string& username, const std::string& identificator_publicatie,int rating, const std::string& text,
+        bool verificat);
 
-    void getReviewuri(const std::string &username, const std::string &identificator_publicatie, int rating,
-                      const std::string &text,
-                      bool verificat);
+    std::vector<Review>getReviewPublicatie(const std::string& identificator_publicatie) const;
 
-    std::vector<Review> getReviewPublicatie(const std::string &identificator_publicatie) const;
+    double calculeazaRatingPublicatie(const std::string& identificator_publicatie) const;
 
-    bool stergeReviewNeverificat(
-        const std::string &username,
-        const std::string &identificator_publicatie);
+    bool stergeReviewNeverificat(const std::string& username,const std::string& identificator_publicatie);
+
+    // funtii pt loguri
+
+    static void Logsactivitateclients(const AppState &app);
+
+    static void adaugaLogs(AppState &app, const Tiplog tip, const std::string &email, const std::string &detalii = "");
 };
 #endif //OOP_APPSTATE_H

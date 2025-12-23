@@ -205,3 +205,7 @@ void Client::seteazaParola(std::string &parolac) {
         throw LibrarieException("Parola prea scurta!");
     parolac = parola;
 }
+
+const std::vector<std::string> & Client::getIstoricIdentificatori()const {
+    return istoric_identificatori;
+}
