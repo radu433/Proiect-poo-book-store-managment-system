@@ -131,5 +131,6 @@ public:
     void activeaza() { activa = true; }
 
 
+
 };
 #endif //OOP_PUBLICATIE_H

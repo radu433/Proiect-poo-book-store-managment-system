@@ -18,3 +18,7 @@ bool Reducere::seAplicaLa(const std::shared_ptr<Publicatie>& p) const {
 int Reducere::getProcent() const {
     return procent;
 }
+
+std::shared_ptr<Publicatie> Reducere::getPublicatie() const {
+    return publicatie;
+}

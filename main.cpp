@@ -890,7 +890,7 @@ void meniuTopPopularitatePeTip(const AppState &app) {
     }
 }
 
-void statisticaDistriburiePopularitate(const AppState &app) {
+void statisticaDistributiePopularitate(const AppState &app) {
     int carti = 0, manuale = 0, cs = 0, reviste = 0;
     for (const auto &p: app.publicatii) {
         if (std::dynamic_pointer_cast<Carte>(p)) carti++;
@@ -1175,9 +1175,9 @@ void afiseazaPrioritatiRestoc(const AppState &app) {
                 << p->calculeazaPrioritateRestoc()
                 << "\n";
     }
-}
 
- {
+
+
     std::vector<std::shared_ptr<Publicatie> > lista = app.publicatii;
 
     std::ranges::sort(lista,
@@ -1336,7 +1336,7 @@ void meniuOperatiiPublicatie(AppState &app, int idx) {
     int opt = -1;
     while (opt != 0) {
         std::cout << "\n--- OPERATII PUBLICATIE ---\n";
-        std::cout << "1. Afisare detalii\n";
+        std::cout << "1. Afisare detalii\n"
         std::cout << "2.Adauga rating\n";
         std::cout << "3.Modifica stoc\n";
         std::cout << "4.Cloneaza publicatie\n";

@@ -106,6 +106,20 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         "files/fisiere executabile/SerchService.cpp"
         files/headere/InventoryService.h
         "files/fisiere executabile/InventoryService.cpp"
+        "files/headere/ReducereService .h"
+        files/headere/AuthenticationService.h
+        "files/fisiere executabile/AuthenticatorService.cpp"
+        "files/fisiere executabile/AuthenticatorService.cpp"
+        "files/fisiere executabile/AuthenticationService.cpp"
+        "files/fisiere executabile/AuthenticationService.cpp"
+        "files/fisiere executabile/AuthenticationService.cpp"
+        files/headere/ReviewService.h
+        "files/fisiere executabile/ReviewService.cpp"
+        "files/fisiere executabile/ReviewService.cpp"
+        "files/fisiere executabile/ReviewService.cpp"
+        files/headere/AutorService.h
+        "files/fisiere executabile/AutorService.cpp"
+        files/headere/ClientService.h
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )

@@ -7,6 +7,7 @@
 #include <memory>
 #include <ctime>
 
+#include "Client.h"
 #include "UnitateVanzare.h"
 class Client;
 
@@ -57,6 +58,8 @@ public:
      [[nodiscard]] int getId() const;
      [[nodiscard]] std::string getDataFormatata() const;
      [[nodiscard]] int getNumarArticole() const;
+     const std::string& getUsernameClient() const{return client->getUsername();}
+     const std::vector<std::shared_ptr<Publicatie>>& getPublicatii() const;
 
      // functii
      void adaugaArticol(const std::shared_ptr<UnitateVanzare> &articol, int cantitate);

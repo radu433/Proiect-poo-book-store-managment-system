@@ -20,5 +20,7 @@ public:
     bool seAplicaLa(const std::shared_ptr<Publicatie>& p) const;
 
     int getProcent() const;
+    std::shared_ptr<Publicatie> getPublicatie() const;
+
 };
 #endif //OOP_REDUCERE_H

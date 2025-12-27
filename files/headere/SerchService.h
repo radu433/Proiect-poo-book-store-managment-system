@@ -14,21 +14,60 @@ class Comanda;
 
 class SerchService {
     public:
-    // publicatii
-    static int filtrePublicatie(const AppState &app);
+    // tamplate pt folosirea serch barului pt publicatii autori si clienti
+    template <typename T, typename Predicate>
+   static std::vector<int> search(const std::vector<std::shared_ptr<T>>& lista,Predicate pred) {
+        std::vector<int> rezultate;
+        for (int i = 0; i < static_cast<int>(lista.size()); ++i) {
+            if (lista[i] && pred(lista[i])) {
+                rezultate.push_back(i);
+            }
+        }
+        return rezultate;
+    }
 
-    static int Serchbar(const AppState &app);
+    // publicatii
+    static std::vector<int> filtreazaPublicatiiDupaTip(
+        const std::vector<std::shared_ptr<Publicatie>>& publicatii,
+        int tip
+    );
+
+    static std::vector<int> filtreazaPublicatiiDupaAutor(
+        const std::vector<std::shared_ptr<Publicatie>>& publicatii,
+        const std::string& nume
+    );
 
     // autori
 
-    static std::shared_ptr<Autor> cautaAutor(const AppState &app, const std::string &nume, const std::string &prenume);
-
-    static std::shared_ptr<Autor> selecteazaAutor(AppState &app);
+    static std::vector<int> filtreazaAutoriNume(
+        const std::vector<std::shared_ptr<Autor>>& autori,
+        const std::string& nume
+    );
 
     //client
-    static int filtreazaClient(const AppState &app);
-    // comanda
-    static int filtrareComanda(const AppState &app);
+    static std::vector<int> filtreazaClientiUsername(
+        const std::vector<std::shared_ptr<Client>>& clienti,
+        const std::string& username
+    );
+
+    static std::vector<int> filtreazaClientiEmail(
+        const std::vector<std::shared_ptr<Client>>& clienti,
+        const std::string& email
+    );
+    // comenzi
+    static std::vector<int> toateComenzile(
+    const std::vector<std::shared_ptr<Comanda>>& comenzi
+);
+
+    static std::vector<int> comenziDupaClient(
+        const std::vector<std::shared_ptr<Comanda>>& comenzi,
+        const std::shared_ptr<Client>& client
+    );
+
+    static std::vector<int> comenziDupaStare(
+        const std::vector<std::shared_ptr<Comanda>>& comenzi,
+        const std::string& stare
+    );
 };
 
 

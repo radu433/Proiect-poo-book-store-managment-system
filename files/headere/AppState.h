@@ -5,7 +5,9 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <iomanip>
 #include <memory>
+#include <ostream>
 
 #include "Review.h"
 class Publicatie;
@@ -16,7 +18,8 @@ class Reducere;
 class PachetSerie;
 
 enum class Tiplog {
-    CONT_CREAT, CONT_STERS, LOGIN, COMANDA_FINALIZATA, COMANDA_ANULATA, INCERCARI_MULTIPLE_AUTENTIFICARE_ESUATE,REVIEW_ADAUGAT
+    CONT_CREAT, CONT_STERS, LOGIN, COMANDA_FINALIZATA, COMANDA_ANULATA, INCERCARI_MULTIPLE_AUTENTIFICARE_ESUATE,REVIEW_ADAUGAT,
+    AUTENTIFICARE_ESUATA
 };
 
 struct LogEntry {
@@ -24,6 +27,16 @@ struct LogEntry {
     Tiplog tip;
     std::string email_client;
     std::string detalii;
+    std::string user;
+    friend std::ostream& operator<<(std::ostream& os, const LogEntry& log){
+        const std::tm* tm = std::localtime(&log.timestamp);
+
+        os << "[" << std::put_time(tm, "%Y-%m-%d %H:%M:%S") << "] "
+           << log.user << ": "
+           << log.detalii;
+
+        return os;
+    }
 };
 
 struct AppState {
@@ -49,8 +62,7 @@ struct AppState {
 
     // funtii pt loguri
 
-    static void Logsactivitateclients(const AppState &app);
 
-    static void adaugaLogs(AppState &app, const Tiplog tip, const std::string &email, const std::string &detalii = "");
+    static void adaugaLogs( const Tiplog tip, const std::string &email, const std::string &detalii = "",const std::string &user);
 };
 #endif //OOP_APPSTATE_H

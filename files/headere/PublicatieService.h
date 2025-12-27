@@ -29,9 +29,5 @@ public :
     // clonare
     static std::shared_ptr<Publicatie> cloneazaPublicatie(AppState &app, const std::shared_ptr<Publicatie>& original,int stocInitial);
 
-    // reduceri active
-    static void aplicareReducerePublicatie(std::shared_ptr<Publicatie> pub,
-                                           const Reducere &reducere) {
-    }
 };
 #endif //OOP_PUBLICATIESERVICE_H

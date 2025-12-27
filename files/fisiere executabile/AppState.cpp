@@ -89,6 +89,8 @@ void AppState::Logsactivitateclients(const AppState &app) {
                 break;
             case Tiplog::REVIEW_ADAUGAT:
                 std::cout << "REVIEW_ADAUGAT";
+            case Tiplog::AUTENTIFICARE_ESUATA:
+                std::cout << "AUTENTIFICARE_ESUATA";
                 break;
         }
 
@@ -99,9 +101,9 @@ void AppState::Logsactivitateclients(const AppState &app) {
     }
 }
 
-void AppState::adaugaLogs(AppState &app, const Tiplog tip, const std::string &email, const std::string &detalii) {
-    app.logs.push_back({
-        std::time(nullptr), tip, email, detalii
+void AppState::adaugaLogs( const Tiplog tip, const std::string &email, const std::string &detalii,const std::string& user) {
+    logs.push_back({
+        std::time(nullptr), tip, email, detalii,user
     });
 }
 
