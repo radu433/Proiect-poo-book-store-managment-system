@@ -9,6 +9,8 @@
 class RevistaIndividuala: public UnitateVanzare {
 protected:
     void afisare(std::ostream& out) const override;
+
+
 public:
     // constructor
     explicit RevistaIndividuala(const std::shared_ptr<Revista> &revista);
@@ -31,5 +33,8 @@ public:
     std::string getDescriere() const override;
 
     [[nodiscard]]  std::string getIdentificator() const override;
+
+
+    void marcheazaSecondHand(const std::string &conditie, int luni_vechime) override;
 };
 #endif //OOP_REVISTAINDIVIDUALA_H

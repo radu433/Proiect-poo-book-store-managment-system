@@ -20,6 +20,10 @@ ComandaAnulataException::ComandaAnulataException(int id_comanda)
 {
 }
 // clasa goala
-ComandaGoalaException::ComandaGoalaException() :
+ComandaGoalaFinalizareException::ComandaGoalaFinalizareException() :
 ComandaException("Nu se poate finaliza o comanda fara produse (cos gol)!") {
 }
+
+ComandaGoalaException::ComandaGoalaException():
+     ComandaException("Cosul este gol !"){}
+

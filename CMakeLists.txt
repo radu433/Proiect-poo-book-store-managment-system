@@ -120,6 +120,19 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         files/headere/AutorService.h
         "files/fisiere executabile/AutorService.cpp"
         files/headere/ClientService.h
+        files/headere/ComandaService.h
+        "files/headere/CosService.h"
+        "files/fisiere executabile/CosService.cpp"
+        "files/fisiere executabile/CosService.cpp"
+        "files/fisiere executabile/CosService.cpp"
+        "files/fisiere executabile/CosService.cpp"
+        "files/headere/CosService.h"
+        "files/fisiere executabile/CosService.cpp"
+        files/headere/ArticolComanda.h
+        files/headere/PublicatieSugestie.h
+        files/headere/TradeInService.h
+        "files/fisiere executabile/TradeInService.cpp"
+        "files/fisiere executabile/TradeInService.cpp"
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )

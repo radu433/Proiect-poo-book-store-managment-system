@@ -42,6 +42,8 @@ public:
 
     [[nodiscard]] double calculeazaPrioritateRestoc() const override;
 
+    bool areAutor(int idautor)const override;
+
     //operator <<
     void afisare(std::ostream &out) const override;
 };

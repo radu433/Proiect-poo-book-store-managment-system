@@ -38,6 +38,8 @@ public:
 
     virtual void seteazaReducere(int procent, int durata_zilei) override;
 
+    bool areAutor(int idautor)const override;
+
     // operator <<
     void afisare (std::ostream& out) const override;
 };

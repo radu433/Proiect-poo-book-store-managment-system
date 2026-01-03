@@ -1,4 +1,6 @@
 #include "../headere/PublicatieService.h"
+#include "../headere/CarteStiintifica.h"
+#include"../headere/Manual.h"
 #include "../headere/AppState.h"
 #include "../headere/Publicatie.h"
 #include "../headere/Client.h"
@@ -84,12 +86,7 @@ void PublicatieService::adaugaReview_Rating(AppState &app, const Client &client,
         verificat
     );
 
-    app.adaugaLogs(
-        app,
-        Tiplog::REVIEW_ADAUGAT,
-        client.getEmail(),
-        "Publicatie: " + pub->getTitlu()
-    );
+
 }
 
 std::shared_ptr<Publicatie> PublicatieService::cloneazaPublicatie(AppState &app, const std::shared_ptr<Publicatie> &original,
@@ -111,6 +108,23 @@ std::shared_ptr<Publicatie> PublicatieService::cloneazaPublicatie(AppState &app,
     app.publicatii.push_back(copie);
 
     return copie;
+}
+
+StatPopularitate PublicatieService::statisticaDetaliata(const AppState &app) {
+    StatPopularitate s;
+    for (const auto &p: app.publicatii) {
+        if (const auto m = std::dynamic_pointer_cast<Manual>(p)) {
+            s.sumaManual += m->CalculeazaScorPopularitate();
+            s.nrManual++;
+        } else if (const auto cs = std::dynamic_pointer_cast<CarteStiintifica>(p)) {
+            s.sumaCS += cs->CalculeazaScorPopularitate();
+            s.nrCS++;
+        } else if (const auto c = std::dynamic_pointer_cast<Carte>(p)) {
+            s.sumaCarte += c->CalculeazaScorPopularitate();
+            s.nrCarte++;
+        }
+    }
+    return s;
 }
 
 

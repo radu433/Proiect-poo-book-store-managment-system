@@ -240,6 +240,10 @@ void Manual::seteazaReducere(int procent, int durata_zilei) {
     Carte::seteazaReducere(procent, durata_zilei);
 }
 
+bool Manual::areAutor(int idautor) const {
+    return Carte::areAutor(idautor);
+}
+
 
 // operator <<
 void Manual::afisare(std::ostream &out) const {

@@ -44,11 +44,13 @@ public:
     // functii
 
 
-    void adauga_stoc(int nr_buc);
+    void adauga_stoc(int nr_buc) override;
 
     void adauga_rating(int rating) override;
 
     [[nodiscard]] int cumparaDupaPopularitate(const Carte &alta) const;
+
+    bool este_disponibila() const override;
 
 
     virtual double calculeazaPrioritateRestoc() const override;
@@ -75,5 +77,7 @@ public:
     [[nodiscard]] const std::string &getISBN() const;
 
     [[nodiscard]] Autor &getAutor() const;
+
+    bool areAutor(int idautor) const override;
 };
 #endif //OOP_CARTE_H

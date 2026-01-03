@@ -8,11 +8,15 @@
 #include "../headere/AppState.h"
 
 class Publicatie;
+struct PrioritateRestoc {
+    std::shared_ptr<Publicatie> pub;
+    double scor;
+};
 class InventoryService {
 public:
-    void modificaStocPublicatie(AppState& app, int idx);
-    // functii pt stoc
-    void modificaStocPublicatie(const AppState &app, int idx);
-    void restocheazaDinPrioritati(const AppState &app);
+  static void adaugaStoc(Publicatie& p, int cantitate);
+  static void scadeStoc (Publicatie& p, int cantitate);
+
+    static std::vector <PrioritateRestoc> calculeazaPrioritateRestoc(const AppState& app);
 };
 #endif //OOP_INVENTORYSERVICE_H

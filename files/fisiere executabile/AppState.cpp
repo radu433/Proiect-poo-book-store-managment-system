@@ -63,45 +63,8 @@ bool AppState::stergeReviewNeverificat(const std::string &username, const std::s
         return false;
 }
 // functii logs
-void AppState::Logsactivitateclients(const AppState &app) {
-    std::cout << "\n=== LOGURI SISTEM ===\n";
-    for (const auto &l: app.logs) {
-        std::cout << "[" << std::ctime(&l.timestamp) << "] ";
 
-        switch (l.tip) {
-            case Tiplog::CONT_CREAT:
-                std::cout << "CONT CREAT";
-                break;
-            case Tiplog::CONT_STERS:
-                std::cout << "CONT STERS";
-                break;
-            case Tiplog::LOGIN:
-                std::cout << "LOGIN";
-                break;
-            case Tiplog::COMANDA_FINALIZATA:
-                std::cout << "COMANDA FINALIZATA";
-                break;
-            case Tiplog::COMANDA_ANULATA:
-                std::cout << "COMANDA ANULATA";
-                break;
-            case Tiplog::INCERCARI_MULTIPLE_AUTENTIFICARE_ESUATE:
-                std::cout << "INCERCARI_MULTIPLE_AUTENTIFICARE_ESUATE";
-                break;
-            case Tiplog::REVIEW_ADAUGAT:
-                std::cout << "REVIEW_ADAUGAT";
-            case Tiplog::AUTENTIFICARE_ESUATA:
-                std::cout << "AUTENTIFICARE_ESUATA";
-                break;
-        }
-
-        std::cout << " | " << l.email_client;
-        if (!l.detalii.empty())
-            std::cout << " | " << l.detalii;
-        std::cout << "\n";
-    }
-}
-
-void AppState::adaugaLogs( const Tiplog tip, const std::string &email, const std::string &detalii,const std::string& user) {
+void AppState::adaugaLogs( const Tiplog tip, const std::string &email,const std::string& user, const std::string &detalii) {
     logs.push_back({
         std::time(nullptr), tip, email, detalii,user
     });

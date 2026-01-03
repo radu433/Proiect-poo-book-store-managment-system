@@ -1,5 +1,3 @@
-
-
 #ifndef OOP_COMANDA_H
 #define OOP_COMANDA_H
 #include "../exceptii/exceptii_headere/LibrarieException.h"
@@ -7,6 +5,7 @@
 #include <memory>
 #include <ctime>
 
+#include "ArticolComanda.h"
 #include "Client.h"
 #include "UnitateVanzare.h"
 class Client;
@@ -17,14 +16,14 @@ private:
      std::shared_ptr <Client> client;
 
      // date obiecte comandate(carte individuala pachete de carti  reviste)
-     std::vector<std::shared_ptr<UnitateVanzare>> articole;
+     std::vector<ArticolComanda> articole;
 
      std::string stare_comanda;
 
      int id_comanda;
      static int global_id_comanda;
      time_t data_comanda;
-// healper
+     // healper
 
      std::vector<std::shared_ptr<Carte>> extrageCarti() const;
 
@@ -43,10 +42,10 @@ public:
      ~Comanda();
 
      // constructor de copiere
-     Comanda(const Comanda& other);
+     Comanda(const Comanda& other)=delete;
 
      // operator =
-     Comanda& operator=(Comanda other);
+     Comanda& operator=(Comanda other)=delete;
 
      // functie swap pt opertor <<
      friend  void swap(Comanda& unu,Comanda& doi ) noexcept;
@@ -59,7 +58,7 @@ public:
      [[nodiscard]] std::string getDataFormatata() const;
      [[nodiscard]] int getNumarArticole() const;
      const std::string& getUsernameClient() const{return client->getUsername();}
-     const std::vector<std::shared_ptr<Publicatie>>& getPublicatii() const;
+     const std::vector<ArticolComanda>& getArticole() const;
 
      // functii
      void adaugaArticol(const std::shared_ptr<UnitateVanzare> &articol, int cantitate);

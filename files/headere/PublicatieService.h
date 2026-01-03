@@ -12,6 +12,15 @@ class AppState;
 class Publicatie;
 class Review;
 
+struct StatPopularitate {
+    double sumaCarte = 0;
+    double sumaManual = 0;
+    double sumaCS = 0;
+    int nrCarte = 0;
+    int nrManual = 0;
+    int nrCS = 0;
+};
+
 class PublicatieService {
 public :
     // functii pt adaugat publicatii(admin)
@@ -29,5 +38,7 @@ public :
     // clonare
     static std::shared_ptr<Publicatie> cloneazaPublicatie(AppState &app, const std::shared_ptr<Publicatie>& original,int stocInitial);
 
+    //statistici
+    static StatPopularitate statisticaDetaliata(const AppState& app);
 };
 #endif //OOP_PUBLICATIESERVICE_H

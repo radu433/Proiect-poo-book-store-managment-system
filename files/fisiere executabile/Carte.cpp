@@ -275,3 +275,7 @@ const std::string &Carte::getISBN() const {
 Autor &Carte::getAutor() const {
     return *autor;
 }
+
+bool Carte::areAutor(int idautor) const {
+    return autor && autor->getidAutor() == idautor;
+}

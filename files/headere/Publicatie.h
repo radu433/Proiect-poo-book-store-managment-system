@@ -113,7 +113,7 @@ public:
 
     virtual std::string getIdentificator()const=0;
 
-     bool este_disponibila() const;
+    virtual bool este_disponibila() const;
 
     //functii pt toate publicatiile
 
@@ -126,9 +126,12 @@ public:
     virtual std::string getTitlu()const {
         return titlu;
     }
+    virtual bool areAutor(int idautor)const;
+
     bool esteActiva() const {return activa;}
     void dezactiveaza() { activa = false; }
     void activeaza() { activa = true; }
+
 
 
 

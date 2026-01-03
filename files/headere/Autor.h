@@ -17,6 +17,10 @@ private:
     int varsta;
     std::vector<std::string> carti_scrise;
     int numar_premii;
+    int idautor;
+
+
+    static int nextidautor;
 
 public:
     //constructor fara parametrii
@@ -47,6 +51,7 @@ public:
     [[nodiscard]] int calcscorrenume()const;
 
     std::string ierarhie_a()const;
+    int getidAutor()const;
 
 
 

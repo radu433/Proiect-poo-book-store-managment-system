@@ -16,7 +16,12 @@ private:
     const int id_unic;
     static int id_contor_global;
 
+
 protected:
+    bool este_second_hand = false;
+    std::string conditie_fizica = "Noua";
+    time_t data_cumparare{};
+
     std::shared_ptr<Publicatie> produs_principal;
 
     // Constructor pt derivate de tip carte
@@ -32,10 +37,11 @@ protected:
     virtual void afisare(std::ostream& out) const;
 
     // Constructor de copiere protected
-    UnitateVanzare(const UnitateVanzare& other);
+
 
 
 public:
+    UnitateVanzare(const UnitateVanzare& other);
     // getter
     [[nodiscard]] std::shared_ptr<Publicatie> getProdusPrincipal() const;
 
@@ -66,12 +72,21 @@ public:
     virtual void scadeStoc( const int cantitate) = 0;
 
     //functii
+    [[nodiscard]] int calculeazaLuniDetinere() const;
 
     // Wrapper peste verificaStocSuficient(1)
     [[nodiscard]] bool valideazaDisponibilitate() const;
     std::string getTitlu() const {return produs_principal->getTitlu();}
     // Helper pentru ISBN (doar primul ISBN
 
+    //functii t trade in
+    virtual std::string getConditieFizica() const {return conditie_fizica;}
+    virtual bool esteSecondHand() const {return este_second_hand; }
+    virtual void marcheazaSecondHand(const std::string& conditie,int luni_vechime);
+
+    // healpere pt data
+    [[nodiscard]] int calculeazaZileDetinere() const;
+    [[nodiscard]] std::string getDataCumparareFormatata() const;
 };
 
 #endif //OOP_UNITATEVANZARE_H

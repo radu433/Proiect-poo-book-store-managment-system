@@ -5,6 +5,7 @@
 #include "../headere/Manual.h"
 #include "../headere/CarteStiintifica.h"
 #include "../headere/Revista.h"
+#include <algorithm>
 
 // constructori cu parametrii
 
@@ -117,37 +118,63 @@ std::string Client::ierarhie_clienti() const {
 }
 
 void Client::adaugaComanda(double valoare, const std::vector<std::shared_ptr<Carte> > &carti_cumparate) {
-    if (valoare <= 0) {
-        throw DateInvalideException("Valoarea comenzii invalida (<=0)!");
-    }
-    plateste(valoare);
-    adaugacumparaturi(valoare);
-    std::map<std::string, int> statistica_preferinte;
-    for (const auto &carte: carti_cumparate) {
-        istoric_cumparaturi.push_back(carte);
-        if (const auto manual = std::dynamic_pointer_cast<Manual>(carte)) {
-            statistica_preferinte["Manuale"]++;
-            statistica_preferinte["Clasa " + std::to_string(manual->getclasa())]++;
-        } else if (auto stiintifica = std::dynamic_pointer_cast<CarteStiintifica>(carte)) {
-            statistica_preferinte["Stiinta"]++;
-            statistica_preferinte["Domeniu: " + stiintifica->getDomeniu()]++;
-        } else if (auto revista = std::dynamic_pointer_cast<Revista>(carte)) {
-            statistica_preferinte["Reviste"]++;
+
+        if (valoare <= 0)
+            throw DateInvalideException("Valoarea comenzii invalida!");
+
+        plateste(valoare);
+        adaugacumparaturi(valoare);
+
+        for (const auto& carte : carti_cumparate) {
+            istoric_cumparaturi.push_back(carte);
+        }
+}
+
+std::vector<PublicatieSugestie> Client::genereazaSugestii() const {
+    std::map<std::string, int> statistica;
+    std::vector<PublicatieSugestie> sugestii;
+
+    for (const auto& carte : istoric_cumparaturi) {
+        if (!carte) continue;
+
+        if (auto manual = std::dynamic_pointer_cast<Manual>(carte)) {
+            statistica["Manuale"]++;
+            statistica["Clasa_" + std::to_string(manual->getclasa())]++;
+        }
+        else if (auto stiintifica = std::dynamic_pointer_cast<CarteStiintifica>(carte)) {
+            statistica["Stiinta"]++;
+            statistica["Domeniu_" + stiintifica->getDomeniu()]++;
+        }
+        else if (std::dynamic_pointer_cast<Revista>(carte)) {
+            statistica["Reviste"]++;
         }
     }
-    std::cout << "\n--- ANALIZA PREFERINTE ---\n";
 
-    if (statistica_preferinte["Manuale"] > 0) {
-        std::cout << "Vad ca ai cumparat Manuale. Iti recomandam si culegeri pentru aceeasi clasa!\n";
-    }
-    if (statistica_preferinte["Stiinta"] > 1) {
-        std::cout << "Esti pasionat de Stiinta! Avem noi enciclopedii in stoc.\n";
-    }
-    if (statistica_preferinte["Reviste"] > 0) {
-        std::cout << " Nu uita sa te abonezi la revistele tale preferate pentru a primi editia lunar!\n";
+    if (statistica["Manuale"] > 0) {
+        sugestii.emplace_back(
+            "Manuale si culegeri",
+            "Iti recomandam culegeri pentru aceeasi clasa.",
+            "Manuale"
+        );
     }
 
-    std::cout << "Comanda inregistrata cu succes. Multumim!\n";
+    if (statistica["Stiinta"] > 1) {
+        sugestii.emplace_back(
+            "Enciclopedii stiintifice",
+            "Esti pasionat de stiinta! Avem enciclopedii noi.",
+            "Stiinta"
+        );
+    }
+
+    if (statistica["Reviste"] > 0) {
+        sugestii.emplace_back(
+            "Abonamente reviste",
+            "Aboneaza-te pentru a primi editii lunare.",
+            "Reviste"
+        );
+    }
+
+    return sugestii;
 }
 
 double Client::foloseste_pct_fidelitate(int pct_utilizate) {
@@ -200,7 +227,7 @@ bool Client::verificaParola(const std::string &parolaIntrodusa) const {
     return parolaIntrodusa == parola;
 }
 
-void Client::seteazaParola(std::string &parolac) {
+void Client::seteazaParola(std::string &parolac) const {
     if (parola.size() < 6)
         throw LibrarieException("Parola prea scurta!");
     parolac = parola;
@@ -208,4 +235,20 @@ void Client::seteazaParola(std::string &parolac) {
 
 const std::vector<std::string> & Client::getIstoricIdentificatori()const {
     return istoric_identificatori;
+}
+
+void Client::adaugaPCT(int pct) {
+    if (pct<0)
+        throw DateInvalideException("Numar puncte invalid!");
+    pct_fidelitate+=pct;
+}
+
+void Client::adugaredVit(double reducere) {
+    if (reducere<0)
+        throw DateInvalideException("Priocentaj gresit!");
+    reducereLaUrmC+=reducere;
+}
+
+bool Client::aCumparatPub(const std::string &identificator) const {
+    return std::ranges::find(istoric_identificatori,identificator) != istoric_identificatori.end();
 }

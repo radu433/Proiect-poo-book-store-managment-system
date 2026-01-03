@@ -10,6 +10,7 @@
 #include <ostream>
 
 #include "Review.h"
+#include "UnitateVanzare.h"
 class Publicatie;
 class Client;
 class Comanda;
@@ -48,6 +49,7 @@ struct AppState {
     std::vector<LogEntry> logs;
     std::vector<std::shared_ptr<PachetSerie>> pachetePredefinite;
     std::vector<Review> reviews;
+    std::vector<std::shared_ptr<UnitateVanzare>> stocSH;
 // functii pt reviewuri
    bool existaReview(const std::string& username, const std::string& identificator_publicatie) const;
 
@@ -63,6 +65,6 @@ struct AppState {
     // funtii pt loguri
 
 
-    static void adaugaLogs( const Tiplog tip, const std::string &email, const std::string &detalii = "",const std::string &user);
+     void adaugaLogs( const Tiplog tip, const std::string &email,const std::string &user, const std::string &detalii = "");
 };
 #endif //OOP_APPSTATE_H

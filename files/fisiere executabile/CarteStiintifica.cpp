@@ -157,6 +157,10 @@ double CarteStiintifica::calculeazaPrioritateRestoc() const {
     return Carte::calculeazaPrioritateRestoc();
 }
 
+bool CarteStiintifica::areAutor(int idautor) const {
+    return Carte::areAutor(idautor);
+}
+
 
 // operator<<
 void CarteStiintifica::afisare(std::ostream &out) const {

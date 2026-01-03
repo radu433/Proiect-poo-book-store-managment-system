@@ -6,17 +6,13 @@
 #include "../exceptii/exceptii_headere/DateInvalideException.h"
 
 class CarteIndividuala : public UnitateVanzare {
-private:
-    bool este_second_hand;
-    std::string conditie_fizica; // Noua , Buna, Acceptabila , Uzata
-    time_t data_cumparare;
 
 protected:
     void afisare(std::ostream &out) const override;
 
 public:
     // constructor cu parametrii
-    CarteIndividuala(std::shared_ptr<Carte> carte, bool este_second_hand, const std::string &conditie_fizica);
+    CarteIndividuala(std::shared_ptr<Carte> carte);
 
     // constructor de copiere
     CarteIndividuala(const CarteIndividuala &other);
@@ -40,18 +36,6 @@ public:
 
     std::string getIdentificator() const override;
 
-    // functii
-    [[nodiscard]] int calculeazaLuniDetinere() const;
-
-    [[nodiscard]] int calculeazaZileDetinere() const;
-
-    [[nodiscard]] std::string getDataCumparareFormatata() const;
-
-    bool esteEligibilaPtTrade(const CarteIndividuala &carte_noua) const;
-
-    double calculeazaValoareRevanzare(int luni_folosite) const;
-
-    double calculeazaReducereSecondHand() const;
 };
 
 #endif //OOP_CARTEINDIVIDUALA_H

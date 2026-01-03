@@ -2,89 +2,39 @@
 
 #include <iostream>
 
-void InventoryService::modificaStocPublicatie(AppState& app, int idx) {
-    if (app.publicatii.empty()) {
-        std::cout << "Nu exista publicatii in sistem.\n";
-        return;
+#include "../exceptii/exceptii_headere/DateInvalideException.h"
+#include "../headere/Publicatie.h"
+
+void InventoryService::adaugaStoc(Publicatie &p, int cantitate) {
+    if (cantitate<0)
+        throw DateInvalideException("Cantitate invalida!");
+    p.adauga_stoc(cantitate);
+}
+
+void InventoryService::scadeStoc(Publicatie &p, int cantitate) {
+    if (cantitate <= 0)
+        throw DateInvalideException("Cantitate invalida!");
+
+    if (!p.Scade_stoc(cantitate))
+        throw DateInvalideException("Stoc insuficient.");
+}
+
+std::vector<PrioritateRestoc> InventoryService::calculeazaPrioritateRestoc(const AppState &app) {
+    std::vector<PrioritateRestoc> rezultat;
+
+    for (const auto& p : app.publicatii) {
+        const double popularitate = p->CalculeazaScorPopularitate();
+        const int stoc = p->getcantitate();
+
+        const double scor = popularitate / (stoc + 1);
+
+        rezultat.push_back({p, scor});
     }
 
-    std::cout << "\n=== DEZACTIVARE PUBLICATIE ===\n";
-    std::cout << "1. Cauta publicatia\n";
-    std::cout << "2. Filtreaza publicatiile\n";
-    std::cout << "0. Anulare\n";
-    std::cout << "Optiune: ";
+    std::ranges::sort(rezultat,
+                      [](const auto& a, const auto& b) {
+                          return a.scor > b.scor;
+                      });
 
-    int opts;
-    std::cin >> opts;
-
-    idx = -1;
-    switch (opts) {
-        case 1:
-            idx = SerchService::Serchbar(app);
-            break;
-        case 2:
-            idx = SerchService::filtrePublicatie(app);
-            break;
-        case 0:
-            return;
-        default:
-            std::cout << "Optiune invalida.\n";
-            return;
-    }
-    auto pub = app.publicatii[idx];
-    int opt = -1;
-    while (opt != 0) {
-        std::cout << "\n--- MODIFICARE STOC ---\n";
-        std::cout << "Titlu: " << pub->getTitlu() << "\n";
-        std::cout << "Stoc curent: " << pub->getcantitate() << "\n";
-        std::cout << "1. Adauga stoc\n";
-        std::cout << "2. Scade stoc\n";
-        std::cout << "3. Statistica prioritate restoc\n";
-        std::cout << "0. Inapoi\n";
-
-        std::cin >> opt;
-
-        switch (opt) {
-            case 1: {
-                int cantitate;
-
-                std::cout << "Cantitate de adaugat:\n";
-                std::cin >> cantitate;
-                try {
-                    pub->adauga_stoc(cantitate);
-                    std::cout << "Stoc actualizat! Nou stoc: "
-                            << pub->getcantitate() << "\n";
-                } catch (const std::exception &e) {
-                    std::cout << "Eroare: " << e.what() << "\n";
-                }
-                break;
-            }
-            case 2: {
-                int cantitate;
-                std::cout << "Cantitate de scazut: ";
-                std::cin >> cantitate;
-
-                try {
-                    if (!pub->Scade_stoc(cantitate)) {
-                        std::cout << "Stoc insuficient! Disponibil: "
-                                << pub->getcantitate() << "\n";
-                    } else {
-                        std::cout << "Stoc actualizat! Nou stoc: "
-                                << pub->getcantitate() << "\n";
-                    }
-                } catch (const std::exception &e) {
-                    std::cout << "Eroare: " << e.what() << "\n";
-                }
-                break;
-            }
-            case 3: {
-                meniuPrioritatiRestoc(app);
-                break;
-            }
-            case 0:
-                break;
-            default:
-                std::cout << "Optiune invalida!\n";
-        }
-    }
+    return rezultat;
 }

@@ -185,6 +185,11 @@ double Publicatie::reducere(int procent) {
     return pret_baza;
 }
 
+bool Publicatie::areAutor(int) const {
+    return false;
+}
+
+
 std::time_t Publicatie::convertesteDatainSecunde() const {
     std::tm tm_pub = {};
     int zi, luna, an;

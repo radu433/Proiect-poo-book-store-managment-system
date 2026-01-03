@@ -3,12 +3,14 @@
 #include "../exceptii/exceptii_headere/LibrarieException.h"
 #include "../exceptii/exceptii_headere/DateInvalideException.h"
 // contrsuctor
-RevistaIndividuala::RevistaIndividuala(const std::shared_ptr<Revista> &revista) : UnitateVanzare(revista){
+RevistaIndividuala::RevistaIndividuala(const std::shared_ptr<Revista> &revista) : UnitateVanzare(revista)
+     {
     if (!revista)
         throw DateInvalideException("Revista invalida(nullptr)");
 }
 //constructor de copiere
-RevistaIndividuala::RevistaIndividuala(const RevistaIndividuala &other):UnitateVanzare(other) {
+RevistaIndividuala::RevistaIndividuala(const RevistaIndividuala &other):UnitateVanzare(other)
+ {
 }
 //clone
 std::shared_ptr<UnitateVanzare> RevistaIndividuala::clone() const {
@@ -35,7 +37,7 @@ double RevistaIndividuala::getPretcomanda() const {
 }
 
 std::vector<std::string> RevistaIndividuala::getListaIdentificatori() const {
-    return {produs_principal->getISBN()};
+    return {produs_principal->getIdentificator()};
 }
 std::string RevistaIndividuala::getDescriere() const {
     return "Revista: " + produs_principal->getTitlu();
@@ -45,10 +47,16 @@ std::string RevistaIndividuala::getIdentificator() const {
     return produs_principal->getIdentificator();
 }
 
+
+
+void RevistaIndividuala::marcheazaSecondHand(const std::string &conditie, int luni_vechime) {
+    UnitateVanzare::marcheazaSecondHand(conditie, luni_vechime);
+}
+
 // afisare
 void RevistaIndividuala::afisare(std::ostream& out) const {
     out << "[Revista individuala]\n";
     out << "Titlu: " << produs_principal->getTitlu() << "\n";
-    out << "Identificator (ISSN): " << produs_principal->getISBN() << "\n";
+    out << "Identificator (ISSN): " << produs_principal->getIdentificator() << "\n";
     out << "Pret: " << getPretcomanda() << " lei\n";
 }

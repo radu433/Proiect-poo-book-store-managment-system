@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include "adresa.h"
+#include "PublicatieSugestie.h"
 
 #include "../exceptii/exceptii_headere/LibrarieException.h"
 class Comanda;
@@ -24,6 +25,7 @@ private:
     int pct_fidelitate;
     std::vector<std::shared_ptr<Publicatie> > istoric_cumparaturi;
     std::shared_ptr<Comanda> comandaActiva = nullptr;
+    double reducereLaUrmC=0.0;
 
 public:
     // constrctor cu parametrii
@@ -56,6 +58,9 @@ public:
 
     void adaugaComanda(double valoare, const std::vector<std::shared_ptr<Carte> > &carti_cumparate);
 
+    std::vector<PublicatieSugestie> genereazaSugestii() const;
+
+
     double foloseste_pct_fidelitate(int pct_utilizate);
 
     [[nodiscard]] const std::string &getUsername() const;
@@ -72,9 +77,16 @@ public:
 
     bool verificaParola(const std::string &parolaIntrodusa) const;
 
-    void seteazaParola(std::string &parolac);
+    void seteazaParola(std::string &parolac) const;
 
     [[nodiscard]] const std::vector<std::string>& getIstoricIdentificatori() const;
+
+    void adaugaPCT(int pct);
+
+    void adugaredVit(double reducere);
+
+    bool aCumparatPub(const std::string& identificator) const ;
+
 
 };
 

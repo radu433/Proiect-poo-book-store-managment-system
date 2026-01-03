@@ -40,9 +40,20 @@ nume_pachet(nume_pachet),continut(continut), tip_pachet(tip_pachet),este_complet
     }
     }
 
+PachetSerie::PachetSerie(const std::vector<std::shared_ptr<UnitateVanzare>> &continutSH): UnitateVanzare(std::shared_ptr<Publicatie>(nullptr)),
+  nume_pachet("Pachet Second-Hand"),
+  continutSH(continutSH),
+  tip_pachet("SH"),
+  este_complet(true),
+  esteSH(true) {
+    if (continutSH.empty()) {
+        throw DateInvalideException("Nu se poate crea un pachet SH gol!");
+    }
+}
+
 
 PachetSerie::PachetSerie(const PachetSerie &other):UnitateVanzare(other), nume_pachet(other.nume_pachet),
-continut(other.continut), tip_pachet(other.tip_pachet),este_complet(other.este_complet){
+                                                   continut(other.continut), tip_pachet(other.tip_pachet),este_complet(other.este_complet){
 }
 
 std::shared_ptr<UnitateVanzare> PachetSerie::clone() const {
@@ -212,6 +223,13 @@ void PachetSerie::scadeStoc( const int cantitate)  {
 
 std::string PachetSerie::getDescriere() const {
     std::stringstream ss;
+    if (esteSH) {
+        ss << "PACHET SH";
+        if (este_complet) ss << " [COMPLET]";
+        ss << " - contine " << continutSH.size() << " produse";
+        return ss.str();
+    }
+
     ss << "PACHET (" << tip_pachet << "): " << nume_pachet;
     if (este_complet) ss << " [COMPLET]";
     ss << " - contine " << continut.size() << " continut";
@@ -219,6 +237,18 @@ std::string PachetSerie::getDescriere() const {
 }
 
 double PachetSerie::getPretcomanda() const {
+    if (esteSH) {
+        double total_brut = 0.0;
+
+        for (const auto& u : continutSH) {
+            if (u) {
+                total_brut += u->getPretcomanda();
+            }
+        }
+
+        return total_brut * 0.85;
+    }
+
     double total_brut = 0.0;
 
     // Suma prețurilor cărților

@@ -3,13 +3,14 @@
 #include "../exceptii/exceptii_headere/DateInvalideException.h"
 #include "../exceptii/exceptii_headere/AutorException.h"
 #include<iostream>
+int Autor::nextidautor=0;
 // constructor fara parametrii
 Autor::Autor() : nume("NECUNOSCUT"), prenume("NECUNOSCUT"), varsta(0), numar_premii(0) {
 }
 
 // constructor cu parametrii
 Autor::Autor(const std::string &nume, const std::string &prenume, int varsta) : nume(nume),
-    prenume(prenume), varsta(varsta), numar_premii(0) {
+    prenume(prenume), varsta(varsta), numar_premii(0) ,idautor(++nextidautor){
     if (nume.empty() || prenume.empty()) {
         throw AutorInvalidException("Numele si prenumele autorului nu pot fi goale!");
     }
@@ -91,4 +92,8 @@ std::string Autor::ierarhie_a() const {
         return "In ascensiune";
 
     return "Incepator";
+}
+
+int Autor::getidAutor() const {
+    return idautor;
 }

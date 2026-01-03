@@ -23,8 +23,12 @@ class ComandaAnulataException : public ComandaException {
     public:
     explicit ComandaAnulataException(int id_comanda);
 };
-class ComandaGoalaException : public ComandaException {
+class ComandaGoalaFinalizareException : public ComandaException {
   public:
-    explicit ComandaGoalaException();
+    explicit ComandaGoalaFinalizareException();
 };
+class ComandaGoalaException : public ComandaException {
+    public:
+    explicit ComandaGoalaException();
+}
 #endif //OOP_COMANDAEXCEPTIONS_H
