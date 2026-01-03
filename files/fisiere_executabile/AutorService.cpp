@@ -22,7 +22,9 @@ AutorStat AutorService::getDetaliiAutor(const AppState&, const std::shared_ptr<A
     return stat;
 }
 
-std::vector<AutorStat> AutorService::getTopAutori(const AppState &app, TipTopAutor tip) {
+
+
+std::vector<AutorStat> AutorService::getTopAutori( AppState &app, TipTopAutor tip) {
     std::vector<AutorStat> lista;
 
     for (const auto& a : app.autor) {
@@ -58,6 +60,7 @@ std::vector<AutorStat> AutorService::getTopAutori(const AppState &app, TipTopAut
     }
 
     return lista;
+
 }
 
 void AutorService::adaugaAutor(AppState &app, const std::shared_ptr<Autor> &autor) {

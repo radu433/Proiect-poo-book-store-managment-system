@@ -30,5 +30,5 @@ class ComandaGoalaFinalizareException : public ComandaException {
 class ComandaGoalaException : public ComandaException {
     public:
     explicit ComandaGoalaException();
-}
+};
 #endif //OOP_COMANDAEXCEPTIONS_H

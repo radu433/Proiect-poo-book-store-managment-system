@@ -12,9 +12,9 @@ public :
          int idxP);
 
     static void adaugaCarteIndividuala(std::shared_ptr<Client>& clientCurent,std::shared_ptr<Comanda>& comandaActiva,
-                                       int cantitate, const std::shared_ptr<Publicatie> &publicatie);
+    int cantitate, const std::shared_ptr<Publicatie> &publicatie,bool esteSH,const std::string& conditie,int luni);
     static void adaugaPachetCreat(std::shared_ptr<Client>& clientCurent,std::shared_ptr<Comanda>& comandaActiva,
-    std::shared_ptr<UnitateVanzare> pachet);
+    const std::shared_ptr<UnitateVanzare> &pachet);
 
     static void adaugaUnitataVanzare(std::shared_ptr<Client>& client,std::shared_ptr<Comanda>& comanda,
     const std::shared_ptr<UnitateVanzare>& unitate);
