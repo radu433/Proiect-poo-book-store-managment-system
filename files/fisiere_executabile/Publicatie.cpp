@@ -152,6 +152,14 @@ double Publicatie::getpretbaza() const {
     return pret_baza;
 }
 
+double Publicatie::calculeazaPrioritateRestoc() const {
+    return 0.0;
+}
+
+bool Publicatie::este_disponibila() const {
+    return cantitate>0;
+}
+
 bool Publicatie::Scade_stoc(int bucati) {
     if (bucati <= 0) {
         throw DateInvalideException("Numarul de bucati trebuie sa fie pozitiv!");
@@ -170,10 +178,10 @@ bool Publicatie::Scade_stoc(int bucati) {
     return true;
 }
 
-void Publicatie::cresteCantitatea(int cantitate) {
+void Publicatie::cresteCantitatea(const int cantitate_a) {
     if (cantitate<= 0)
         throw DateInvalideException("Cantitate invalida!");
-    this->cantitate+=cantitate;
+    this->cantitate+=cantitate_a;
 }
 
 double Publicatie::reducere(int procent) {

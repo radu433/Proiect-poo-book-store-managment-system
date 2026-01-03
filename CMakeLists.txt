@@ -50,89 +50,44 @@ include(cmake/CopyHelper.cmake)
 # NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
 add_executable(${MAIN_EXECUTABLE_NAME}
         "main.cpp"
-        files/headere/Autor.h
-        files/headere/Carte.h
-        files/headere/Client.h
-        "files/fisiere executabile/Carte.cpp"
-        "files/fisiere executabile/Autor.cpp"
-        "files/fisiere executabile/Client.cpp"
-        files/headere/adresa.h
-        "files/fisiere executabile/adresa.cpp"
-        files/headere/Manual.h
-        "files/fisiere executabile/Manual.cpp"
-        files/headere/CarteStiintifica.h
-        "files/fisiere executabile/CarteStiintifica.cpp"
-        files/headere/Revista.h
-        "files/fisiere executabile/Revista.cpp"
-        files/headere/UnitateVanzare.h
-        "files/fisiere executabile/UnitateVanzare.cpp"
-        files/headere/CarteIndividuala.h
-        files/headere/Comanda.h
-        "files/fisiere executabile/Comanda.cpp"
-        "files/fisiere executabile/CarteIndividuala.cpp"
-        files/headere/PachetSerie.h
-        "files/fisiere executabile/PachetSerie.cpp"
+        "files/fisiere_executabile/Carte.cpp"
+        "files/fisiere_executabile/Autor.cpp"
+        "files/fisiere_executabile/Client.cpp"
+        "files/fisiere_executabile/adresa.cpp"
+        "files/fisiere_executabile/Manual.cpp"
+        "files/fisiere_executabile/CarteStiintifica.cpp"
+        "files/fisiere_executabile/Revista.cpp"
+        "files/fisiere_executabile/UnitateVanzare.cpp"
+        "files/fisiere_executabile/Comanda.cpp"
+        "files/fisiere_executabile/CarteIndividuala.cpp"
+        "files/fisiere_executabile/PachetSerie.cpp"
         "files/exceptii/exceptii_headere/LibrarieException.h"
-        "files/exceptii/exceptii executabile/LibrarieException.cpp"
+        "files/exceptii/exceptii_executabile/LibrarieException.cpp"
         "files/exceptii/exceptii_headere/StocException.h"
-        "files/exceptii/exceptii executabile/StocException.cpp"
-        files/exceptii/exceptii_headere/ComandaExceptions.h
-        "files/exceptii/exceptii executabile/ComandaExceptions.cpp"
-        files/exceptii/exceptii_headere/ClientExceptions.h
-        "files/exceptii/exceptii executabile/ClientExceptions.cpp"
-        files/exceptii/exceptii_headere/DateInvalideException.h
-        "files/exceptii/exceptii executabile/DateInvalideException.cpp"
-        files/exceptii/exceptii_headere/AutorException.h
-        "files/exceptii/exceptii executabile/AutorException.cpp"
+        "files/exceptii/exceptii_executabile/StocException.cpp"
+        "files/exceptii/exceptii_executabile/ComandaExceptions.cpp"
+        "files/exceptii/exceptii_executabile/ClientExceptions.cpp"
+        "files/exceptii/exceptii_executabile/DateInvalideException.cpp"
+        "files/exceptii/exceptii_executabile/AutorException.cpp"
         "files/headere/Publicatie.h"
-        "files/fisiere executabile/Publicatie.cpp"
-        files/exceptii/exceptii_headere/DataException.h
-        files/exceptii/exceptii_headere/PaginareException.h
-        "files/exceptii/exceptii executabile/PaginareException.cpp"
-        files/exceptii/exceptii_headere/PublicatieException.h
-        "files/exceptii/exceptii executabile/PublicatieException.cpp"
-        files/headere/Reducere.h
-        "files/fisiere executabile/Reducere.cpp"
-        files/headere/RevistaIndividuala.h
-        "files/fisiere executabile/RevistaIndividuala.cpp"
-        files/headere/Review.h
-        files/headere/AppState.h
-        "files/fisiere executabile/AppState.cpp"
-        files/headere/Book_Store_manager.h
-        "files/fisiere executabile/Book_Store_manager.cpp"
-        files/headere/PublicatieService.h
-        "files/fisiere executabile/publicatieService.cpp"
-        files/headere/SerchService.h
-        "files/fisiere executabile/SerchService.cpp"
-        files/headere/InventoryService.h
-        "files/fisiere executabile/InventoryService.cpp"
-        "files/headere/ReducereService .h"
-        files/headere/AuthenticationService.h
-        "files/fisiere executabile/AuthenticatorService.cpp"
-        "files/fisiere executabile/AuthenticatorService.cpp"
-        "files/fisiere executabile/AuthenticationService.cpp"
-        "files/fisiere executabile/AuthenticationService.cpp"
-        "files/fisiere executabile/AuthenticationService.cpp"
-        files/headere/ReviewService.h
-        "files/fisiere executabile/ReviewService.cpp"
-        "files/fisiere executabile/ReviewService.cpp"
-        "files/fisiere executabile/ReviewService.cpp"
-        files/headere/AutorService.h
-        "files/fisiere executabile/AutorService.cpp"
-        files/headere/ClientService.h
-        files/headere/ComandaService.h
+        "files/fisiere_executabile/Publicatie.cpp"
+        "files/exceptii/exceptii_executabile/PaginareException.cpp"
+        "files/exceptii/exceptii_executabile/PublicatieException.cpp"
+        "files/fisiere_executabile/Reducere.cpp"
+        "files/fisiere_executabile/RevistaIndividuala.cpp"
+        "files/fisiere_executabile/AppState.cpp"
+        "files/fisiere_executabile/Book_Store_manager.cpp"
+        "files/fisiere_executabile/publicatieService.cpp"
+        "files/fisiere_executabile/SerchService.cpp"
+        "files/fisiere_executabile/InventoryService.cpp"
+        "files/headere/ReducereService.h"
+        "files/fisiere_executabile/AuthenticationService.cpp"
+        "files/fisiere_executabile/ReviewService.cpp"
+        "files/fisiere_executabile/AutorService.cpp"
         "files/headere/CosService.h"
-        "files/fisiere executabile/CosService.cpp"
-        "files/fisiere executabile/CosService.cpp"
-        "files/fisiere executabile/CosService.cpp"
-        "files/fisiere executabile/CosService.cpp"
-        "files/headere/CosService.h"
-        "files/fisiere executabile/CosService.cpp"
-        files/headere/ArticolComanda.h
-        files/headere/PublicatieSugestie.h
-        files/headere/TradeInService.h
-        "files/fisiere executabile/TradeInService.cpp"
-        "files/fisiere executabile/TradeInService.cpp"
+        "files/fisiere_executabile/CosService.cpp"
+        "files/fisiere_executabile/TradeInService.cpp"
+
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )

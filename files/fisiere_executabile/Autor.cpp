@@ -5,7 +5,7 @@
 #include<iostream>
 int Autor::nextidautor=0;
 // constructor fara parametrii
-Autor::Autor() : nume("NECUNOSCUT"), prenume("NECUNOSCUT"), varsta(0), numar_premii(0) {
+Autor::Autor() : nume("NECUNOSCUT"), prenume("NECUNOSCUT"), varsta(0), numar_premii(0), idautor(++nextidautor) {
 }
 
 // constructor cu parametrii

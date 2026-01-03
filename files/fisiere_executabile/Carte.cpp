@@ -100,7 +100,8 @@ Carte::Carte(const std::string &titlu, std::shared_ptr<Autor> autor, int cantita
     std::cout << "Carte creata: " << this->titlu << std::endl;
 }
 
-std::ostream operator<<(const std::ostream &out, const std::ostream &rhs);
+Carte::~Carte()=default;
+
 
 void Carte::afisare(std::ostream &out) const {
     Publicatie::afisare(out);
@@ -223,6 +224,10 @@ double Carte::getPretFinal() const {
 
 
     return pret;
+}
+
+std::string Carte::getTip() const {
+    return "Carte";
 }
 
 double Carte::calculeaza_valoarea_academica() const {

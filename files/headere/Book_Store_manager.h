@@ -2,7 +2,7 @@
 #ifndef OOP_BOOK_STORE_MANAGER_H
 #define OOP_BOOK_STORE_MANAGER_H
 #include "AppState.h"
-#include "ReducereService .h"
+#include "ReducereService.h"
 #include "AutorService.h"
 #include "CosService.h"
 
@@ -40,9 +40,9 @@ private:
     void meniuCautaPublicatii(AppState& app);
 
      void meniuSH_Tradein(AppState& app);
-    static void meniuCosCumparaturi(AppState& app,std::shared_ptr<Client>& clientCurent,std::shared_ptr<Comanda>& comandaActiva);
+    static void meniuCosCumparaturi(const AppState& app,std::shared_ptr<Client>& clientCurent,std::shared_ptr<Comanda>& comandaActiva);
     void adaugaReview_Rating(AppState& app) const;// clasa de publicatii
-    void meniuDetaliiCont(AppState& app);
+    void meniuDetaliiCont(const AppState& app) const;
 
     void afiseazaReducere();
     //functii din meniu clienti
@@ -51,8 +51,9 @@ private:
     void alimentareCont();//clasa client
 
     // autentificare client+reare cont
-    std::shared_ptr<Client> autentificareClientUI(AppState& app);
-    void creareContClientUI(AppState& app);
+    static std::shared_ptr<Client> autentificareClientUI(AppState& app);
+
+    static void creareContClientUI(AppState& app);
 
     //motoare de cautare pub/autori/clienti pt administartor
     static int selecteazaPub(const AppState& app);
@@ -64,7 +65,7 @@ private:
     static int filtreComanda(const AppState& app);
 
     // motor de cautare client+functie de vizualizare review+adauga in cos
-    std::shared_ptr<Publicatie> selecteazaPubClient( AppState& app);
+    static std::shared_ptr<Publicatie> selecteazaPubClient( AppState& app);
 
     static void afiseazaReviewuriClient(const AppState& app, const std::string& idP);
 
@@ -74,6 +75,7 @@ private:
     static void adaugaManual(AppState& app);
     static void adaugaCarteStiintifica(AppState& app);
     static void adaugaRevista(AppState& app);
+     static std::shared_ptr<Autor> gasesteSauCreeazaAutorDupaISBN(AppState& app, const std::string& isbn);
 
     // meniu adauga pachete(predefinite + create pe loc)
     static void meniuAdaugaPachete(const AppState& app,std::shared_ptr<Client>& clientCurent,std::shared_ptr<Comanda>& comandaActiva);
@@ -81,7 +83,7 @@ private:
     static void afisazaContinutPachet(const AppState& app, int idx);
     //meniu stoc
 
-    static void meniuStocA(AppState& app);
+    static void meniuStocA(const AppState& app);
 
     //meniu statistici admin
     static void meniuStatisticaDistributieTip(const AppState& app);

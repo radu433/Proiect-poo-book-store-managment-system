@@ -14,6 +14,8 @@ public:
     Manual(const std::string& titlu, const std::shared_ptr<Autor> &autor,double pret_baza,int cantitate,const std::string& data_publicatie,
         const std::string& isbn,const int numar_pagini,const std::string& editura, const std::string& materie,int clasa);
 
+    // destructor
+    virtual ~Manual()=default;
 
     // functii
 

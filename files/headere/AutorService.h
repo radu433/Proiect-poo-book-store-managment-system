@@ -5,8 +5,8 @@
 #include <vector>
 #include <memory>
 #include <string>
+#include "../headere/AppState.h"
 
-class AppState;
 class Autor;
 
 enum class TipTopAutor{PRODUCTIVITATE,SCOR_RENUME,IERARHIE};

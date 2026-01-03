@@ -1,6 +1,4 @@
-//
-// Created by sindicat on 12/26/2025.
-//
+
 
 #ifndef OOP_AUTHENTICATIONSERVICE_H
 #define OOP_AUTHENTICATIONSERVICE_H

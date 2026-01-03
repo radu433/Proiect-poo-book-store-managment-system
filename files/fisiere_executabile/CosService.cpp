@@ -29,29 +29,41 @@ void CosService::adaugaPachetPredefinit(const AppState &app, std::shared_ptr<Cli
 
 
 void CosService::adaugaCarteIndividuala( std::shared_ptr<Client> &clientCurent,
-                                        std::shared_ptr<Comanda> &comandaActiva,  int cantitate, const std::shared_ptr<Publicatie> &publicatie) {
+                                        std::shared_ptr<Comanda> &comandaActiva,  int cantitate,
+                                        const std::shared_ptr<Publicatie> &publicatie,bool esteSH,const std::string& conditie,int luni) {
     if (!publicatie)
         throw DateInvalideException("Publicatia este inexistenta!");
-    if (cantitate<=0)
+    if (cantitate <= 0)
         throw DateInvalideException("Cantitate invalida!");
+
     std::shared_ptr<UnitateVanzare> unitate;
 
     if (auto carte = std::dynamic_pointer_cast<Carte>(publicatie)) {
-        unitate = std::make_shared<CarteIndividuala>(carte, false, "Noua");
-    }
-    else if (auto revista = std::dynamic_pointer_cast<Revista>(publicatie)) {
+        unitate = std::make_shared<CarteIndividuala>(carte);
+
+        if (esteSH) {
+            unitate->marcheazaSecondHand(conditie, luni);
+        }
+
+    } else if (auto revista = std::dynamic_pointer_cast<Revista>(publicatie)) {
         unitate = std::make_shared<RevistaIndividuala>(revista);
-    }
-    else {
+
+        if (esteSH) {
+            unitate->marcheazaSecondHand(conditie, luni);
+        }
+
+    } else {
         throw DateInvalideException("Publicatia nu poate fi adaugata individual!");
     }
+
     if (!comandaActiva)
-        comandaActiva=std::make_shared<Comanda>(clientCurent);
-    comandaActiva->adaugaArticol(unitate,cantitate);
+        comandaActiva = std::make_shared<Comanda>(clientCurent);
+
+    comandaActiva->adaugaArticol(unitate, cantitate);
 }
 
 void CosService::adaugaPachetCreat(std::shared_ptr<Client> &clientCurent, std::shared_ptr<Comanda> &comandaActiva,
-    std::shared_ptr<UnitateVanzare> pachet) {
+    const std::shared_ptr<UnitateVanzare> &pachet) {
     if (!pachet)
         throw DateInvalideException("Pachet invalid!");
 

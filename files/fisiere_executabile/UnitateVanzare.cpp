@@ -1,4 +1,5 @@
 #include "../headere/UnitateVanzare.h"
+#include "../headere/Revista.h"
 
 #include <iomanip>
 
@@ -17,6 +18,15 @@ UnitateVanzare::UnitateVanzare(std::shared_ptr<Publicatie> produs)
 {
     if (!produs_principal) {
         throw DateInvalideException("Eroare critica: UnitateVanzare creata cu un pointer null!");
+    }
+}
+
+UnitateVanzare::UnitateVanzare(std::shared_ptr<Revista> revista): id_unic(++id_contor_global),
+      produs_principal(std::move(revista))
+{
+    if (!produs_principal) {
+        throw DateInvalideException(
+            "Eroare critica: UnitateVanzare creata cu revista nullptr!");
     }
 }
 

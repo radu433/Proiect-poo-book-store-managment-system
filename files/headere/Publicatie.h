@@ -89,7 +89,7 @@ public:
 
     // functii virtuale
 
-    virtual std::string getTip() const =0;\
+    virtual std::string getTip() const =0;
 
     virtual std::string getdata_publicatie()const  {return data_publicatie;}
 

@@ -18,6 +18,8 @@ public:
                      const std::string &nivel_academic,
                      int nr_referinte, const bool are_formule_diagrame);
 
+    // destructor
+    virtual ~CarteStiintifica()=default;
     // functii virtuale
 
     [[nodiscard]] virtual int timp_estimat_lecturii() const override;

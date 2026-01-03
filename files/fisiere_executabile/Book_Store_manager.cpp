@@ -488,7 +488,7 @@ std::shared_ptr<Publicatie> BookStoreManager::selecteazaPubClient( AppState &app
         std::cout << "Selecteaza (-1 inapoi): ";
         std::cin >> alegere;
 
-        if (alegere < 0 || alegere >= (int)rezultate.size())
+        if (alegere < 0 || alegere >= static_cast<int>(rezultate.size()))
             continue;
 
         return app.publicatii[rezultate[alegere]];
@@ -578,7 +578,7 @@ void BookStoreManager::adaugaCarte(AppState &app) {
         std::cout << "Cantitate: ";
         std::cin >> cantitate;
 
-        auto autor = selecteazaAutor(app);
+        auto autor = gasesteSauCreeazaAutorDupaISBN(app, isbn);
 
         auto carte = std::make_shared<Carte>(
             titlu, autor, cantitate, data_publicatie,
@@ -637,7 +637,7 @@ void BookStoreManager::adaugaManual(AppState &app) {
         std::cout << "Clasa: ";
         std::cin >> clasa;
 
-        auto autor = selecteazaAutor(app);
+        auto autor = gasesteSauCreeazaAutorDupaISBN(app, isbn);
 
         auto manual = std::make_shared<Manual>(
             titlu, autor, pret_baza, cantitate, data_publicatie,
@@ -706,7 +706,7 @@ void BookStoreManager::adaugaCarteStiintifica(AppState &app) {
         std::cout << "Cantitate: ";
         std::cin >> cantitate;
 
-        auto autor = selecteazaAutor(app);
+        auto autor = gasesteSauCreeazaAutorDupaISBN(app, isbn);
 
         auto carte = std::make_shared<CarteStiintifica>(
             titlu, autor, cantitate, data_publicatie, isbn,
@@ -793,6 +793,40 @@ void BookStoreManager::adaugaRevista(AppState &app) {
     } catch (const std::exception &e) {
         std::cout << "Eroare: " << e.what() << "\n";
     }
+}
+
+std::shared_ptr<Autor> BookStoreManager::gasesteSauCreeazaAutorDupaISBN(AppState &app, const std::string &isbn) {
+    for (const auto& autor : app.autor) {
+        if (autor->adauga_carte(isbn) == false) {
+            return autor;
+        }
+    }
+    std::cout << "Nu exista autor pentru ISBN-ul introdus.\n";
+    std::cout << "Introdu datele autorului:\n";
+
+    std::string nume, prenume;
+    int varsta;
+
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    std::cout << "Nume autor: ";
+    std::getline(std::cin, nume);
+
+    std::cout << "Prenume autor: ";
+    std::getline(std::cin, prenume);
+
+    std::cout << "Varsta: ";
+    std::cin >> varsta;
+
+    auto autor = std::make_shared<Autor>(nume, prenume, varsta);
+    autor->adauga_carte(isbn);
+
+    AutorService::adaugaAutor(app, autor);
+
+    std::cout << "Autor creat si asociat cu ISBN-ul.\n";
+
+    return autor;
+
 }
 
 
@@ -1023,7 +1057,7 @@ void BookStoreManager::meniuStatisticiPublicatii(const AppState &app) {
 }
 
 
-void creareContClientUI(AppState& app) {
+void BookStoreManager:: creareContClientUI(AppState& app) {
     std::string username, email, telefon, parola;
     std::string judet, oras, strada, cod_postal;
     int numar = 0;
@@ -1073,116 +1107,174 @@ void creareContClientUI(AppState& app) {
         std::cout << "Eroare: " << e.what() << "\n";
     }
 }
-std::shared_ptr<Client> BookStoreManager::autentificareClientUI(AppState &app) {
-    int opt = -1;
-
-    std::cout << "\n=== CLIENT ===\n";
-    std::cout << "1. Login\n";
-    std::cout << "2. Creeaza cont\n";
-    std::cout << "0. Inapoi\n";
-    std::cout << "Optiune: ";
-    std::cin >> opt;
-
-    if (opt == 0)
-        return nullptr;
-
-    if (opt == 2) {
-        creareContClientUI(app);
-    }
-
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-    std::string identificator;
-    std::cout << "Introduceti Email / Telefon / Username: ";
-    std::getline(std::cin, identificator);
-
-    int incercari = 0;
-    while (incercari < 5) {
-        std::string parola;
-        std::cout << "Parola (0 pentru iesire): ";
-        std::getline(std::cin, parola);
-
-        if (parola == "0")
-            return nullptr;
-
-        auto client = AuthenticatorService::autentifica(
-            app, identificator, parola
-        );
-
-        if (client) {
-            std::cout << "Autentificare reusita!\n";
-            return client;
-        }
-
-        incercari++;
-        std::cout << "Parola gresita. Reincercati!\n";
-    }
-
-    std::cout << "Prea multe incercari esuate.\n";
-    return nullptr;
-}
-// meniu stoc
-void BookStoreManager::meniuStocA(AppState& app) {
-    const int idx = selecteazaPub(app);
-    if (idx == -1) {
-        std::cout << "Publicatia nu exista!\n";
-        return;
-    }
-
-    const auto pub = app.publicatii[idx];
-
+void BookStoreManager::afisareMeniuPrincipal(AppState&app) {
     int opt = -1;
     while (opt != 0) {
-        std::cout << "\n--- MENIU STOC ---\n";
-        std::cout << "Titlu: " << pub->getTitlu() << "\n";
-        std::cout << "Stoc curent: " << pub->getcantitate() << "\n";
-        std::cout << "1. Adauga stoc\n";
-        std::cout << "2. Scade stoc\n";
-        std::cout << "3. Prioritate restoc\n";
-        std::cout << "0. Inapoi\n";
+        std::cout << "\n=== LIBRARIE  ===\n";
+        std::cout << "1. Administrator\n";
+        std::cout << "2. Client\n";
+        std::cout << "0. Iesire\n";
         std::cout << "Optiune: ";
 
         std::cin >> opt;
-
         switch (opt) {
             case 1: {
-                int cant;
-                std::cout<<"Introduceti cantitatea dorita: ";
-                std::cin>>cant;
-                InventoryService::adaugaStoc(*pub,cant);
+                CLIAdministrator(app);
                 break;
             }
             case 2: {
-                int cant;
-                std::cout<<"Introduceti cantitatea dorita de scazut: ";
-                std::cin>>cant;
-                InventoryService::scadeStoc(*pub,cant);
+                CLIClient(app);
+                break;
+
+            }
+            case 0: {
                 break;
             }
-            case 3: {
-                auto lista = InventoryService::calculeazaPrioritateRestoc(app);
-
-                if (lista.empty()) {
-                    std::cout << "Nu exista publicatii.\n";
-                    break;
-                }
-
-                std::cout << "\n=== PRIORITATI RESTOC ===\n";
-                int poz = 1;
-                for (const auto& p : lista) {
-                    std::cout << poz++ << ". "
-                              << p.pub->getTitlu()
-                              << " | Stoc: " << p.pub->getcantitate()
-                              << " | Scor: " << p.scor << "\n";
-                }
-                break;
-            }
-            case 0: break;
             default:
-                std::cout<<"Optiune invalida!";
+                std::cout<<"Optiune invalida!\n";
         }
     }
 }
+void BookStoreManager::CLIAdministrator(AppState &app) {
+    std::string parola;
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    std::cout << "Introduceti parola pentru a va loga in contul de administrator: ";
+    std::getline(std::cin, parola);
+    if (parola != "admin123") {
+        std::cout << "Parola incorecta!\n";
+        return;
+    }
+    int opt = -1;
+    while (opt != 0) {
+        std::cout << "\n--- MENIU ADMINISTRATOR ---\n";
+        std::cout << "1. !Reduceri Active!\n";
+        std::cout << "2.Meniu Publicatii\n";
+        std::cout << "3.Meniu Review-uri\n";
+        std::cout << "4.Meniu Autor\n";
+        std::cout << "5.Meniu Client\n";
+        std::cout << "6.Meniu Comenzi\n";
+        std::cout << "7.Statistici\n";
+        std::cout << "0. Logout\n";
+        std::cout << "Optiune: ";
+
+        std::cin >> opt;
+        switch (opt) {
+            case 1: afiseazaReduceriActive(app);
+                break;
+            case 2: meniuPublicatiiA(app);
+                break;
+            case 3: meniuReviewuri(app);
+                break;
+            case 4: meniuAutorA(app);
+                break;
+            case 5: meniuClientA(app);
+                break;
+            case 6: meniuComenziA(app);
+                break;
+            case 7:meniuStatisticiA(app);break;
+            case 0: break;
+            default:
+                std::cout << "Optiune invalida!\n";
+        }
+    }
+}
+void BookStoreManager::CLIClient(AppState &app) {
+    clientCurent = autentificareClientUI(app);
+    comandaActiva=nullptr;
+    if (!clientCurent) {
+        return;
+    }
+
+    int opt = -1;
+    while (opt != 0) {
+        std::cout << "=== MENIU CLIENT ===\n";
+        std::cout << "1. Reduceri active!\n";
+        std::cout << "2. Cauta Publicatii\n";
+        std::cout<<  "3. Afisare sugestii dupa cuparataturi\n";
+        std::cout<<  "4. Publiatii Secon-hand/ Trade-in pulicatii\n";
+        std::cout << "5. Cos de cumparaturi\n";
+        std::cout << "6. Review-uri si rating\n";
+        std::cout << "7. Istoric comenzi\n";
+        std::cout << "8. Detalii cont\n";
+        std::cout << "9. Alimentare cont\n";
+        std::cout << "0. Logout\n";
+        std::cout << "Optiune: ";
+
+        std::cin >> opt;
+        switch (opt) {
+            case 1: afiseazaReduceriActive(app);
+                break;
+            case 2: {
+                meniuCautaPublicatii(app);break;
+            }
+            case 3: {
+                auto sugestii = clientCurent->genereazaSugestii();
+
+                if (sugestii.empty()) {
+                    std::cout << "Momentan nu exista sugestii personalizate.\n";
+                    break;
+                }
+
+                std::cout << "\n=== SUGESTII PENTRU TINE ===\n";
+                for (const auto& s : sugestii) {
+                    std::cout << "- [" << s.getCategorie() << "] "
+                            << s.getTitlu() << "\n"
+                            << "  " << s.getDescriere() << "\n";
+                }
+                break;
+            }
+            case 4: meniuSH_Tradein(app);break;
+            case 5: meniuCosCumparaturi(app,clientCurent,comandaActiva);
+                break;
+            case 6:adaugaReview_Rating(app);
+                break;
+            case 7: {
+                bool gasit = false;
+                std::cout << "\n === ISTORIC COMENZI ===\n";
+                for (const auto &cmd: app.comenzi) {
+                    if (cmd && cmd->getClient() == clientCurent) {
+                        gasit = true;
+                        std::cout
+                                << "ID: " << cmd->getId()
+                                << " | Data: " << cmd->getDataFormatata()
+                                << " | Stare: " << cmd->getStare()
+                                << " | Articole: " << cmd->getNumarArticole()
+                                << " | Total: " << std::fixed << std::setprecision(2)
+                                << cmd->calculeazaTotal()
+                                << "\n";
+                    }
+                }
+                if (!gasit)
+                    std::cout << "Nu ai comenzi inregistrate!\n";
+                break;
+            }
+            case 8: meniuDetaliiCont(app);
+                break;
+            case 9: {
+                double suma = 0;
+                std::cout <<
+                        "introduceti suma pe care vreti sa o adaugati soldului(Pot fi adaugate si sume zecimale) : \n";
+                std::cin >> suma;
+                try {
+                    clientCurent->alimenteazaCont(suma);
+                    std::cout << "Sold nou: "
+                            << clientCurent->getSold()
+                            << " lei\n";
+                } catch (const std::exception &e) {
+                    std::cout << "Eroare: " << e.what() << "\n";
+                }
+                break;
+            }
+            case 0:
+                break;
+
+            default:
+                std::cout << "Optiune invalida!\n";
+        }
+    }
+}
+
 // meniu publicatii administrator
 void BookStoreManager::meniuPublicatiiA(AppState &app) {
     int opt = -1;
@@ -1191,7 +1283,7 @@ void BookStoreManager::meniuPublicatiiA(AppState &app) {
         std::cout << "1. Adauga Publicatii\n";
         std::cout << "2. Dezactiveaza publicatie\n";
         std::cout << "3. Sterge Publicatie\n";
-        std::cout << "4. Meniu Stoc ";
+        std::cout << "4. Meniu Stoc \n";
         std::cout << "4. Cloneaza Publicatie\n";
         std::cout << "0. Inapoi\n";
         std::cout << "Optiune: ";
@@ -1227,7 +1319,7 @@ void BookStoreManager::meniuPublicatiiA(AppState &app) {
                 break;
             }
             case 4: {
-                    meniuStocA(app); break;
+                meniuStocA(app); break;
             }
             case 5: {
                 int idx = selecteazaPub(app);
@@ -1245,7 +1337,7 @@ void BookStoreManager::meniuPublicatiiA(AppState &app) {
                         stoc
                     );
                     std::cout << "Publicatie clonata: "
-                              << copie->getTitlu() << "\n";
+                            << copie->getTitlu() << "\n";
                 } catch (const std::exception& e) {
                     std::cout << "Eroare: " << e.what() << "\n";
                 }
@@ -1256,7 +1348,6 @@ void BookStoreManager::meniuPublicatiiA(AppState &app) {
         }
     }
 }
-
 void BookStoreManager::meniuReviewuri(AppState &app) {
     int opt = -1;
     while (opt != 0) {
@@ -1285,13 +1376,13 @@ void BookStoreManager::meniuReviewuri(AppState &app) {
                 }
 
                 std::cout << "\n=== REVIEW-URI PENTRU: "
-                          << pub->getTitlu() << " ===\n";
+                        << pub->getTitlu() << " ===\n";
 
                 for (size_t i = 0; i < reviewuri.size(); ++i) {
                     const Review* r = reviewuri[i];
                     std::cout << "[" << i << "] "
-                              << (r->verificat ? "[VERIFICAT] " : "[NEVERIFICAT] ")
-                              << r->username << " | Rating: " << r->rating << "\n";
+                            << (r->verificat ? "[VERIFICAT] " : "[NEVERIFICAT] ")
+                            << r->username << " | Rating: " << r->rating << "\n";
                     std::cout << "   \"" << r->text << "\"\n";
                     std::cout << "---------------------------------\n";
                 }
@@ -1319,7 +1410,7 @@ void BookStoreManager::meniuReviewuri(AppState &app) {
                 for (size_t i = 0; i < reviewuri.size(); ++i) {
                     const Review* r = reviewuri[i];
                     std::cout << "[" << i << "] "
-                              << r->username << " | Rating: " << r->rating << "\n";
+                            << r->username << " | Rating: " << r->rating << "\n";
                     std::cout << "   \"" << r->text << "\"\n";
                     std::cout << "---------------------------------\n";
                 }
@@ -1357,6 +1448,7 @@ void BookStoreManager::meniuReviewuri(AppState &app) {
         }
     }
 }
+
 void BookStoreManager::meniuAutorA(AppState& app) {
     int opt=-1;
     while (opt != 0) {
@@ -1393,12 +1485,12 @@ void BookStoreManager::meniuAutorA(AppState& app) {
                     AutorService::adaugaAutor(app, autor);
 
                     std::cout << "Autor adaugat cu succes: "
-                              << nume << " " << prenume << "\n";
+                            << nume << " " << prenume << "\n";
                 } catch (const std::exception& e) {
                     std::cout << "Eroare la adaugarea autorului: "
-                              << e.what() << "\n";
+                            << e.what() << "\n";
                 }
-                    break;
+                break;
             }
             case 2: {
                 auto autor = selecteazaAutor(app);
@@ -1442,7 +1534,7 @@ void BookStoreManager::meniuAutorA(AppState& app) {
                             tip = TipTopAutor::IERARHIE;
                             break;
                         case 0:
-                            break;
+                            continue;
                         default:
                             std::cout << "Optiune invalida!\n";
                             continue;
@@ -1460,19 +1552,19 @@ void BookStoreManager::meniuAutorA(AppState& app) {
 
                     for (const auto&[autor, productivitate, scor_renume, ierarhie] : top) {
                         std::cout << poz++ << ". "
-                                  << autor->getNume() << " "
-                                  << autor->getprenume()
-                                  << " | Prod: " << productivitate
-                                  << " | Scor: " << scor_renume
-                                  << " | Ierarhie: " << ierarhie
-                                  << "\n";
+                                << autor->getNume() << " "
+                                << autor->getprenume()
+                                << " | Prod: " << productivitate
+                                << " | Scor: " << scor_renume
+                                << " | Ierarhie: " << ierarhie
+                                << "\n";
                     }
 
                 }
                 break;
             }
             case 0: break;
-                default:
+            default:
                 std::cout << "Optiune invalida!\n";
         }
 
@@ -1508,20 +1600,20 @@ void BookStoreManager::meniuClientA(AppState& app) {
 
                 std::cout << "Comenzi totale: " << stats.totalComenzi << "\n";
                 std::cout << "Valoare totala vanzari: "
-                          << std::fixed << std::setprecision(2)
-                          << stats.totalVanzari << " lei\n\n";
+                        << std::fixed << std::setprecision(2)
+                        << stats.totalVanzari << " lei\n\n";
 
                 if (stats.maxComenzi) {
                     std::cout << "Client cu cele mai multe comenzi: "
-                              << stats.maxComenzi->getUsername()
-                              << " (" << stats.maxComenzi->getNumarComenzi() << " comenzi)\n";
+                            << stats.maxComenzi->getUsername()
+                            << " (" << stats.maxComenzi->getNumarComenzi() << " comenzi)\n";
                 }
 
                 if (stats.maxCheltuieli) {
                     std::cout << "Client cu cele mai mari cheltuieli: "
-                              << stats.maxCheltuieli->getUsername()
-                              << " (" << stats.maxCheltuieli->getTotalCumparaturi()
-                              << " lei)\n";
+                            << stats.maxCheltuieli->getUsername()
+                            << " (" << stats.maxCheltuieli->getTotalCumparaturi()
+                            << " lei)\n";
                 }
                 break;
             }
@@ -1547,7 +1639,7 @@ void BookStoreManager::meniuClientA(AppState& app) {
                 std::cout << "Ierarhie client: " << det.ierarhie << "\n";
                 break;
             }
-                case 3: {
+            case 3: {
                 if (app.logs.empty()) {
                     std::cout << "Nu exista log-uri.\n";
                     break;
@@ -1573,7 +1665,7 @@ void BookStoreManager::meniuClientA(AppState& app) {
                     }
 
                     std::cout << " | user: " << user
-                              << " | email: " << email_client;
+                            << " | email: " << email_client;
 
                     if (!detalii.empty())
                         std::cout << " | " << detalii;
@@ -1584,7 +1676,7 @@ void BookStoreManager::meniuClientA(AppState& app) {
             }
             case 0:break;
             default:
-                    std::cout << "Optiune invalida.\n";
+                std::cout << "Optiune invalida.\n";
 
 
         }
@@ -1614,146 +1706,39 @@ void BookStoreManager::meniuComenziA( const AppState& app) {
                 for (size_t i = 0; i < app.comenzi.size(); ++i) {
                     const auto& c = app.comenzi[i];
                     std::cout << i << ". "
-                              << "ID: " << c->getId()
-                              << " | Data: " << c->getDataFormatata()
-                              << " | Articole: " << c->getNumarArticole()
-                              << " | Total: " << c->calculeazaTotal()
-                              << " lei\n";
+                            << "ID: " << c->getId()
+                            << " | Data: " << c->getDataFormatata()
+                            << " | Articole: " << c->getNumarArticole()
+                            << " | Total: " << c->calculeazaTotal()
+                            << " lei\n";
                     break;
                 }
-                case 2: {
-                    const int idx = filtreComanda(app);
-                    if (idx < 0 || idx >= static_cast<int>(app.comenzi.size()))
-                        break;
-
-                    const auto& cmd = app.comenzi[idx];
-
-                    std::cout << "\n===== DETALII COMANDA =====\n";
-                    std::cout << "ID comanda: " << cmd->getId() << "\n";
-                    std::cout << "Data: " << cmd->getDataFormatata() << "\n";
-                    std::cout << "Stare: " << cmd->getStare() << "\n";
-                    std::cout << "Numar articole: " << cmd->getNumarArticole() << "\n\n";
-
-                    std::cout << "--- Articole ---\n";
-                    std::cout << *cmd << "\n";
-
-                    std::cout << "Total comanda: "
-                              << cmd->calculeazaTotal() << " lei\n";
-                    std::cout << "===========================\n";
-                    break;
-                }
-                case 0: break;
-                default:
-                    std::cout<<"Optiune invalida!\n";
-            }
-
-        }
-    }
-}
-
-void BookStoreManager::meniuTop(  AppState &app) {
-    int opt = -1;
-
-    while (opt != 0) {
-        std::cout << "\n=== TOPURI ===\n";
-        std::cout << "1. Top clienti (dupa suma cheltuita)\n";
-        std::cout << "2. Top autori (ierarhie)\n";
-        std::cout << "3. Top publicatii (popularitate)\n";
-        std::cout << "0. Inapoi\n";
-        std::cout << "Optiune: ";
-
-        std::cin >> opt;
-
-        switch (opt) {
-            case 1: {
-                if (app.clienti.empty()) {
-                    std::cout << "Nu exista clienti.\n";
-                    break;
-                }
-
-                auto lista = app.clienti;
-
-                std::ranges::sort(lista, [](const auto &a, const auto &b) {
-                    return a->getTotalCumparaturi() > b->getTotalCumparaturi();
-                });
-
-                std::cout << "\n=== TOP CLIENTI DUPA SUMA CHELTUITA ===\n";
-                int poz = 1;
-                for (const auto &c : lista) {
-                    std::cout << poz++ << ". "
-                              << c->getEmail()
-                              << " | Total cheltuit: "
-                              << c->getTotalCumparaturi()
-                              << " lei | Ierarhie: "
-                              << c->ierarhie_clienti()
-                              << "\n";
-                }
-                break;
-            }
-
             case 2: {
-                int opt1 = -1;
-                while (opt1 != 0) {
-                    std::cout << "\n--- TOP AUTORI ---\n";
-                    std::cout << "1. Productivitate\n";
-                    std::cout << "2. Scor renume\n";
-                    std::cout << "3. Ierarhie\n";
-                    std::cout << "0. Inapoi\n";
-                    std::cout << "Optiune: ";
-                    std::cin >> opt1;
+                const int idx = filtreComanda(app);
+                if (idx < 0 || idx >= static_cast<int>(app.comenzi.size()))
+                    break;
 
-                    TipTopAutor tip;
+                const auto& cmd = app.comenzi[idx];
 
-                    switch (opt1) {
-                        case 1:
-                            tip = TipTopAutor::PRODUCTIVITATE;
-                            break;
-                        case 2:
-                            tip = TipTopAutor::SCOR_RENUME;
-                            break;
-                        case 3:
-                            tip = TipTopAutor::IERARHIE;
-                            break;
-                        case 0:
-                            break;
-                        default:
-                            std::cout << "Optiune invalida!\n";
-                            continue;
-                    }
+                std::cout << "\n===== DETALII COMANDA =====\n";
+                std::cout << "ID comanda: " << cmd->getId() << "\n";
+                std::cout << "Data: " << cmd->getDataFormatata() << "\n";
+                std::cout << "Stare: " << cmd->getStare() << "\n";
+                std::cout << "Numar articole: " << cmd->getNumarArticole() << "\n\n";
 
-                    auto top = AutorService::getTopAutori(app,tip);
+                std::cout << "--- Articole ---\n";
+                std::cout << *cmd << "\n";
 
-                    if (top.empty()) {
-                        std::cout << "Nu exista autori.\n";
-                        continue;
-                    }
-
-                    std::cout << "\n=== TOP AUTORI ===\n";
-                    int poz = 1;
-
-                    for (const auto&[autor, productivitate, scor_renume, ierarhie] : top) {
-                        std::cout << poz++ << ". "
-                                  << autor->getNume() << " "
-                                  << autor->getprenume()
-                                  << " | Prod: " << productivitate
-                                  << " | Scor: " << scor_renume
-                                  << " | Ierarhie: " << ierarhie
-                                  << "\n";
-                    }
-
-                }
+                std::cout << "Total comanda: "
+                        << cmd->calculeazaTotal() << " lei\n";
+                std::cout << "===========================\n";
                 break;
             }
-
-            case 3:
-                meniuTopPublicatiiPopularitate(app);
-                break;
-
-            case 0:
-                break;
-
+            case 0: break;
             default:
-                std::cout << "Optiune invalida.\n";
+                std::cout<<"Optiune invalida!\n";
+            }
+
         }
     }
 }
@@ -1799,21 +1784,21 @@ void BookStoreManager::meniuStatisticiA( AppState& app) {
 
                 std::cout << "Comenzi totale: " << stats.totalComenzi << "\n";
                 std::cout << "Incasari totale: "
-                          << std::fixed << std::setprecision(2)
-                          << stats.totalVanzari << " lei\n\n";
+                        << std::fixed << std::setprecision(2)
+                        << stats.totalVanzari << " lei\n\n";
 
                 if (stats.maxComenzi) {
                     std::cout << "Client cu cele mai multe comenzi: "
-                              << stats.maxComenzi->getUsername()
-                              << " (" << stats.maxComenzi->getNumarComenzi()
-                              << " comenzi)\n";
+                            << stats.maxComenzi->getUsername()
+                            << " (" << stats.maxComenzi->getNumarComenzi()
+                            << " comenzi)\n";
                 }
 
                 if (stats.maxCheltuieli) {
                     std::cout << "Client cu cele mai mari cheltuieli: "
-                              << stats.maxCheltuieli->getUsername()
-                              << " (" << stats.maxCheltuieli->getTotalCumparaturi()
-                              << " lei)\n";
+                            << stats.maxCheltuieli->getUsername()
+                            << " (" << stats.maxCheltuieli->getTotalCumparaturi()
+                            << " lei)\n";
                 }
                 break;
 
@@ -1821,7 +1806,7 @@ void BookStoreManager::meniuStatisticiA( AppState& app) {
             case 4:meniuTop(app);
             case 0: break;
             default:
-                    std::cout<<"Optiune invalida!\n";
+                std::cout<<"Optiune invalida!\n";
 
 
         }
@@ -1831,74 +1816,6 @@ void BookStoreManager::meniuStatisticiA( AppState& app) {
 
 
 
-void BookStoreManager::CLIAdministrator(AppState &app) {
-    std::string parola;
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-    std::cout << "Introduceti parola pentru a va loga in contul de administrator: ";
-    std::getline(std::cin, parola);
-    if (parola != "admin123") {
-        std::cout << "Parola incorecta!\n";
-        return;
-    }
-    int opt = -1;
-    while (opt != 0) {
-        std::cout << "\n--- MENIU ADMINISTRATOR ---\n";
-        std::cout << "1. !Reduceri Active!\n";
-        std::cout << "2.Meniu Publicatii\n";
-        std::cout << "3.Meniu Review-uri\n";
-        std::cout << "4.Meniu Autor\n";
-        std::cout << "5.Meniu Client\n";
-        std::cout << "6.Meniu Comenzi\n";
-        std::cout << "7.Statistici\n";
-        std::cout << "0. Logout\n";
-        std::cout << "Optiune: ";
-
-        std::cin >> opt;
-        switch (opt) {
-            case 1: afiseazaReduceriActive(app);
-                break;
-            case 2: meniuPublicatiiA(app);
-                break;
-            case 3: meniuReviewuri(app);
-                break;
-            case 4: meniuAutorA(app);
-                break;
-            case 5: meniuClientA(app);
-                break;
-            case 6: meniuComenziA(app);
-                break;
-            case 7:meniuStatisticiA(app);break;
-            case 0: break;
-            default:
-                std::cout << "Optiune invalida!\n";
-        }
-    }
-}
-void BookStoreManager::afisazaContinutPachet(const AppState &app, int idx) {
-    auto pachet = app.pachetePredefinite[idx];
-
-    std::cout << "\n=== CONTINUT PACHET ===\n";
-    std::cout << "Identificator pachet: "
-              << pachet->getIdentificator() << "\n";
-
-    const auto& continut = pachet->getContinut();
-
-    if (continut.empty()) {
-        std::cout << "(Pachet gol)\n";
-        return;
-    }
-
-    for (size_t i = 0; i < continut.size(); ++i) {
-        if (continut[i]) {
-            std::cout << "  " << i << ". "
-                      << continut[i]->getTitlu()
-                      << " | ID: "
-                      << continut[i]->getIdentificator()
-                      << "\n";
-        }
-    }
-}
 void BookStoreManager::meniuCautaPublicatii(AppState &app) {
     if (!clientCurent) {
         std::cout<<"Trebuie sa fii autentificat!\n";
@@ -1934,339 +1851,17 @@ void BookStoreManager::meniuCautaPublicatii(AppState &app) {
 
     if (cantitate > pub->getcantitate()) {
         std::cout << "Stoc insuficient! Disponibil: "
-                  << pub->getcantitate() << "\n";
+                << pub->getcantitate() << "\n";
         return;
     }
 
     try {
-        clientCurent->adaugaComanda(pub,cantitate);
+        CosService::adaugaCarteIndividuala(clientCurent,comandaActiva,cantitate,pub,false,"Noua",0);
         std::cout << "Publicatia a fost adaugata in cos!\n";
     } catch (const std::exception& e) {
         std::cout << "Eroare: " << e.what() << "\n";
     }
 }
-
-void BookStoreManager::meniuAdaugaPachete(const AppState &app,std::shared_ptr<Client>& clientCurent,
-    std::shared_ptr<Comanda>& comandaActiva) {
-    int opt=-1;
-    while (opt!=0) {
-        std::cout<<"\n === MENIU ADAUGA PACHETE ===\n";
-        std::cout <<"1. Adauga pachet predefinit\n ";
-        std::cout<<"2. Creaza pachet si adauga \n";
-        std::cout<<"0. Inapoi\n";
-        std::cout<<"Optiune:";
-
-        std::cin>>opt;
-        switch (opt) {
-            case 1: {
-                if (app.pachetePredefinite.empty()) {
-                    std::cout<<" Nu exista momentan pachete predefinite!";
-                    break;
-                }
-
-                std::cout << "\n=== PACHETE PREDEFINITE ===\n";
-                for (size_t i = 0; i < app.pachetePredefinite.size(); ++i) {
-                    std::cout << i << ". "
-                              << app.pachetePredefinite[i]->getDescriere()
-                              << "\n";
-                }
-                int idx;
-                std::cout << "\nAlege indexul pachetului (sau -1 pentru inapoi): ";
-                std::cin >> idx;
-
-                if (idx == -1)
-                    break;
-
-                if (idx < 0 || idx >= static_cast<int>(app.pachetePredefinite.size())) {
-                    std::cout << "Index invalid!\n";
-                    break;
-                }
-                std::cout << "\n=== CONTINUT PACHET ===\n";
-                afisazaContinutPachet(app, idx);
-                int opt2;
-                std::cout << "\n1. Adauga pachetul in cos\n";
-                std::cout << "0. Inapoi\n";
-                std::cout << "Optiune: ";
-                std::cin >> opt2;
-
-                if (opt2 == 1) {
-                    try {
-                        CosService::adaugaPachetPredefinit(app,clientCurent,comandaActiva,idx);
-                        std::cout << "Pachet adaugat in cos.\n";
-                    }
-                    catch (const std::exception& e) {
-                        std::cout << "Eroare: " << e.what() << "\n";
-                    }
-                }
-
-                break;
-
-            }
-                case 2: {
-                 std::vector<std::shared_ptr<Publicatie>> continut;
-
-    TipPublicatie tipAcceptat = TipPublicatie::Necunoscut;
-    bool continua = true;
-
-    std::cout << "\n=== CREARE PACHET PERSONALIZAT ===\n";
-    std::cout << "Selecteaza publicatii (toate trebuie sa fie de acelasi tip).\n";
-
-    while (continua) {
-        int idx = selecteazaPub(app);
-
-        if (idx < 0 || idx >= static_cast<int>(app.publicatii.size())) {
-            std::cout << "Selectie invalida!\n";
-            continue;
-        }
-
-        auto pub = app.publicatii[idx];
-        TipPublicatie tipCurent = determinaTipPublicatie(pub);
-
-        if (tipCurent == TipPublicatie::Necunoscut) {
-            std::cout << "Tip de publicatie neacceptat!\n";
-            continue;
-        }
-
-        if (tipAcceptat == TipPublicatie::Necunoscut) {
-            tipAcceptat = tipCurent;
-            continut.push_back(pub);
-            std::cout << "Publicatie adaugata.\n";
-        }
-        else if (tipCurent == tipAcceptat) {
-            continut.push_back(pub);
-            std::cout << "Publicatie adaugata.\n";
-        }
-        else {
-            std::cout << "Pachetul permite doar publicatii de acelasi tip!\n";
-            continue;
-        }
-
-        int opt1;
-        std::cout << "\n1. Adauga alta publicatie\n";
-        std::cout << "2. Finalizeaza pachet\n";
-        std::cout << "0. Anuleaza\n";
-        std::cout << "Optiune: ";
-        std::cin >> opt1;
-
-        if (opt1 == 1) {
-            continua = true;
-        }
-        else if (opt1== 2) {
-            continua = false;
-        }
-        else {
-            std::cout << "Crearea pachetului a fost anulata.\n";
-            continut.clear();
-            break;
-        }
-    }
-
-    if (continut.size() < 2) {
-        std::cout << "Un pachet trebuie sa contina cel putin 2 publicatii.\n";
-        break;
-    }
-
-    std::string numePachet, tipPachet;
-    std::cout << "Nume pachet: ";
-    std::cin >> numePachet;
-    std::cout << "Tip pachet: ";
-    std::cin >> tipPachet;
-
-    auto pachetCreat = std::make_shared<PachetSerie>(
-        continut,
-        numePachet,
-        tipPachet,
-        true
-    );
-
-    try {
-        CosService::adaugaPachetCreat(
-            clientCurent,
-            comandaActiva,
-            pachetCreat
-        );
-        std::cout << "Pachetul personalizat a fost adaugat in cos.\n";
-    }
-    catch (const std::exception& e) {
-        std::cout << "Eroare: " << e.what() << "\n";
-    }
-
-    break;
-            }
-            case 0:
-                break;
-            default:
-                    std::cout<<"Optiune Invalida!\n";
-        }
-    }
-}
-
-
-
-void BookStoreManager::meniuCosCumparaturi(AppState& app,std::shared_ptr<Client>& clientCurent,std::shared_ptr<Comanda>& comandaActiva) {
-    int opt=-1;
-    while (opt!=0) {
-        std::cout<<"\n=== MENIU COS CUMPARATURI ===\n ";
-        std::cout<<"1. Adauga articol idividual in cos \n";
-        std::cout<<"2. Adauga articol pachet \n";
-        std::cout<<"3. Sterge articol din cos \n";
-        std::cout<<"4. Vezi cosul \n";
-        std::cout<<"5. Finalizeaza comanda\n";
-        std::cout<<"0. Inapoi\n";
-        std::cout<<"Optiune: ";
-
-        std::cin>>opt;
-
-        switch (opt) {
-            case 1: {
-                int idx=-1;
-                idx=selecteazaPub(app);
-                if (idx==-1)
-                    std::cout<<"Publicatia nu a fost gasita\n";
-                if (idx < 0 || idx >= static_cast<int>(app.publicatii.size())) {
-                    std::cout << "Index invalid.\n";
-                    break;
-                }
-                int cantitate;
-                std::cout<<"Introduceti cantitatea dorita:";
-                std::cin>>cantitate;
-                CosService::adaugaCarteIndividuala(clientCurent,comandaActiva,cantitate,app.publicatii[idx]);
-                break;
-            }
-            case 2 : {
-                meniuAdaugaPachete(app,clientCurent,comandaActiva); break;
-            }
-            case 3: {
-                if (!comandaActiva || comandaActiva->getNumarArticole() == 0) {
-                    std::cout << "Cosul este gol!\n";
-                    break;
-                }
-
-                std::cout << "\n=== COS CURENT ===\n";
-
-                const auto& articole = comandaActiva->getArticole();
-                for (size_t i = 0; i < articole.size(); ++i) {
-                    std::cout << i << ". "
-                              << articole[i].getUnitate()->getDescriere()
-                              << " x" << articole[i].getCantitate()
-                              << " = " << articole[i].getSubtotal()
-                              << " lei\n";
-                }
-
-                int idx;
-                std::cout << "Index articol de sters (-1 pentru inapoi): ";
-                std::cin >> idx;
-
-                if (idx == -1)
-                    break;
-
-                try {
-                    comandaActiva->stergeArticol(idx);
-                    std::cout << "Articol sters din cos.\n";
-                }
-                catch (const std::exception& e) {
-                    std::cout << "Eroare: " << e.what() << "\n";
-                }
-
-                break;
-            }
-            case 4: {
-                if (!comandaActiva || comandaActiva->getNumarArticole() == 0) {
-                    std::cout << "Cosul este gol!\n";
-                    break;
-                }
-
-                std::cout << "\n=== COS CUMPARATURI ===\n";
-
-                const auto& articole = comandaActiva->getArticole();
-                for (size_t i = 0; i < articole.size(); ++i) {
-                    std::cout << i << ". "
-                              << articole[i].getUnitate()->getDescriere()
-                              << " x" << articole[i].getCantitate()
-                              << " = " << articole[i].getSubtotal()
-                              << " lei\n";
-                }
-
-                std::cout << "-----------------------------\n";
-                std::cout << "TOTAL: " << comandaActiva->calculeazaTotal() << " lei\n";
-
-                break;
-            }
-            case 5: {
-               if (!comandaActiva || comandaActiva->getNumarArticole() == 0) {
-    std::cout << "Nu exista o comanda activa sau cosul este gol!\n";
-    break;
-}
-
-try {
-
-    double total = comandaActiva->calculeazaTotal();
-    std::cout << "Total comanda: " << total << " lei\n";
-
-
-    int pctDisponibile = clientCurent->getPunctedeFideliate();
-
-    if (pctDisponibile > 0) {
-        std::cout << "Aveti " << pctDisponibile << " puncte de fidelitate.\n";
-        std::cout << "Doriti sa folositi puncte? (1 = Da, 0 = Nu): ";
-
-        int opt3;
-        std::cin >> opt3;
-
-        if (opt3 == 1) {
-            int pct;
-            std::cout << "Cate puncte doriti sa folositi? ";
-            std::cin >> pct;
-
-            double reducere = clientCurent->foloseste_pct_fidelitate(pct);
-            total -= reducere;
-
-            if (total < 0)
-                total = 0;
-
-            std::cout << "Total dupa reducere: " << total << " lei\n";
-        }
-    }
-
-
-    if (clientCurent->getSold() < total) {
-        throw SoldInsuficientException(clientCurent->getSold(), total);
-    }
-
-
-    comandaActiva->finalizareComanda();
-
-    std::cout << "\nComanda a fost finalizata cu succes!\n";
-    std::cout << "Total platit: " << total << " lei\n";
-
-
-    comandaActiva.reset();
-
-} catch (const ComandaGoalaException&) {
-    std::cout << "Eroare: comanda este goala!\n";
-} catch (const ComandaAnulataException&) {
-    std::cout << "Eroare: comanda este anulata!\n";
-} catch (const ComandaFinalizataException&) {
-    std::cout << "Eroare: comanda este deja finalizata!\n";
-} catch (const SoldInsuficientException&) {
-    std::cout << "Fonduri insuficiente pentru finalizarea comenzii!\n";
-} catch (const StocInsuficientException&) {
-    std::cout << "Stoc insuficient pentru unul dintre produse!\n";
-} catch (const DateInvalideException& e) {
-    std::cout << "Date invalide: " << e.what() << "\n";
-} catch (const std::exception& e) {
-    std::cout << "Eroare neasteptata: " << e.what() << "\n";
-}
-
-break;
-            }
-            case 0: break;
-                default:
-                std::cout<<"Optiune Invalida!\n";
-        }
-    }
-}
-
 void BookStoreManager::meniuSH_Tradein(AppState& app) {
     int opt=-1;
     while (opt!=0) {
@@ -2331,16 +1926,16 @@ void BookStoreManager::meniuSH_Tradein(AppState& app) {
                 try {
                     // 9. Procesare trade-in
                     double valoare_finala =
-                        TradeInService::proceseazaTradeIn(
-                            *clientCurent,*unitate,app,optiune);
+                            TradeInService::proceseazaTradeIn(
+                                *clientCurent,*unitate,app,optiune);
 
                     std::cout << "Trade-In realizat cu succes!\n";
                     std::cout << "Valoare acordata: "
-                              << valoare_finala << " lei\n";
+                            << valoare_finala << " lei\n";
 
                 } catch (const std::exception& e) {
                     std::cout << "Eroare la trade-in: "
-                              << e.what() << "\n";
+                            << e.what() << "\n";
                 }
 
                 break;
@@ -2387,89 +1982,253 @@ void BookStoreManager::meniuSH_Tradein(AppState& app) {
             }
             case 3: {
 
-    if (app.stocSH.size() < 2) {
-        std::cout << "Nu exista suficiente produse SH pentru a crea un pachet.\n";
-        break;
-    }
+                if (app.stocSH.size() < 2) {
+                    std::cout << "Nu exista suficiente produse SH pentru a crea un pachet.\n";
+                    break;
+                }
 
-    std::vector<std::shared_ptr<UnitateVanzare>> continutSH;
-     bool continua = true;
+                std::vector<std::shared_ptr<UnitateVanzare>> continutSH;
+                bool continua = true;
 
-    std::cout << "\n=== CREARE PACHET SECOND-HAND ===\n";
-    std::cout << "Selecteaza produse SH. Cand esti gata, apasa 0.\n";
+                std::cout << "\n=== CREARE PACHET SECOND-HAND ===\n";
+                std::cout << "Selecteaza produse SH. Cand esti gata, apasa 0.\n";
 
-    while (continua) {
+                while (continua) {
 
-        std::cout << "\n--- STOC SH DISPONIBIL ---\n";
-        for (size_t i = 0; i < app.stocSH.size(); ++i) {
-            std::cout << i << ". " << *app.stocSH[i] << "\n";
-        }
+                    std::cout << "\n--- STOC SH DISPONIBIL ---\n";
+                    for (size_t i = 0; i < app.stocSH.size(); ++i) {
+                        std::cout << i << ". " << *app.stocSH[i] << "\n";
+                    }
 
-        std::cout << "-1. Finalizeaza pachet\n";
-        std::cout << "Selectie: ";
+                    std::cout << "-1. Finalizeaza pachet\n";
+                    std::cout << "Selectie: ";
 
-        int idx;
-        std::cin >> idx;
+                    int idx;
+                    std::cin >> idx;
 
-        if (idx == 0) {
-            break;
-        }
+                    if (idx == 0) {
+                        break;
+                    }
 
-        if (idx < 0 || idx >= static_cast<int>(app.stocSH.size())) {
-            std::cout << "Index invalid.\n";
-            continue;
-        }
+                    if (idx < 0 || idx >= static_cast<int>(app.stocSH.size())) {
+                        std::cout << "Index invalid.\n";
+                        continue;
+                    }
 
-        // adaugam produsul in pachet
-        continutSH.push_back(app.stocSH[idx]);
+                    // adaugam produsul in pachet
+                    continutSH.push_back(app.stocSH[idx]);
 
-        // il scoatem din stoc SH
-        app.stocSH.erase(app.stocSH.begin() + idx);
+                    // il scoatem din stoc SH
+                    app.stocSH.erase(app.stocSH.begin() + idx);
 
-        std::cout << "Produs adaugat in pachet. Total produse: "
-                  << continutSH.size() << "\n";
-    }
+                    std::cout << "Produs adaugat in pachet. Total produse: "
+                            << continutSH.size() << "\n";
+                }
 
-    if (continutSH.size() < 2) {
-        std::cout << "Un pachet SH trebuie sa contina minim 2 produse.\n";
+                if (continutSH.size() < 2) {
+                    std::cout << "Un pachet SH trebuie sa contina minim 2 produse.\n";
 
-        // punem produsele inapoi
-        for (auto& u : continutSH)
-            app.stocSH.push_back(u);
+                    // punem produsele inapoi
+                    for (auto& u : continutSH)
+                        app.stocSH.push_back(u);
 
-        break;
-    }
+                    break;
+                }
 
-    try {
-        // cream pachetul SH
-        auto pachetSH = std::make_shared<PachetSerie>(continutSH);
-
-
-        CosService::adaugaUnitataVanzare(
-            clientCurent,
-            comandaActiva,
-            pachetSH
-        );
-
-        std::cout << "Pachetul SH a fost creat si adaugat in cos!\n";
-
-    } catch (const std::exception& e) {
-        std::cout << "Eroare la creare pachet SH: " << e.what() << "\n";
+                try {
+                    // cream pachetul SH
+                    auto pachetSH = std::make_shared<PachetSerie>(continutSH);
 
 
-        for (auto& u : continutSH)
-            app.stocSH.push_back(u);
-    }
+                    CosService::adaugaUnitataVanzare(
+                        clientCurent,
+                        comandaActiva,
+                        pachetSH
+                    );
 
-    break;
+                    std::cout << "Pachetul SH a fost creat si adaugat in cos!\n";
+
+                } catch (const std::exception& e) {
+                    std::cout << "Eroare la creare pachet SH: " << e.what() << "\n";
+
+
+                    for (auto& u : continutSH)
+                        app.stocSH.push_back(u);
+                }
+
+                break;
             }
             case 0: break;
             default:
-                    std::cout<<"Optiune invalida!\n";
+                std::cout<<"Optiune invalida!\n";
         }
     }
 
 }
+void BookStoreManager::meniuCosCumparaturi(const AppState& app,std::shared_ptr<Client>& clientCurent,std::shared_ptr<Comanda>& comandaActiva) {
+    int opt=-1;
+    while (opt!=0) {
+        std::cout<<"\n=== MENIU COS CUMPARATURI ===\n ";
+        std::cout<<"1. Adauga articol idividual in cos \n";
+        std::cout<<"2. Adauga articol pachet \n";
+        std::cout<<"3. Sterge articol din cos \n";
+        std::cout<<"4. Vezi cosul \n";
+        std::cout<<"5. Finalizeaza comanda\n";
+        std::cout<<"0. Inapoi\n";
+        std::cout<<"Optiune: ";
+
+        std::cin>>opt;
+
+        switch (opt) {
+            case 1: {
+                int idx=-1;
+                idx=selecteazaPub(app);
+                if (idx==-1)
+                    std::cout<<"Publicatia nu a fost gasita\n";
+                if (idx < 0 || idx >= static_cast<int>(app.publicatii.size())) {
+                    std::cout << "Index invalid.\n";
+                    break;
+                }
+                int cantitate;
+                std::cout<<"Introduceti cantitatea dorita:";
+                std::cin>>cantitate;
+                CosService::adaugaCarteIndividuala(clientCurent,comandaActiva,cantitate,app.publicatii[idx],false,"Noua",0);
+                break;
+            }
+            case 2 : {
+                meniuAdaugaPachete(app,clientCurent,comandaActiva); break;
+            }
+            case 3: {
+                if (!comandaActiva || comandaActiva->getNumarArticole() == 0) {
+                    std::cout << "Cosul este gol!\n";
+                    break;
+                }
+
+                std::cout << "\n=== COS CURENT ===\n";
+
+                const auto& articole = comandaActiva->getArticole();
+                for (size_t i = 0; i < articole.size(); ++i) {
+                    std::cout << i << ". "
+                            << articole[i].getUnitate()->getDescriere()
+                            << " x" << articole[i].getCantitate()
+                            << " = " << articole[i].getSubtotal()
+                            << " lei\n";
+                }
+
+                int idx;
+                std::cout << "Index articol de sters (-1 pentru inapoi): ";
+                std::cin >> idx;
+
+                if (idx == -1)
+                    break;
+
+                try {
+                    comandaActiva->stergeArticol(idx);
+                    std::cout << "Articol sters din cos.\n";
+                }
+                catch (const std::exception& e) {
+                    std::cout << "Eroare: " << e.what() << "\n";
+                }
+
+                break;
+            }
+            case 4: {
+                if (!comandaActiva || comandaActiva->getNumarArticole() == 0) {
+                    std::cout << "Cosul este gol!\n";
+                    break;
+                }
+
+                std::cout << "\n=== COS CUMPARATURI ===\n";
+
+                const auto& articole = comandaActiva->getArticole();
+                for (size_t i = 0; i < articole.size(); ++i) {
+                    std::cout << i << ". "
+                            << articole[i].getUnitate()->getDescriere()
+                            << " x" << articole[i].getCantitate()
+                            << " = " << articole[i].getSubtotal()
+                            << " lei\n";
+                }
+
+                std::cout << "-----------------------------\n";
+                std::cout << "TOTAL: " << comandaActiva->calculeazaTotal() << " lei\n";
+
+                break;
+            }
+            case 5: {
+                if (!comandaActiva || comandaActiva->getNumarArticole() == 0) {
+                    std::cout << "Nu exista o comanda activa sau cosul este gol!\n";
+                    break;
+                }
+
+                try {
+
+                    double total = comandaActiva->calculeazaTotal();
+                    std::cout << "Total comanda: " << total << " lei\n";
+
+
+                    int pctDisponibile = clientCurent->getPunctedeFideliate();
+
+                    if (pctDisponibile > 0) {
+                        std::cout << "Aveti " << pctDisponibile << " puncte de fidelitate.\n";
+                        std::cout << "Doriti sa folositi puncte? (1 = Da, 0 = Nu): ";
+
+                        int opt3;
+                        std::cin >> opt3;
+
+                        if (opt3 == 1) {
+                            int pct;
+                            std::cout << "Cate puncte doriti sa folositi? ";
+                            std::cin >> pct;
+
+                            double reducere = clientCurent->foloseste_pct_fidelitate(pct);
+                            total -= reducere;
+
+                            if (total < 0)
+                                total = 0;
+
+                            std::cout << "Total dupa reducere: " << total << " lei\n";
+                        }
+                    }
+
+
+                    if (clientCurent->getSold() < total) {
+                        throw SoldInsuficientException(clientCurent->getSold(), total);
+                    }
+
+
+                    comandaActiva->finalizareComanda();
+
+                    std::cout << "\nComanda a fost finalizata cu succes!\n";
+                    std::cout << "Total platit: " << total << " lei\n";
+
+
+                    comandaActiva.reset();
+
+                } catch (const ComandaGoalaException&) {
+                    std::cout << "Eroare: comanda este goala!\n";
+                } catch (const ComandaAnulataException&) {
+                    std::cout << "Eroare: comanda este anulata!\n";
+                } catch (const ComandaFinalizataException&) {
+                    std::cout << "Eroare: comanda este deja finalizata!\n";
+                } catch (const SoldInsuficientException&) {
+                    std::cout << "Fonduri insuficiente pentru finalizarea comenzii!\n";
+                } catch (const StocInsuficientException&) {
+                    std::cout << "Stoc insuficient pentru unul dintre produse!\n";
+                } catch (const DateInvalideException& e) {
+                    std::cout << "Date invalide: " << e.what() << "\n";
+                } catch (const std::exception& e) {
+                    std::cout << "Eroare neasteptata: " << e.what() << "\n";
+                }
+
+                break;
+            }
+            case 0: break;
+            default:
+                std::cout<<"Optiune Invalida!\n";
+        }
+    }
+}
+
 void BookStoreManager::adaugaReview_Rating(AppState& app) const {
     int opt=-1;
     while (opt!=0)  {
@@ -2493,7 +2252,7 @@ void BookStoreManager::adaugaReview_Rating(AppState& app) const {
 
                 if (!esteVerificat) {
                     std::cout
-                        << "Review NEVERIFICAT (nu ati cumparat aceasta publicatie)\n";
+                            << "Review NEVERIFICAT (nu ati cumparat aceasta publicatie)\n";
                 }
                 int rating;
                 std::cout << "Rating (1 - 5): ";
@@ -2535,13 +2294,13 @@ void BookStoreManager::adaugaReview_Rating(AppState& app) const {
                 }
 
                 std::cout << "\n=== REVIEW-URI PENTRU: "
-                          << pub->getTitlu() << " ===\n";
+                        << pub->getTitlu() << " ===\n";
 
                 for (size_t i = 0; i < reviewuri.size(); ++i) {
                     const Review* r = reviewuri[i];
                     std::cout << "[" << i << "] "
-                              << (r->verificat ? "[VERIFICAT] " : "[NEVERIFICAT] ")
-                              << r->username << " | Rating: " << r->rating << "\n";
+                            << (r->verificat ? "[VERIFICAT] " : "[NEVERIFICAT] ")
+                            << r->username << " | Rating: " << r->rating << "\n";
                     std::cout << "   \"" << r->text << "\"\n";
                     std::cout << "---------------------------------\n";
                 }
@@ -2554,7 +2313,10 @@ void BookStoreManager::adaugaReview_Rating(AppState& app) const {
     }
 
 }
-void BookStoreManager::meniuDetaliiCont(AppState& app) {
+
+
+
+void BookStoreManager::meniuDetaliiCont(const AppState& app) const {
     int opt = -1;
     while (opt != 0) {
 
@@ -2580,18 +2342,18 @@ void BookStoreManager::meniuDetaliiCont(AppState& app) {
             case 2: {
                 std::cout << "\n--- SOLD & FIDELITATE ---\n";
                 std::cout << "Sold curent: "
-                          << clientCurent->getSold() << " lei\n";
+                        << clientCurent->getSold() << " lei\n";
                 std::cout << "Puncte fidelitate: "
-                          << clientCurent->getPunctedeFideliate() << "\n";
+                        << clientCurent->getPunctedeFideliate() << "\n";
                 break;
             }
             case 3: {
                 std::cout << "\n--- STATISTICI COMENZI ---\n";
                 std::cout << "Numar comenzi: "
-                          << clientCurent->getNumarComenzi() << "\n";
+                        << clientCurent->getNumarComenzi() << "\n";
                 std::cout << "Total cheltuit: "
-                          << clientCurent->getTotalCumparaturi()
-                          << " lei\n";
+                        << clientCurent->getTotalCumparaturi()
+                        << " lei\n";
                 break;
             }
             case 4: {
@@ -2603,10 +2365,10 @@ void BookStoreManager::meniuDetaliiCont(AppState& app) {
                         gasit = true;
 
                         std::cout << "\nPublicatie: "
-                                  << r.identificator_publicatie << "\n";
+                                << r.identificator_publicatie << "\n";
 
                         std::cout << "Rating: "
-                                  << r.rating << "/5 ";
+                                << r.rating << "/5 ";
 
                         if (r.verificat)
                             std::cout << "[VERIFICAT]\n";
@@ -2633,98 +2395,291 @@ void BookStoreManager::meniuDetaliiCont(AppState& app) {
 
     }
 }
-void BookStoreManager::CLIClient(AppState &app) {
-    clientCurent = autentificareClientUI(app);
-    comandaActiva=nullptr;
-    if (!clientCurent) {
-        return;
+
+std::shared_ptr<Client> BookStoreManager::autentificareClientUI(AppState &app) {
+    int opt = -1;
+
+    std::cout << "\n=== CLIENT ===\n";
+    std::cout << "1. Login\n";
+    std::cout << "2. Creeaza cont\n";
+    std::cout << "0. Inapoi\n";
+    std::cout << "Optiune: ";
+    std::cin >> opt;
+
+    if (opt == 0)
+        return nullptr;
+
+    if (opt == 2) {
+        creareContClientUI(app);
     }
 
-    int opt = -1;
-    while (opt != 0) {
-        std::cout << "=== MENIU CLIENT ===\n";
-        std::cout << "1. Reduceri active!\n";
-        std::cout << "2. Cauta Publicatii\n";
-        std::cout<<  "3. Afisare sugestii dupa cuparataturi\n";
-        std::cout<<  "4. Publiatii Secon-hand/ Trade-in pulicatii\n";
-        std::cout << "5. Cos de cumparaturi\n";
-        std::cout << "6. Review-uri si rating\n";
-        std::cout << "7. Istoric comenzi\n";
-        std::cout << "8. Detalii cont\n";
-        std::cout << "9. Alimentare cont\n";
-        std::cout << "0. Logout\n";
-        std::cout << "Optiune: ";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-        std::cin >> opt;
+    std::string identificator;
+    std::cout << "Introduceti Email / Telefon / Username: ";
+    std::getline(std::cin, identificator);
+
+    int incercari = 0;
+    while (incercari < 5) {
+        std::string parola;
+        std::cout << "Parola (0 pentru iesire): ";
+        std::getline(std::cin, parola);
+
+        if (parola == "0")
+            return nullptr;
+
+        if (auto client = AuthenticatorService::autentifica(app, identificator, parola)) {
+            std::cout << "Autentificare reusita!\n";
+            return client;
+        }
+
+        incercari++;
+        std::cout << "Parola gresita. Reincercati!\n";
+    }
+
+    std::cout << "Prea multe incercari esuate.\n";
+    return nullptr;
+}
+
+
+
+void BookStoreManager::meniuAdaugaPachete(const AppState &app,std::shared_ptr<Client>& clientCurent,
+                                          std::shared_ptr<Comanda>& comandaActiva) {
+    int opt=-1;
+    while (opt!=0) {
+        std::cout<<"\n === MENIU ADAUGA PACHETE ===\n";
+        std::cout <<"1. Adauga pachet predefinit\n ";
+        std::cout<<"2. Creaza pachet si adauga \n";
+        std::cout<<"0. Inapoi\n";
+        std::cout<<"Optiune:";
+
+        std::cin>>opt;
         switch (opt) {
-            case 1: afiseazaReduceriActive(app);
-                break;
-            case 2: {
-                    meniuCautaPublicatii(app);break;
-            }
-            case 3: {
-                auto sugestii = clientCurent->genereazaSugestii();
-
-                if (sugestii.empty()) {
-                    std::cout << "Momentan nu exista sugestii personalizate.\n";
+            case 1: {
+                if (app.pachetePredefinite.empty()) {
+                    std::cout<<" Nu exista momentan pachete predefinite!";
                     break;
                 }
 
-                std::cout << "\n=== SUGESTII PENTRU TINE ===\n";
-                for (const auto& s : sugestii) {
-                    std::cout << "- [" << s.getCategorie() << "] "
-                              << s.getTitlu() << "\n"
-                              << "  " << s.getDescriere() << "\n";
+                std::cout << "\n=== PACHETE PREDEFINITE ===\n";
+                for (size_t i = 0; i < app.pachetePredefinite.size(); ++i) {
+                    std::cout << i << ". "
+                            << app.pachetePredefinite[i]->getDescriere()
+                            << "\n";
                 }
-                break;
-            }
-            case 4: meniuSH_Tradein(app);break;
-            case 5: meniuCosCumparaturi(app,clientCurent,comandaActiva);
-                break;
-            case 6:adaugaReview_Rating(app);
-                break;
-            case 7: {
-                bool gasit = false;
-                std::cout << "\n === ISTORIC COMENZI ===\n";
-                for (const auto &cmd: app.comenzi) {
-                    if (cmd && cmd->getClient() == clientCurent) {
-                        gasit = true;
-                        std::cout
-                                << "ID: " << cmd->getId()
-                                << " | Data: " << cmd->getDataFormatata()
-                                << " | Stare: " << cmd->getStare()
-                                << " | Articole: " << cmd->getNumarArticole()
-                                << " | Total: " << std::fixed << std::setprecision(2)
-                                << cmd->calculeazaTotal()
-                                << "\n";
+                int idx;
+                std::cout << "\nAlege indexul pachetului (sau -1 pentru inapoi): ";
+                std::cin >> idx;
+
+                if (idx == -1)
+                    break;
+
+                if (idx < 0 || idx >= static_cast<int>(app.pachetePredefinite.size())) {
+                    std::cout << "Index invalid!\n";
+                    break;
+                }
+                std::cout << "\n=== CONTINUT PACHET ===\n";
+                afisazaContinutPachet(app, idx);
+                int opt2;
+                std::cout << "\n1. Adauga pachetul in cos\n";
+                std::cout << "0. Inapoi\n";
+                std::cout << "Optiune: ";
+                std::cin >> opt2;
+
+                if (opt2 == 1) {
+                    try {
+                        CosService::adaugaPachetPredefinit(app,clientCurent,comandaActiva,idx);
+                        std::cout << "Pachet adaugat in cos.\n";
+                    }
+                    catch (const std::exception& e) {
+                        std::cout << "Eroare: " << e.what() << "\n";
                     }
                 }
-                if (!gasit)
-                    std::cout << "Nu ai comenzi inregistrate!\n";
+
                 break;
+
             }
-            case 8: meniuDetaliiCont(app);
-                break;
-            case 9: {
-                double suma = 0;
-                std::cout <<
-                        "introduceti suma pe care vreti sa o adaugati soldului(Pot fi adaugate si sume zecimale) : \n";
-                std::cin >> suma;
+            case 2: {
+                std::vector<std::shared_ptr<Publicatie>> continut;
+
+                TipPublicatie tipAcceptat = TipPublicatie::Necunoscut;
+                bool continua = true;
+
+                std::cout << "\n=== CREARE PACHET PERSONALIZAT ===\n";
+                std::cout << "Selecteaza publicatii (toate trebuie sa fie de acelasi tip).\n";
+
+                while (continua) {
+                    int idx = selecteazaPub(app);
+
+                    if (idx < 0 || idx >= static_cast<int>(app.publicatii.size())) {
+                        std::cout << "Selectie invalida!\n";
+                        continue;
+                    }
+
+                    auto pub = app.publicatii[idx];
+                    TipPublicatie tipCurent = determinaTipPublicatie(pub);
+
+                    if (tipCurent == TipPublicatie::Necunoscut) {
+                        std::cout << "Tip de publicatie neacceptat!\n";
+                        continue;
+                    }
+
+                    if (tipAcceptat == TipPublicatie::Necunoscut) {
+                        tipAcceptat = tipCurent;
+                        continut.push_back(pub);
+                        std::cout << "Publicatie adaugata.\n";
+                    }
+                    else if (tipCurent == tipAcceptat) {
+                        continut.push_back(pub);
+                        std::cout << "Publicatie adaugata.\n";
+                    }
+                    else {
+                        std::cout << "Pachetul permite doar publicatii de acelasi tip!\n";
+                        continue;
+                    }
+
+                    int opt1;
+                    std::cout << "\n1. Adauga alta publicatie\n";
+                    std::cout << "2. Finalizeaza pachet\n";
+                    std::cout << "0. Anuleaza\n";
+                    std::cout << "Optiune: ";
+                    std::cin >> opt1;
+
+                    if (opt1 == 1) {
+                        continua = true;
+                    }
+                    else if (opt1== 2) {
+                        continua = false;
+                    }
+                    else {
+                        std::cout << "Crearea pachetului a fost anulata.\n";
+                        continut.clear();
+                        break;
+                    }
+                }
+
+                if (continut.size() < 2) {
+                    std::cout << "Un pachet trebuie sa contina cel putin 2 publicatii.\n";
+                    break;
+                }
+
+                std::string numePachet, tipPachet;
+                std::cout << "Nume pachet: ";
+                std::cin >> numePachet;
+                std::cout << "Tip pachet: ";
+                std::cin >> tipPachet;
+
+                auto pachetCreat = std::make_shared<PachetSerie>(
+                    continut,
+                    numePachet,
+                    tipPachet,
+                    true
+                );
+
                 try {
-                    clientCurent->alimenteazaCont(suma);
-                    std::cout << "Sold nou: "
-                            << clientCurent->getSold()
-                            << " lei\n";
-                } catch (const std::exception &e) {
+                    CosService::adaugaPachetCreat(
+                        clientCurent,
+                        comandaActiva,
+                        pachetCreat
+                    );
+                    std::cout << "Pachetul personalizat a fost adaugat in cos.\n";
+                }
+                catch (const std::exception& e) {
                     std::cout << "Eroare: " << e.what() << "\n";
                 }
+
                 break;
             }
             case 0:
                 break;
-
             default:
-                std::cout << "Optiune invalida!\n";
+                std::cout<<"Optiune Invalida!\n";
+        }
+    }
+}
+void BookStoreManager::afisazaContinutPachet(const AppState &app, int idx) {
+    auto pachet = app.pachetePredefinite[idx];
+
+    std::cout << "\n=== CONTINUT PACHET ===\n";
+    std::cout << "Identificator pachet: "
+            << pachet->getIdentificator() << "\n";
+
+    const auto& continut = pachet->getContinut();
+
+    if (continut.empty()) {
+        std::cout << "(Pachet gol)\n";
+        return;
+    }
+
+    for (size_t i = 0; i < continut.size(); ++i) {
+        if (continut[i]) {
+            std::cout << "  " << i << ". "
+                    << continut[i]->getTitlu()
+                    << " | ID: "
+                    << continut[i]->getIdentificator()
+                    << "\n";
+        }
+    }
+}
+// meniu stoc
+void BookStoreManager::meniuStocA(const AppState& app) {
+    const int idx = selecteazaPub(app);
+    if (idx == -1) {
+        std::cout << "Publicatia nu exista!\n";
+        return;
+    }
+
+    const auto pub = app.publicatii[idx];
+
+    int opt = -1;
+    while (opt != 0) {
+        std::cout << "\n--- MENIU STOC ---\n";
+        std::cout << "Titlu: " << pub->getTitlu() << "\n";
+        std::cout << "Stoc curent: " << pub->getcantitate() << "\n";
+        std::cout << "1. Adauga stoc\n";
+        std::cout << "2. Scade stoc\n";
+        std::cout << "3. Prioritate restoc\n";
+        std::cout << "0. Inapoi\n";
+        std::cout << "Optiune: ";
+
+        std::cin >> opt;
+
+        switch (opt) {
+            case 1: {
+                int cant;
+                std::cout<<"Introduceti cantitatea dorita: ";
+                std::cin>>cant;
+                InventoryService::adaugaStoc(*pub,cant);
+                break;
+            }
+            case 2: {
+                int cant;
+                std::cout<<"Introduceti cantitatea dorita de scazut: ";
+                std::cin>>cant;
+                InventoryService::scadeStoc(*pub,cant);
+                break;
+            }
+            case 3: {
+                auto lista = InventoryService::calculeazaPrioritateRestoc(app);
+
+                if (lista.empty()) {
+                    std::cout << "Nu exista publicatii.\n";
+                    break;
+                }
+
+                std::cout << "\n=== PRIORITATI RESTOC ===\n";
+                int poz = 1;
+                for (const auto& p : lista) {
+                    std::cout << poz++ << ". "
+                            << p.pub->getTitlu()
+                            << " | Stoc: " << p.pub->getcantitate()
+                            << " | Scor: " << p.scor << "\n";
+                }
+                break;
+            }
+            case 0: break;
+            default:
+                std::cout<<"Optiune invalida!";
         }
     }
 }
@@ -2732,31 +2687,109 @@ void BookStoreManager::CLIClient(AppState &app) {
 
 
 
-void BookStoreManager::afisareMeniuPrincipal(AppState&app) {
+void BookStoreManager::meniuTop(  AppState &app) {
     int opt = -1;
+
     while (opt != 0) {
-        std::cout << "\n=== LIBRARIE  ===\n";
-        std::cout << "1. Administrator\n";
-        std::cout << "2. Client\n";
-        std::cout << "0. Iesire\n";
+        std::cout << "\n=== TOPURI ===\n";
+        std::cout << "1. Top clienti (dupa suma cheltuita)\n";
+        std::cout << "2. Top autori (ierarhie)\n";
+        std::cout << "3. Top publicatii (popularitate)\n";
+        std::cout << "0. Inapoi\n";
         std::cout << "Optiune: ";
 
         std::cin >> opt;
+
         switch (opt) {
             case 1: {
-                CLIAdministrator(app);
+                if (app.clienti.empty()) {
+                    std::cout << "Nu exista clienti.\n";
+                    break;
+                }
+
+                auto lista = app.clienti;
+
+                std::ranges::sort(lista, [](const auto &a, const auto &b) {
+                    return a->getTotalCumparaturi() > b->getTotalCumparaturi();
+                });
+
+                std::cout << "\n=== TOP CLIENTI DUPA SUMA CHELTUITA ===\n";
+                int poz = 1;
+                for (const auto &c : lista) {
+                    std::cout << poz++ << ". "
+                            << c->getEmail()
+                            << " | Total cheltuit: "
+                            << c->getTotalCumparaturi()
+                            << " lei | Ierarhie: "
+                            << c->ierarhie_clienti()
+                            << "\n";
+                }
                 break;
             }
+
             case 2: {
-                CLIClient(app);
+                int opt1 = -1;
+                while (opt1 != 0) {
+                    std::cout << "\n--- TOP AUTORI ---\n";
+                    std::cout << "1. Productivitate\n";
+                    std::cout << "2. Scor renume\n";
+                    std::cout << "3. Ierarhie\n";
+                    std::cout << "0. Inapoi\n";
+                    std::cout << "Optiune: ";
+                    std::cin >> opt1;
+
+                    TipTopAutor tip;
+
+                    switch (opt1) {
+                        case 1:
+                            tip = TipTopAutor::PRODUCTIVITATE;
+                            break;
+                        case 2:
+                            tip = TipTopAutor::SCOR_RENUME;
+                            break;
+                        case 3:
+                            tip = TipTopAutor::IERARHIE;
+                            break;
+                        case 0:
+                            continue;
+                        default:
+                            std::cout << "Optiune invalida!\n";
+                            continue;
+                    }
+
+                    auto top = AutorService::getTopAutori(app,tip);
+
+                    if (top.empty()) {
+                        std::cout << "Nu exista autori.\n";
+                        continue;
+                    }
+
+                    std::cout << "\n=== TOP AUTORI ===\n";
+                    int poz = 1;
+
+                    for (const auto&[autor, productivitate, scor_renume, ierarhie] : top) {
+                        std::cout << poz++ << ". "
+                                << autor->getNume() << " "
+                                << autor->getprenume()
+                                << " | Prod: " << productivitate
+                                << " | Scor: " << scor_renume
+                                << " | Ierarhie: " << ierarhie
+                                << "\n";
+                    }
+
+                }
+                break;
+            }
+
+            case 3:
+                meniuTopPublicatiiPopularitate(app);
                 break;
 
-            }
-            case 0: {
+            case 0:
                 break;
-            }
+
             default:
-                std::cout<<"Optiune invalida!\n";
+                std::cout << "Optiune invalida.\n";
         }
     }
 }

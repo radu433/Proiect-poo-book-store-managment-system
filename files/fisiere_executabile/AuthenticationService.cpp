@@ -38,12 +38,7 @@ std::shared_ptr<Client> AuthenticatorService::creeazaClient(AppState &app, const
 
     app.clienti.push_back(client);
 
-    app.logs.push_back({
-        time(nullptr),
-        Tiplog::CONT_CREAT,
-        email,
-        "Cont client creat"
-    });
+    app.logs.push_back({time(nullptr),Tiplog::CONT_CREAT,email,"Cont client creat",username});
 
     return client;
 }
@@ -58,12 +53,8 @@ std::shared_ptr<Client> AuthenticatorService::autentifica(AppState &app, const s
         return client;
     }
 
-    app.logs.push_back({
-        time(nullptr),
-        Tiplog::AUTENTIFICARE_ESUATA,
-        identificator,
-        "Parola incorecta"
-    });
+    app.logs.push_back({time(nullptr),Tiplog::AUTENTIFICARE_ESUATA,identificator,"Parola incorecta",
+        client->getUsername()});
 
     return nullptr;
 }

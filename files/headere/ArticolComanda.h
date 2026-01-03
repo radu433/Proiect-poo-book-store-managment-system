@@ -10,7 +10,7 @@ private:
     std::shared_ptr<UnitateVanzare> unitate;
     int cantitate;
 public:
-    ArticolComanda(std::shared_ptr<UnitateVanzare> u, int c)
+    ArticolComanda(const std::shared_ptr<UnitateVanzare> &u, const int c)
         : unitate(u), cantitate(c) {}
 
     std::shared_ptr<UnitateVanzare> getUnitate() const {
