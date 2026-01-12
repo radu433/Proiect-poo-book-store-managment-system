@@ -37,8 +37,6 @@ public:
 
     [[nodiscard]] virtual int timp_estimat_lecturii() const override;
 
-    std::string getFrecventa()const{return frecventa;}
-
     virtual void seteazaReducere(int procent, int durata_zilei) override;
 
  double calculeazaPrioritateRestoc() const override;
@@ -51,6 +49,11 @@ public:
     bool este_colectionabila() const;
 
   std::string getIdentificator() const override;
+
+    int getNrE() const {return numar_editie;}
+    bool areC() const {return are_cadou_suplimentar;}
+    TipPublicatie getTipPub() const override;
+
 
 };
 

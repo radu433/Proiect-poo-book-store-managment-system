@@ -3,20 +3,21 @@
 #define OOP_COSSERVICE_H
 #include "AppState.h"
 #include "UnitateVanzare.h"
+#include "Client.h"
 
 class CosService {
 public :
-    static void stergeDinCons(const std::shared_ptr<Comanda> &comandaActiva, int idxA);
+    static void stergeDinCons(Comanda* &comandaActiva, int idxA);
 
-     static void adaugaPachetPredefinit(const AppState& app,std::shared_ptr<Client>& clientCurent,std::shared_ptr<Comanda>& comandaActiva,
+     static void adaugaPachetPredefinit(const AppState& app, Client* clientCurent,Comanda*& comandaActiva,
          int idxP);
 
-    static void adaugaCarteIndividuala(std::shared_ptr<Client>& clientCurent,std::shared_ptr<Comanda>& comandaActiva,
+    static void adaugaCarteIndividuala( Client* clientCurent,Comanda*& comandaActiva,
     int cantitate, const std::shared_ptr<Publicatie> &publicatie,bool esteSH,const std::string& conditie,int luni);
-    static void adaugaPachetCreat(std::shared_ptr<Client>& clientCurent,std::shared_ptr<Comanda>& comandaActiva,
+    static void adaugaPachetCreat( Client* clientCurent,Comanda*& comandaActiva,
     const std::shared_ptr<UnitateVanzare> &pachet);
 
-    static void adaugaUnitataVanzare(std::shared_ptr<Client>& client,std::shared_ptr<Comanda>& comanda,
+    static void adaugaUnitataVanzare( AppState& app,Client* client,Comanda*& comanda,
     const std::shared_ptr<UnitateVanzare>& unitate);
 
 };

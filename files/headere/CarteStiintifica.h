@@ -12,14 +12,14 @@ private:
 
 public:
     // constructor cu parametrii
-    CarteStiintifica(const std::string &titlu, const std::shared_ptr<Autor> &autor, int cantitate,
+    CarteStiintifica(const std::string &titlu,  Autor* autor, int cantitate,
                      const std::string &data_publicatie, const std::string &isbn, double pret_baza,
                      const int numar_pagini, const std::string &editura, const std::string &domeniu,
                      const std::string &nivel_academic,
                      int nr_referinte, const bool are_formule_diagrame);
 
     // destructor
-    virtual ~CarteStiintifica()=default;
+     ~CarteStiintifica()override=default;
     // functii virtuale
 
     [[nodiscard]] virtual int timp_estimat_lecturii() const override;
@@ -30,7 +30,6 @@ public:
 
     [[nodiscard]] double calculeaza_valoarea_academica() const override;
 
-    virtual void seteazaReducere(int procent, int durata_zilei) override;
 
     // functii
     [[nodiscard]] const std::string &getDomeniu() const;
@@ -40,13 +39,14 @@ public:
 
     [[nodiscard]] double calculeazaFactorImpact() const;
 
-    [[nodiscard]] bool CompatibilaCuNivel(const std::string &nivel_studii) const;
 
-    [[nodiscard]] double calculeazaPrioritateRestoc() const override;
 
-    bool areAutor(int idautor)const override;
+    int getNr_referinte()const{ return nr_referinte; }
+    bool areFormule()const { return are_formule_diagrame; }
 
     //operator <<
     void afisare(std::ostream &out) const override;
+    TipPublicatie getTipPub() const override;
+
 };
 #endif //OOP_CARTESTIINTIFICA_H

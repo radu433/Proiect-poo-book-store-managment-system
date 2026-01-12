@@ -23,8 +23,6 @@ private:
     double totalcumparaturi;
     std::vector<std::string> istoric_identificatori;
     int pct_fidelitate;
-    std::vector<std::shared_ptr<Publicatie> > istoric_cumparaturi;
-    std::shared_ptr<Comanda> comandaActiva = nullptr;
     double reducereLaUrmC=0.0;
 
 public:
@@ -56,9 +54,9 @@ public:
 
     std::string ierarhie_clienti() const;
 
-    void adaugaComanda(double valoare, const std::vector<std::shared_ptr<Carte> > &carti_cumparate);
+    void finalizeazaComanda(double valoare,const std::vector<std::string>& ids);
 
-    std::vector<PublicatieSugestie> genereazaSugestii() const;
+
 
 
     double foloseste_pct_fidelitate(int pct_utilizate);
@@ -73,7 +71,7 @@ public:
 
     [[nodiscard]] int getPunctedeFideliate() const;
 
-    [[nodiscard ]] std::string getTelefon() const;
+    [[nodiscard ]]const  std::string& getTelefon() const;
 
     bool verificaParola(const std::string &parolaIntrodusa) const;
 
@@ -86,6 +84,16 @@ public:
     void adugaredVit(double reducere);
 
     bool aCumparatPub(const std::string& identificator) const ;
+
+    std::string serialize() const;
+
+    Client deserialize(const std::string &line);
+
+    std::string getP() const {return parola;}
+    const Adresa& getAdresa() const {return adresa_livrare;}//pt afisat
+    double getReducereLaUrm() const { return reducereLaUrmC; }
+
+    Adresa& getadresa(){return adresa_livrare;}// pt modificat
 
 
 };

@@ -11,38 +11,36 @@ class BookStoreManager {
 private:
     std::shared_ptr<Client> clientCurent;
     std::shared_ptr<Comanda> comandaActiva;
+    AppState& app;
+
+ template<typename T>
+   void topPopularitatePeTip(const std::string &numeTip);
 
     // afisarea reducerilor active
-    static void afiseazaReduceriActive(const AppState& app);
+    void afiseazaReduceriActive() const;
     // meniuri principale
-    void afisareMeniuPrincipal(AppState& app);
+    void afisareMeniuPrincipal();
 
-    static void CLIAdministrator(AppState& app);
-    void CLIClient(AppState& app);
+     void CLIAdministrator();
+    void CLIClient();
 
     // submeniuri Administrator
-    static void meniuPublicatiiA(AppState& app);
+     void meniuPublicatiiA() const;
     void meniuAdaugaPublicatie();
-
-    static void meniuReviewuri(AppState& app);
-
-    static void meniuAutorA(AppState& app);
-
-    static void meniuClientA(AppState& app);
-
-    static void meniuComenziA( const AppState& app);
-
-    static void meniuStatisticiA( AppState& app);
-
+     void meniuReviewuri() const;
+     void meniuAutorA() const;
+     void meniuClientA() const;
+    void meniuComenziA() const;
+    void meniuStatisticiA();
     void aplicaReducerePublicatii();
 
     //submeniuri Client
-    void meniuCautaPublicatii(AppState& app);
+    void meniuCautaPublicatii();
 
-     void meniuSH_Tradein(AppState& app);
-    static void meniuCosCumparaturi(const AppState& app,std::shared_ptr<Client>& clientCurent,std::shared_ptr<Comanda>& comandaActiva);
-    void adaugaReview_Rating(AppState& app) const;// clasa de publicatii
-    void meniuDetaliiCont(const AppState& app) const;
+     void meniuSH_Tradein();
+    void meniuCosCumparaturi();
+    void adaugaReview_Rating() const;// clasa de publicatii
+    void meniuDetaliiCont() const;
 
     void afiseazaReducere();
     //functii din meniu clienti
@@ -51,50 +49,51 @@ private:
     void alimentareCont();//clasa client
 
     // autentificare client+reare cont
-    static std::shared_ptr<Client> autentificareClientUI(AppState& app);
+    std::shared_ptr<Client> autentificareClientUI() const;
 
-    static void creareContClientUI(AppState& app);
+     void creareContClientUI() const;
 
     //motoare de cautare pub/autori/clienti pt administartor
-    static int selecteazaPub(const AppState& app);
+      int selecteazaPub() const ;
 
-    static std::shared_ptr<Autor> selecteazaAutor(AppState& app);
+    const Autor* selecteazaAutor() const;
 
-    static int filtreazaClienti(const AppState& app);
+     int filtreazaClienti() const;
 
-    static int filtreComanda(const AppState& app);
+     int filtreComanda() const;
 
     // motor de cautare client+functie de vizualizare review+adauga in cos
-    static std::shared_ptr<Publicatie> selecteazaPubClient( AppState& app);
+     std::shared_ptr<Publicatie> selecteazaPubClient() const;
 
-    static void afiseazaReviewuriClient(const AppState& app, const std::string& idP);
+    void afiseazaReviewuriClient( const std::string& idP) const;
 
     // meniu adaugare publicatii+ functiile lor
-    static void adaugaPub(AppState& app);
-    static void adaugaCarte(AppState& app);
-    static void adaugaManual(AppState& app);
-    static void adaugaCarteStiintifica(AppState& app);
-    static void adaugaRevista(AppState& app);
-     static std::shared_ptr<Autor> gasesteSauCreeazaAutorDupaISBN(AppState& app, const std::string& isbn);
+    void adaugaPub() const;
+     void adaugaCarte() const;
+    void adaugaManual() const;
+     void adaugaCarteStiintifica() const;
+     void adaugaRevista() const;
+      const Autor* gasesteSauCreeazaAutorDupaISBN(const std::string& isbn) const;
 
     // meniu adauga pachete(predefinite + create pe loc)
-    static void meniuAdaugaPachete(const AppState& app,std::shared_ptr<Client>& clientCurent,std::shared_ptr<Comanda>& comandaActiva);
+     void meniuAdaugaPachete();
 
-    static void afisazaContinutPachet(const AppState& app, int idx);
+     void afisazaContinutPachet(int idx) const;
     //meniu stoc
 
-    static void meniuStocA(const AppState& app);
+     void meniuStocA() const;
 
     //meniu statistici admin
-    static void meniuStatisticaDistributieTip(const AppState& app);
-   static void meniuTopPublicatiiPopularitate(const AppState& app);
-    static void meniuTopPopularitatePeTip(const AppState& app);
-    static void topPopulariatateoverall(const AppState& app);
-    static void meniuStatisticiPublicatii(const AppState &app);
-    static void meniuTop( AppState& app);
+     void meniuStatisticaDistributieTip() const;
+    void meniuTopPublicatiiPopularitate();
+     void meniuTopPopularitatePeTip();
+     void topPopulariatateoverall() const;
+    void meniuStatisticiPublicatii();
+     void meniuTop();
 
 public:
-   void run(AppState& app);
+ explicit BookStoreManager(AppState& app);
+   void run();
 
 };
 

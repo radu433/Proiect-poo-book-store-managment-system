@@ -2,34 +2,36 @@
 #include "../headere/PachetSerie.h"
 #include"../exceptii/exceptii_headere/LibrarieException.h"
 #include "../exceptii/exceptii_headere/ComandaExceptions.h"
+#include "../exceptii/exceptii_headere/StocException.h"
 #include "../headere/CarteIndividuala.h"
 #include "../headere/Comanda.h"
 #include "../headere/RevistaIndividuala.h"
 
 
-void CosService::stergeDinCons(const std::shared_ptr<Comanda> &comandaActiva, const int idxA) {
+void CosService::stergeDinCons( Comanda*& comandaActiva, const int idxA) {
     if (!comandaActiva)
         throw ComandaGoalaException();
     comandaActiva->stergeArticol(idxA);
 }
 
-void CosService::adaugaPachetPredefinit(const AppState &app, std::shared_ptr<Client> &clientCurent,
-    std::shared_ptr<Comanda> &comandaActiva, const int idxP) {
-    if (idxP < 0 || idxP >= static_cast<int>(app.pachetePredefinite.size()))
+void CosService::adaugaPachetPredefinit(const AppState &app, Client* clientCurent,
+    Comanda* &comandaActiva, const int idxP) {
+    if (idxP < 0 || idxP >= static_cast<int>(app.getPachetePredefinite().size()))
         throw DateInvalideException("Index pachet invalid");
 
-    const auto unitate = app.pachetePredefinite[idxP]->clone();
+    const auto unitate = app.getPachetePredefinite()[idxP].clone();
 
-    if (!comandaActiva)
-        comandaActiva = std::make_shared<Comanda>(clientCurent);
+    if (!comandaActiva) {
 
+
+    }
     comandaActiva->adaugaArticol(unitate, 1);
 }
 
 
 
-void CosService::adaugaCarteIndividuala( std::shared_ptr<Client> &clientCurent,
-                                        std::shared_ptr<Comanda> &comandaActiva,  int cantitate,
+void CosService::adaugaCarteIndividuala( Client* clientCurent,
+                                        Comanda* &comandaActiva,  int cantitate,
                                         const std::shared_ptr<Publicatie> &publicatie,bool esteSH,const std::string& conditie,int luni) {
     if (!publicatie)
         throw DateInvalideException("Publicatia este inexistenta!");
@@ -62,7 +64,7 @@ void CosService::adaugaCarteIndividuala( std::shared_ptr<Client> &clientCurent,
     comandaActiva->adaugaArticol(unitate, cantitate);
 }
 
-void CosService::adaugaPachetCreat(std::shared_ptr<Client> &clientCurent, std::shared_ptr<Comanda> &comandaActiva,
+void CosService::adaugaPachetCreat(Client* clientCurent, Comanda* &comandaActiva,
     const std::shared_ptr<UnitateVanzare> &pachet) {
     if (!pachet)
         throw DateInvalideException("Pachet invalid!");
@@ -73,13 +75,19 @@ void CosService::adaugaPachetCreat(std::shared_ptr<Client> &clientCurent, std::s
     comandaActiva->adaugaArticol(pachet, 1);
 }
 
-void CosService::adaugaUnitataVanzare(std::shared_ptr<Client> &client, std::shared_ptr<Comanda> &comanda,
-    const std::shared_ptr<UnitateVanzare> &unitate) {
+void CosService::adaugaUnitataVanzare(AppState& app,Client* client,Comanda*& comanda,
+    const std::shared_ptr<UnitateVanzare>& unitate) {
     if (!client)
         throw DateInvalideException("Client invalid!");
 
-    if (!comanda)
-        comanda = std::make_shared<Comanda>(client);
+    if (!unitate->valideazaDisponibilitate()) {
+        throw StocException("Produs indisponibil pentru vanzare!");
+    }
+    if (!comanda) {
+        app.adaugaComanda(Comanda(*client));
+        comanda = &app.getComanda().back();
+    }
+
 
     comanda->adaugaArticol(unitate, 1);
 }

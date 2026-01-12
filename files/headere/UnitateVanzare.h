@@ -13,7 +13,7 @@
 
 class UnitateVanzare {
 private:
-    const int id_unic;
+     int id_unic;
     static int id_contor_global;
 
 
@@ -24,11 +24,14 @@ protected:
 
     std::shared_ptr<Publicatie> produs_principal;
 
+    UnitateVanzare()=default;
     // Constructor pt derivate de tip carte
     explicit UnitateVanzare(std::shared_ptr<Publicatie> produs);
 
     // constructor pt derivate de tip revista
     explicit UnitateVanzare(std::shared_ptr<Revista> revista);
+    // constructor pt load
+    explicit UnitateVanzare(int id, std::shared_ptr<Publicatie> produs);
 
     // Operator=
     UnitateVanzare& operator=(const UnitateVanzare&) = delete;
@@ -86,7 +89,6 @@ public:
 
     // healpere pt data
     [[nodiscard]] int calculeazaZileDetinere() const;
-    [[nodiscard]] std::string getDataCumparareFormatata() const;
 };
 
 #endif //OOP_UNITATEVANZARE_H

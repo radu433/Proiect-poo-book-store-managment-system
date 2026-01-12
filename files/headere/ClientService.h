@@ -4,19 +4,20 @@
 #define OOP_CLIENTSERVICE_H
 #include "AppState.h"
 #include "Client.h"
+#include "Publicatie.h"
 
-
+enum class TipPublicatie;
 
 struct ClientStats {
-    int totalClienti;
-    int activi;
-    int inactivi;
-    int vip;
-    int totalComenzi;
-    double totalVanzari;
+    int totalClienti=0;
+    int activi=0;
+    int inactivi=0;
+    int vip=0;
+    int totalComenzi=0;
+    double totalVanzari=0.0;
 
-    std::shared_ptr<Client> maxComenzi;
-    std::shared_ptr<Client> maxCheltuieli;
+    const Client* maxComenzi=nullptr;
+    const Client* maxCheltuieli=nullptr;
 };
 struct ClientDetalii {
     std::string username;
@@ -32,24 +33,18 @@ public:
     static ClientStats calculeazaStatistici(const AppState& app);
 
     static ClientDetalii getDetaliiClient(const Client& c);
+
+    static std::vector<PublicatieSugestie> genereazaSugestii(const Client& client, const AppState& app);
 };
 
 inline ClientStats ClientService::calculeazaStatistici(const AppState &app) {
     ClientStats stats{};
 
-    stats.totalClienti = static_cast<int>(app.clienti.size());
-    stats.activi = 0;
-    stats.inactivi = 0;
-    stats.vip = 0;
-    stats.totalComenzi = 0;
-    stats.totalVanzari = 0.0;
+    stats.totalClienti = static_cast<int>(app.getClient().size());
 
-    stats.maxComenzi = nullptr;
-    stats.maxCheltuieli = nullptr;
-
-    for (const auto& c : app.clienti) {
-        const int nrC = c->getNumarComenzi();
-        const double totalV = c->getTotalCumparaturi();
+    for (const auto& c : app.getClient()) {
+        const int nrC = c.getNumarComenzi();
+        const double totalV = c.getTotalCumparaturi();
 
         stats.totalComenzi += nrC;
         stats.totalVanzari += totalV;
@@ -57,20 +52,19 @@ inline ClientStats ClientService::calculeazaStatistici(const AppState &app) {
         if (nrC > 0)
             stats.activi++;
 
-        if (c->esteVIP())
+        if (c.esteVIP())
             stats.vip++;
 
         if (!stats.maxComenzi || nrC > stats.maxComenzi->getNumarComenzi()) {
-            stats.maxComenzi = c;
+            stats.maxComenzi = &c;
         }
 
         if (!stats.maxCheltuieli || totalV > stats.maxCheltuieli->getTotalCumparaturi()) {
-            stats.maxCheltuieli = c;
+            stats.maxCheltuieli = &c;
         }
     }
 
     stats.inactivi = stats.totalClienti - stats.activi;
-
     return stats;
 }
 
@@ -86,5 +80,36 @@ inline ClientDetalii ClientService::getDetaliiClient(const Client &c) {
     det.ierarhie = c.ierarhie_clienti();
 
     return det;
+}
+
+inline std::vector<PublicatieSugestie> ClientService::genereazaSugestii(const Client& client, const AppState& app) {
+    std::map<TipPublicatie, int> statistica;
+
+    for (const auto& id: client.getIstoricIdentificatori()) {
+        auto pub=app.gasestePublicatie(id);
+        if (!pub)
+            continue;
+        statistica[pub->getTipPub()]++;
+
+    }
+    auto count = [&](TipPublicatie tip) {
+        auto it = statistica.find(tip);
+        return (it != statistica.end()) ? it->second : 0;
+    };
+    std::vector<PublicatieSugestie> sugestii;
+    if (count(TipPublicatie::Manual) > 0) {
+        sugestii.emplace_back("Manuale","Ai cumparat manuale – iti recomandam auxiliare.","Manual");
+    }
+    if (count(TipPublicatie::Cartestiintifica) > 1) {
+        sugestii.emplace_back("Stiinta","Pare ca iti place stiinta – vezi enciclopediile noastre.","Stiinta");
+    }
+
+    if (count(TipPublicatie::Revista) > 0) {
+        sugestii.emplace_back("Reviste","Te poti abona la revistele tale preferate.","Revista");
+    }
+
+    return sugestii;
+
+
 }
 #endif //OOP_CLIENTSERVICE_H

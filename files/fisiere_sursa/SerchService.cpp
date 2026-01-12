@@ -47,32 +47,32 @@ std::vector<int> SerchService::filtreazaPublicatiiDupaAutor(
 }
 // autor
 std::vector<int> SerchService::filtreazaAutoriNume(
-    const std::vector<std::shared_ptr<Autor>>& autori,
+    const std::vector<Autor>& autori,
     const std::string& nume
 ) {
     std::vector<int> rez;
     for (int i = 0; i < static_cast<int>(autori.size()); ++i) {
-        if (autori[i]->getNume().find(nume) != std::string::npos ||
-            autori[i]->getprenume().find(nume) != std::string::npos)
+        if (autori[i].getNume().find(nume) != std::string::npos ||
+            autori[i].getprenume().find(nume) != std::string::npos)
             rez.push_back(i);
     }
     return rez;
 }
 // clienti
 std::vector<int> SerchService::filtreazaClientiUsername(
-    const std::vector<std::shared_ptr<Client>>& clienti,
+    const std::vector<Client>& clienti,
     const std::string& username
 ) {
     std::vector<int> rez;
     for (int i = 0; i < static_cast<int>(clienti.size()); ++i) {
-        if (clienti[i]->getUsername().find(username) != std::string::npos)
+        if (clienti[i].getUsername().find(username) != std::string::npos)
             rez.push_back(i);
     }
     return rez;
 }
 
 std::vector<int> SerchService::filtreazaClientiEmail(
-    const std::vector<std::shared_ptr<Client>>& clienti,
+    const std::vector<Client>& clienti,
     const std::string& email
 ) {
     std::vector<int> rez;
@@ -84,34 +84,10 @@ std::vector<int> SerchService::filtreazaClientiEmail(
 }
 // comenzi
 std::vector<int> SerchService::toateComenzile(
-    const std::vector<std::shared_ptr<Comanda>>& comenzi
+    const std::vector<Comanda>& comenzi
 ) {
     std::vector<int> rez;
     for (int i = 0; i < static_cast<int>(comenzi.size()); ++i)
         rez.push_back(i);
-    return rez;
-}
-
-std::vector<int> SerchService::comenziDupaClient(
-    const std::vector<std::shared_ptr<Comanda>>& comenzi,
-    const std::shared_ptr<Client>& client
-) {
-    std::vector<int> rez;
-    for (int i = 0; i < static_cast<int>(comenzi.size()); ++i) {
-        if (comenzi[i] && comenzi[i]->getClient() == client)
-            rez.push_back(i);
-    }
-    return rez;
-}
-
-std::vector<int> SerchService::comenziDupaStare(
-    const std::vector<std::shared_ptr<Comanda>>& comenzi,
-    const std::string& stare
-) {
-    std::vector<int> rez;
-    for (int i = 0; i < static_cast<int>(comenzi.size()); ++i) {
-        if (comenzi[i] && comenzi[i]->getStare() == stare)
-            rez.push_back(i);
-    }
     return rez;
 }

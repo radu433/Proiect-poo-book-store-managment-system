@@ -92,6 +92,6 @@ double TradeInService::proceseazaTradeIn(Client &client, const UnitateVanzare &v
         throw DateInvalideException("Optiune trade-in invalida!");
     }
 
-    app.stocSH.push_back(vechi.clone());
+    app.adaugaSH(vechi.clone());
     return valoare;
 }

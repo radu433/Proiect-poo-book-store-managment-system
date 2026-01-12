@@ -10,7 +10,7 @@
 
 int UnitateVanzare::id_contor_global = 0;
 
-// --- CONSTRUCTORI ---
+//constructori
 
 UnitateVanzare::UnitateVanzare(std::shared_ptr<Publicatie> produs)
     : id_unic(++id_contor_global),
@@ -30,13 +30,19 @@ UnitateVanzare::UnitateVanzare(std::shared_ptr<Revista> revista): id_unic(++id_c
     }
 }
 
+UnitateVanzare::UnitateVanzare(int id, std::shared_ptr<Publicatie> produs) : id_unic(id), produs_principal(std::move(produs))
+{
+    if (id > id_contor_global) id_contor_global = id;
+    if (!produs_principal) throw DateInvalideException("UnitateVanzare null!");
+}
+
 UnitateVanzare::UnitateVanzare(const UnitateVanzare &other)
     : id_unic(++id_contor_global), // ID nou la copiere
       produs_principal(other.produs_principal)
 {
 }
 
-// --- GETTERE ---
+//geteri
 
 std::shared_ptr<Publicatie> UnitateVanzare::getProdusPrincipal() const {
     return produs_principal;
@@ -54,15 +60,12 @@ int UnitateVanzare::getCantitate() const { // Corectat typo
     return produs_principal->getcantitate();
 }
 
-
-
-// --- LOGICĂ ---
 int UnitateVanzare::calculeazaLuniDetinere() const {
     return calculeazaZileDetinere() / 30;
 }
 
 bool UnitateVanzare::valideazaDisponibilitate() const {
-    // Apelează funcția virtuală care știe să verifice pachetele corect
+
     return verificaStocSuficient(1);
 }
 
@@ -80,16 +83,8 @@ int UnitateVanzare::calculeazaZileDetinere() const {
     return static_cast<int>(sec / (60 * 60 * 24));
 }
 
-std::string UnitateVanzare::getDataCumparareFormatata() const {
-    const std::tm* tm_info = std::localtime(&data_cumparare);
-    if (!tm_info) return "Data invalida";
 
-    std::ostringstream ss;
-    ss << std::put_time(tm_info, "%d/%m/%Y");
-    return ss.str();
-}
-
-// --- AFIȘARE ---
+//afisare
 
 void UnitateVanzare::afisare(std::ostream &out) const {
     out << "[ID:" << id_unic << "] " << getNumeProdus();

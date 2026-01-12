@@ -14,7 +14,7 @@
 
 class Carte : public Publicatie {
 private:
-    std::shared_ptr<Autor> autor;
+    const Autor* autor;
     std::string isbn;
 
     // atribute statice
@@ -26,7 +26,7 @@ private:
 public:
     // constructor cu parametrii
 
-    Carte(const std::string &titlu, std::shared_ptr<Autor> autor, int cantitate, const std::string &data_publicatie,
+    Carte(const std::string &titlu,  Autor* autor, int cantitate, const std::string &data_publicatie,
           const std::string &isbn, double pret_baza, int numar_pagini, const std::string &editura);
 
     // destructor virtual
@@ -46,7 +46,6 @@ public:
 
     void adauga_stoc(int nr_buc) override;
 
-    void adauga_rating(int rating) override;
 
     [[nodiscard]] int cumparaDupaPopularitate(const Carte &alta) const;
 
@@ -65,10 +64,6 @@ public:
 
     [[nodiscard]] int timp_estimat_lecturii() const override;
 
-    [[nodiscard]] int getcantitate() const override;
-
-    [[nodiscard]] double getpretbaza() const override;
-
     void seteazaReducere(int procent, int durata_zilei) override;
 
     std::string getIdentificator() const override;
@@ -76,8 +71,10 @@ public:
     // gettere
     [[nodiscard]] const std::string &getISBN() const;
 
-    [[nodiscard]] Autor &getAutor() const;
+    [[nodiscard]] const Autor *getAutor() const;
 
     bool areAutor(int idautor) const override;
+
+    TipPublicatie getTipPub() const override ;
 };
 #endif //OOP_CARTE_H

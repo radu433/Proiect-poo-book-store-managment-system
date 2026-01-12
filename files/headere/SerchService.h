@@ -13,7 +13,7 @@ class Client;
 class Comanda;
 
 class SerchService {
-    public:
+public:
     // tamplate pt folosirea serch barului pt publicatii autori si clienti
     template <typename T, typename Predicate>
    static std::vector<int> search(const std::vector<std::shared_ptr<T>>& lista,Predicate pred) {
@@ -40,35 +40,23 @@ class SerchService {
     // autori
 
     static std::vector<int> filtreazaAutoriNume(
-        const std::vector<std::shared_ptr<Autor>>& autori,
+        const std::vector<Autor>& autori,
         const std::string& nume
     );
 
     //client
     static std::vector<int> filtreazaClientiUsername(
-        const std::vector<std::shared_ptr<Client>>& clienti,
+        const std::vector<Client>& clienti,
         const std::string& username
     );
 
     static std::vector<int> filtreazaClientiEmail(
-        const std::vector<std::shared_ptr<Client>>& clienti,
+        const std::vector<Client>& clienti,
         const std::string& email
     );
     // comenzi
     static std::vector<int> toateComenzile(
-    const std::vector<std::shared_ptr<Comanda>>& comenzi
+    const std::vector<Comanda>& comenzi
 );
-
-    static std::vector<int> comenziDupaClient(
-        const std::vector<std::shared_ptr<Comanda>>& comenzi,
-        const std::shared_ptr<Client>& client
-    );
-
-    static std::vector<int> comenziDupaStare(
-        const std::vector<std::shared_ptr<Comanda>>& comenzi,
-        const std::string& stare
-    );
 };
-
-
 #endif //OOP_SERCHSERVICE_H

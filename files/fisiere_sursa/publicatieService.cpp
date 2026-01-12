@@ -14,29 +14,15 @@ void PublicatieService::adaugarePublicatie(AppState &app, const std::shared_ptr<
         throw DateInvalideException("Publicatie invalida");
     }
 
-    app.publicatii.push_back(pub);
+    app.adaugaPublicatie(pub);
 }
 
 void PublicatieService::stergePublicatie(AppState &app, const std::string& identificator) {
 
-       const auto it = std::ranges::remove_if(app.publicatii
-                                        ,
-                                        [&](const std::shared_ptr<Publicatie>& p) {
-                                            return p && p->getIdentificator() == identificator;
-                                        }).begin();
-
-       if (it == app.publicatii.end()) {
-           throw std::runtime_error("Publicatia nu exista");
+       if (!app.stergePublicatie(identificator)) {
+           throw DateInvalideException("Publicatie nu este activa");
        }
-
-       app.publicatii.erase(it, app.publicatii.end());
-
-
-       std::erase_if(
-           app.reviews,
-           [&](const Review& r) {
-               return r.identificator_publicatie == identificator;
-           });
+    app.stergeReviewPublicatie(identificator);
 }
 
 void PublicatieService::dezactivarePublicatie(const std::shared_ptr<Publicatie> &pub) {
@@ -78,18 +64,12 @@ void PublicatieService::adaugaReview_Rating(AppState &app, const Client &client,
         verificat = true;
     }
 
-    app.adaugaReview(
-        username,
-        identificator,
-        rating,
-        text,
-        verificat
-    );
+    app.adaugaReview(username,identificator,rating,text,verificat);
 
 
 }
 
-std::shared_ptr<Publicatie> PublicatieService::cloneazaPublicatie(AppState &app, const std::shared_ptr<Publicatie> &original,
+std::shared_ptr<Publicatie> PublicatieService::cloneazaPublicatie( const std::shared_ptr<Publicatie> &original,
     int stocInitial) {
     if (!original) {
         throw DateInvalideException("Publicatie invalida");
@@ -105,14 +85,12 @@ std::shared_ptr<Publicatie> PublicatieService::cloneazaPublicatie(AppState &app,
         copie->adauga_stoc(stocInitial);
     }
 
-    app.publicatii.push_back(copie);
-
     return copie;
 }
 
 StatPopularitate PublicatieService::statisticaDetaliata(const AppState &app) {
     StatPopularitate s;
-    for (const auto &p: app.publicatii) {
+    for (const auto &p: app.getPublicatii()) {
         if (const auto m = std::dynamic_pointer_cast<Manual>(p)) {
             s.sumaManual += m->CalculeazaScorPopularitate();
             s.nrManual++;

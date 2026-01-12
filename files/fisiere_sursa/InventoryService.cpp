@@ -22,7 +22,7 @@ void InventoryService::scadeStoc(Publicatie &p, int cantitate) {
 std::vector<PrioritateRestoc> InventoryService::calculeazaPrioritateRestoc(const AppState &app) {
     std::vector<PrioritateRestoc> rezultat;
 
-    for (const auto& p : app.publicatii) {
+    for (const auto& p : app.getPublicatii()) {
         const double popularitate = p->CalculeazaScorPopularitate();
         const int stoc = p->getcantitate();
 

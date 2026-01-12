@@ -73,7 +73,7 @@ bool Carte::vaidareisbn(const std::string &isbn_raw) {
 
 // constructor cu parametrii
 
-Carte::Carte(const std::string &titlu, std::shared_ptr<Autor> autor, int cantitate, const std::string &data_publicatie,
+Carte::Carte(const std::string &titlu,  Autor* autor, int cantitate, const std::string &data_publicatie,
              const std::string &isbn,
              double pret_baza, const int numar_pagini, const std::string &editura) : Publicatie(titlu, pret_baza,
     cantitate, data_publicatie, numar_pagini, editura), autor(std::move(autor)), isbn(isbn) {
@@ -129,13 +129,6 @@ void Carte::adauga_stoc(int nr_buc) {
         cantitate += nr_buc;
     else
         throw DateInvalideException("Nu poti adauga stoc negativ!");
-}
-
-void Carte::adauga_rating(const int rating) {
-    if (rating >= 1 && rating <= 5)
-        rating_clienti.push_back(rating);
-    else
-        throw DateInvalideException("Rating trebuie sa fie intre 1 si 5!");
 }
 
 
@@ -255,13 +248,6 @@ int Carte::timp_estimat_lecturii() const {
     return nr_pagini * 2;
 }
 
-int Carte::getcantitate() const {
-    return Publicatie::getcantitate();
-}
-
-double Carte::getpretbaza() const {
-    return Publicatie::getpretbaza();
-}
 
 void Carte::seteazaReducere(int procent, int durata_zilei) {
     reducere_procent = procent;
@@ -277,10 +263,14 @@ const std::string &Carte::getISBN() const {
     return isbn;
 }
 
-Autor &Carte::getAutor() const {
-    return *autor;
+const Autor *Carte::getAutor() const {
+    return autor;
 }
 
 bool Carte::areAutor(int idautor) const {
     return autor && autor->getidAutor() == idautor;
+}
+
+TipPublicatie Carte::getTipPub() const {
+    return TipPublicatie::Carte;
 }

@@ -4,7 +4,7 @@
 #include "../exceptii/exceptii_headere/DateInvalideException.h"
 
 // constructor cu parametrii
-CarteStiintifica::CarteStiintifica(const std::string &titlu, const std::shared_ptr<Autor> &autor, int cantitate,
+CarteStiintifica::CarteStiintifica(const std::string &titlu,  Autor* autor, int cantitate,
                                    const std::string &data_publicatie,
                                    const std::string &isbn, double pret_baza, const int numar_pagini,
                                    const std::string &editura, const std::string &domeniu,
@@ -113,9 +113,7 @@ double CarteStiintifica::calculeaza_valoarea_academica() const {
     return std::min(valoare, 100.0);
 }
 
-void CarteStiintifica::seteazaReducere(int procent, int durata_zilei) {
-    Carte::seteazaReducere(procent, durata_zilei);
-}
+
 
 double CarteStiintifica::calculeazaFactorImpact() const {
     double scor = 0.0;
@@ -141,27 +139,6 @@ double CarteStiintifica::calculeazaFactorImpact() const {
     return scor;
 }
 
-bool CarteStiintifica::CompatibilaCuNivel(const std::string &nivel_studii) const {
-    int nivelCititor = scorNivel(nivel_studii);
-    int nivelCarte = scorNivel(nivel_academic);
-
-    if (nivelCititor == 0 || nivelCarte == 0) {
-        throw DateInvalideException("Nivel academic necunoscut!");
-    }
-
-    // Cititorul trebuie sa aiba nivel >= nivelul cartii
-    return nivelCititor >= nivelCarte;
-}
-
-double CarteStiintifica::calculeazaPrioritateRestoc() const {
-    return Carte::calculeazaPrioritateRestoc();
-}
-
-bool CarteStiintifica::areAutor(int idautor) const {
-    return Carte::areAutor(idautor);
-}
-
-
 // operator<<
 void CarteStiintifica::afisare(std::ostream &out) const {
     Carte::afisare(out);
@@ -172,4 +149,8 @@ void CarteStiintifica::afisare(std::ostream &out) const {
     if (!esteDeActualitate()) {
         out << "  [ATENTIE]: Continut posibil invechit!\n";
     }
+}
+
+TipPublicatie CarteStiintifica::getTipPub() const {
+    return TipPublicatie::Cartestiintifica;
 }

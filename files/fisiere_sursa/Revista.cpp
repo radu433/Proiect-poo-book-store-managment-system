@@ -272,6 +272,10 @@ std::string Revista::getIdentificator() const {
     return ISSN;
 }
 
+TipPublicatie Revista::getTipPub() const {
+    return TipPublicatie::Revista;
+}
+
 
 
 

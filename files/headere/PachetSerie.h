@@ -3,16 +3,16 @@
 #ifndef OOP_PACHETSERIE_H
 #define OOP_PACHETSERIE_H
 #include "UnitateVanzare.h"
-
+enum class TipPachet {Bacalaureat,Trilogie, Stiintific,Literatura,Educativ,Mixt,Personalizat};
 class PachetSerie: public UnitateVanzare {
 private:
     std::string nume_pachet;
-    std::vector<std::shared_ptr<Publicatie>> continut;
-    std::vector<std::shared_ptr<UnitateVanzare>> continutSH;
-    std::string tip_pachet; // "Bacalaureat", "Trilogie", "Opere Complete"
+    std::vector<std::shared_ptr<UnitateVanzare>> continut;
+    TipPachet tip_pachet;
     bool este_complet;
-    bool esteSH=false;
 
+    void adaugaIntern(const std::shared_ptr<UnitateVanzare> &unitate);
+    friend class PachetSerieService;
 
 protected:
 
@@ -21,11 +21,11 @@ protected:
     public:
     // constructor cu parametrii pachete noi
 
-    PachetSerie(const std::vector<std::shared_ptr<Publicatie>> &continut, const std::string &nume_pachet,
-                const std::string &tip_pachet, bool este_complet);
+    explicit PachetSerie(const std::vector<std::shared_ptr<UnitateVanzare>> &continut, const std::string &nume_pachet,
+                const TipPachet tip, bool este_complet);
 
     // constructor cu parametrii pachete sh
-    PachetSerie( const std::vector<std::shared_ptr<UnitateVanzare>>& continutSH);
+   explicit  PachetSerie( const std::vector<std::shared_ptr<UnitateVanzare>>& continutSH);
     // constrcutor de copiere
     PachetSerie(const PachetSerie& other);
 
@@ -44,9 +44,8 @@ protected:
 
     bool verificaCompletitudine()const;
 
-    void adauga_volum(const std::shared_ptr<Carte> &carte);
 
-    const std::vector<std::shared_ptr<Publicatie>>& getContinut() const;
+    const std::vector<std::shared_ptr<UnitateVanzare>>& getContinut() const;
 
 
     // functii virtuale
@@ -61,6 +60,7 @@ protected:
     [[nodiscard]] std::string getDescriere() const override;
 
     [[nodiscard]] double getPretcomanda() const override;
+    static std::string transforma (TipPachet tip_pachet);
 };
 
 

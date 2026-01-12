@@ -13,7 +13,6 @@ private:
     int nr_pagini_invalid;
 public:
     explicit NumarPaginiInvalidException(int nr_pagini);
-    [[nodiscard]] int getNrPagini() const { return nr_pagini_invalid; }
 };
 
 class PaginareInconsistentaException : public PaginareException {

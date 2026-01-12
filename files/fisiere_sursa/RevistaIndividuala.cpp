@@ -49,10 +49,6 @@ std::string RevistaIndividuala::getIdentificator() const {
 
 
 
-void RevistaIndividuala::marcheazaSecondHand(const std::string &conditie, int luni_vechime) {
-    UnitateVanzare::marcheazaSecondHand(conditie, luni_vechime);
-}
-
 // afisare
 void RevistaIndividuala::afisare(std::ostream& out) const {
     out << "[Revista individuala]\n";

@@ -35,6 +35,5 @@ public:
     [[nodiscard]]  std::string getIdentificator() const override;
 
 
-    void marcheazaSecondHand(const std::string &conditie, int luni_vechime) override;
 };
 #endif //OOP_REVISTAINDIVIDUALA_H

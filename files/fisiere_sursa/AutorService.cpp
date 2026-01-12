@@ -4,6 +4,8 @@
 
 #include <algorithm>
 
+#include "../exceptii/exceptii_headere/AutorException.h"
+
 static int prioritateIerarhie(const std::string& i) {
     if (i == "Legendar") return 5;
     if (i == "Renumit") return 4;
@@ -12,7 +14,7 @@ static int prioritateIerarhie(const std::string& i) {
     return 1; // Incepator
 }
 
-AutorStat AutorService::getDetaliiAutor(const AppState&, const std::shared_ptr<Autor> &autor) {
+AutorStat AutorService::getDetaliiAutor(const AppState&, const Autor* autor) {
     AutorStat stat;
     stat.autor = autor;
     stat.productivitate = autor->calcproductivitate();
@@ -24,17 +26,14 @@ AutorStat AutorService::getDetaliiAutor(const AppState&, const std::shared_ptr<A
 
 
 
-std::vector<AutorStat> AutorService::getTopAutori( AppState &app, TipTopAutor tip) {
+std::vector<AutorStat> AutorService::getTopAutori( const AppState &app, const TipTopAutor tip) {
     std::vector<AutorStat> lista;
 
-    for (const auto& a : app.autor) {
-        AutorStat stat;
-        stat.autor = a;
-        stat.productivitate = a->calcproductivitate();
-        stat.scor_renume = a->calcscorrenume();
-        stat.ierarhie = a->ierarhie_a();
-        lista.push_back(stat);
+    for ( auto& a : app.getAutor()) {
+        lista.push_back({&a,a.calcproductivitate(),static_cast<double>(a.calcscorrenume()),
+            a.ierarhie_a()});
     }
+
 
     switch (tip) {
         case TipTopAutor::PRODUCTIVITATE:
@@ -63,7 +62,18 @@ std::vector<AutorStat> AutorService::getTopAutori( AppState &app, TipTopAutor ti
 
 }
 
-void AutorService::adaugaAutor(AppState &app, const std::shared_ptr<Autor> &autor) {
-    app.autor.push_back(autor);
+void AutorService::adaugaAutor(AppState &app, const Autor* autor) {
+    app.adaugaAutor(*autor);
+}
+
+void AutorService::asociazaCarte( AppState& app, const std::string& isbn, const std::string& numeA, const std::string& prenumeA) {
+    for (auto& a : app.getAutor1()) {
+        if (a.getNume() == numeA && a.getprenume() == prenumeA) {
+            a.adauga_carte(isbn);
+            return;
+        }
+    }
+    throw AutorException("Autorul nu a fost gasit");
+
 }
 

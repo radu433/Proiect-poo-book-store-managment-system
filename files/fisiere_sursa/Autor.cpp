@@ -22,6 +22,12 @@ Autor::Autor(const std::string &nume, const std::string &prenume, int varsta) : 
     }
 }
 
+Autor::Autor(int id, const std::string &nume, const std::string &prenume, int varsta) : nume(nume), prenume(prenume),
+varsta(varsta), numar_premii(0), idautor(id)
+{
+    if (id > nextidautor) nextidautor = id;
+}
+
 // getteri
 const std::string &Autor::getNume() const {
     return nume;
@@ -96,4 +102,13 @@ std::string Autor::ierarhie_a() const {
 
 int Autor::getidAutor() const {
     return idautor;
+}
+
+const std::vector<std::string> & Autor::getCartiScrise() const {
+    return carti_scrise;
+}
+
+bool Autor::areCarte(const std::string &idx) const{
+    return std::ranges::find(carti_scrise,idx) != carti_scrise.end();
+
 }

@@ -13,12 +13,12 @@
 
 class ReducereService {
     public:
-    static void aplicaReducerePublicatii(AppState& app);
+    static void aplicaReducerePublicatii(  AppState& app);
     static double calculeazaPretFinalCuReduceri(const AppState& app,const std::shared_ptr<Publicatie>& p);
 };
 
-inline void ReducereService::aplicaReducerePublicatii(AppState &app) {
-    if (app.publicatii.empty())
+inline void ReducereService::aplicaReducerePublicatii( AppState &app) {
+    if (app.getPublicatii().empty())
         return;
 
     std::time_t t = std::time(nullptr);
@@ -32,7 +32,7 @@ inline void ReducereService::aplicaReducerePublicatii(AppState &app) {
 
     std::vector<std::shared_ptr<Publicatie>> candidati;
 
-    for (const auto& p : app.publicatii) {
+    for (const auto& p : app.getPublicatii()) {
         if (tip == CARTE &&
             std::dynamic_pointer_cast<Carte>(p) &&
             !std::dynamic_pointer_cast<Manual>(p) &&
@@ -60,18 +60,13 @@ inline void ReducereService::aplicaReducerePublicatii(AppState &app) {
 
     const int nr = std::min(4, static_cast<int>(candidati.size()));
 
-    app.reduceri.clear();
+    app.stergetoatReducerile();
 
     std::time_t start = t;
     std::time_t sfarsit = t + 24 * 60 * 60;
 
     for (int i = 0; i < nr; ++i) {
-        app.reduceri.emplace_back(
-            candidati[i],
-            procent,
-            start,
-            sfarsit
-        );
+        app.adaugaReduceri(Reducere(candidati[i],procent,start,sfarsit));
     }
 }
 
@@ -82,7 +77,7 @@ calculeazaPretFinalCuReduceri(const AppState &app, const std::shared_ptr<Publica
 
     double pret = p->getPretFinal();
 
-    for (const auto& r : app.reduceri) {
+    for (const auto& r : app.getReducere()) {
         if (r.seAplicaLa(p)) {
             pret -= pret * r.getProcent() / 100.0;
             break; // o singura reducere

@@ -17,19 +17,25 @@
 #include "../headere/CarteIndividuala.h"
 int Comanda::global_id_comanda=0;
 // healper
-std::vector<std::string> Comanda::extrageISBN() const {
-    std::vector<std::string> isbn_list;
+std::vector<std::string> Comanda::extrageIdentificatori() const {
+    std::vector<std::string> idf_list;
 
     for (const auto& art : articole) {
         if (!art.getUnitate()) continue;
 
         for (int i = 0; i < art.getCantitate(); ++i) {
             auto lista = art.getUnitate()->getListaIdentificatori();
-            isbn_list.insert(isbn_list.end(), lista.begin(), lista.end());
+            idf_list.insert(idf_list.end(), lista.begin(), lista.end());
         }
     }
-    return isbn_list;
+    return idf_list;
 }
+
+Comanda::Comanda(Client &client1): client(&client1),stare_comanda("Noua"),id_comanda(++global_id_comanda),data_comanda(std::time(nullptr))
+{
+}
+
+
 
 std::vector<std::shared_ptr<Carte>> Comanda::extrageCarti() const {
     std::vector<std::shared_ptr<Carte>> rezultat;
@@ -56,19 +62,7 @@ std::vector<std::shared_ptr<Carte>> Comanda::extrageCarti() const {
     return rezultat;
 }
 
-// constructor cu parametrii
-Comanda::Comanda(const std::shared_ptr<Client>& c)
-    : client(c),stare_comanda("Noua"),id_comanda(++global_id_comanda),data_comanda(std::time(nullptr)) {
-    if (!client)
-        throw ClientInvalidException("Client invalid!");
 
-    std::cout << "Comanda #" << id_comanda << " creata la " << getDataFormatata() << "\n";
-}
-
-// destructor
-Comanda::~Comanda() {
-    std::cout << "Comanda #" << id_comanda << " distrusa\n";
-}
 
 // operator <<
 std::ostream& operator<<(std::ostream& out, const Comanda& cmd) {
@@ -76,9 +70,6 @@ std::ostream& operator<<(std::ostream& out, const Comanda& cmd) {
     out << "Data: " << cmd.getDataFormatata() << "\n";
     out << "Status: " << cmd.stare_comanda << "\n";
 
-    if (cmd.client) {
-        out << "Client: " << *cmd.client << "\n";
-    }
 
     out << "Articole in cos: " << cmd.articole.size() << "\n";
 
@@ -121,13 +112,10 @@ int Comanda::getNumarArticole() const {
     return static_cast<int>(articole.size());
 }
 
-std::shared_ptr<Client> Comanda::getClient() const {
-    return client;
-}
+
 // functii
 void Comanda::valideazaComanda() const {
-    if (!client)
-        throw ClientInvalidException("Client invalid");
+
     if (articole.empty())
         throw ComandaGoalaException();
     if (stare_comanda == "Anulata")
@@ -192,63 +180,25 @@ double Comanda::calculeazaTotal() const {
     for (const auto& art : articole) {
         auto unitate = art.getUnitate();
         if (!unitate) continue;
-
         double pret = unitate->getPretcomanda();
-
         if (std::dynamic_pointer_cast<PachetSerie>(unitate)) {
             pret *= 0.9;
             nrPachete += art.getCantitate();
         }
-
         total += pret * art.getCantitate();
         nrUnitati += art.getCantitate();
     }
-
     if (nrPachete >= 3) {
         total -= 50.0;
         std::cout << "Bonus 3+ pachete: -50 RON\n";
     }
-
-    double discount = client->calcdiscountpersonalizat();
-    total -= total * discount;
-
     if (nrUnitati >= 15) {
         double reducere = total * 0.05;
         total -= reducere;
         std::cout << "Reducere volum: -" << reducere << " RON\n";
     }
-
     return total;
 }
 
-double Comanda::finalizareComanda() {
-    valideazaComanda();
 
-    double total = calculeazaTotal();
-
-    if (client->getSold() < total)
-        throw SoldInsuficientException(client->getSold(), total);
-
-    for (const auto& art : articole) {
-        auto unitate = art.getUnitate();
-        if (!unitate) continue;
-
-        if (auto pachet = std::dynamic_pointer_cast<PachetSerie>(unitate)) {
-            if (!pachet->verificaCompletitudine())
-                throw DateInvalideException("Pachet incomplet");
-        }
-
-        unitate->scadeStoc(art.getCantitate());
-    }
-
-    auto carti = extrageCarti();
-    client->adaugaComanda(total, carti);
-
-    stare_comanda = "Finalizata";
-
-    std::cout << "Comanda #" << id_comanda << " finalizata. Total: "
-              << total << " RON\n";
-
-    return total;
-}
 //...

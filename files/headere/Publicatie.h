@@ -23,6 +23,8 @@ struct Data {
 
 };
 
+enum class TipPublicatie{Carte,Manual,Cartestiintifica,Revista, Necunoscut };
+
 class Publicatie {
 private:
     static bool este_valida_data( const std::string& data);
@@ -75,7 +77,7 @@ public:
 
     // functii pt tote derivatele
 
-    virtual void adauga_rating(int rating);
+
 
     [[nodiscard]] double getRatingMediu() const;
 
@@ -119,7 +121,6 @@ public:
 
     virtual bool Scade_stoc(int bucati);
 
-    void cresteCantitatea(int cantitate);
 
     virtual double reducere(int procent);
 
@@ -131,6 +132,7 @@ public:
     bool esteActiva() const {return activa;}
     void dezactiveaza() { activa = false; }
     void activeaza() { activa = true; }
+    virtual TipPublicatie getTipPub() const=0;
 
 
 

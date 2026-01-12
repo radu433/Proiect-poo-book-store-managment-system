@@ -178,11 +178,7 @@ bool Publicatie::Scade_stoc(int bucati) {
     return true;
 }
 
-void Publicatie::cresteCantitatea(const int cantitate_a) {
-    if (cantitate<= 0)
-        throw DateInvalideException("Cantitate invalida!");
-    this->cantitate+=cantitate_a;
-}
+
 
 double Publicatie::reducere(int procent) {
     if (procent < 0 || procent > 100) {
@@ -225,13 +221,6 @@ std::string Publicatie::determinaStatutStoc() const {
     } else {
         return "STOC ABUNDENT";
     }
-}
-
-void Publicatie::adauga_rating(int rating) {
-    if (rating<1 || rating>5) {
-        throw DateInvalideException("Eroare interna: rating invalid!");
-    }
-    rating_clienti.push_back(rating);
 }
 
 double Publicatie::getRatingMediu() const {

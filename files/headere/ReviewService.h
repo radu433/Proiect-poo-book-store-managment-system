@@ -8,7 +8,7 @@
 #include <vector>
 
 class AppState;
-struct Review;
+class Review;
 
 class ReviewService {
 private:
@@ -22,5 +22,9 @@ public:
     static std::vector<const Review *> getReviewuriNeverificate(const AppState &app, const std::string &id_pub);
 
     static void stergeReviewuriNeverificate(AppState& app,const std::string& id_pub,const std::vector<int>& indexuri);
+
+    static double calculeazaRatingPublicatieVerificate(AppState& app,const std::string& identificator_publicatie);
+
+    static double calculeazaRatingPublicatieall(AppState& app, const std::string& identificator_publicatie);
 };
 #endif //OOP_REVIEWSERVICE_H

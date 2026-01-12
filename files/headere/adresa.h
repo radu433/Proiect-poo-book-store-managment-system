@@ -8,26 +8,26 @@
 #include <ostream>
 
 class Adresa {
-public:
+private:
     std::string judet;
     std::string oras;
     std::string strada;
     int numar;
     std::string cod_postal;
 
-    // constructor
-    Adresa(const std::string &judet, const std::string &oras, const std::string &strada,
-           const int numar, const std::string &cond_postal);
+
 
     // operator <<
 
     friend std::ostream &operator<<(std::ostream &out, const Adresa &a);
 
-    // functii
+public:
+    // constructor
+    Adresa(const std::string &judet, const std::string &oras, const std::string &strada,
+           const int numar, const std::string &cond_postal);
 
     void modificaAdreasa(const std::string &judet, const std::string &oras,
-                         const std::string &strada, const std::string &cod_postal);
-
+                        const std::string &strada,const int numar, const std::string &cod_postal);
     [[nodiscard]] std::string getAdresaCompleta() const;
 };
 

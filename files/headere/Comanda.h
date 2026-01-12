@@ -12,12 +12,10 @@ class Client;
 
 class Comanda {
 private:
-     // date client
-     std::shared_ptr <Client> client;
 
-     // date obiecte comandate(carte individuala pachete de carti  reviste)
+     // date obiecte comandate
      std::vector<ArticolComanda> articole;
-
+     Client* client;
      std::string stare_comanda;
 
      int id_comanda;
@@ -33,19 +31,23 @@ protected:
 
 public:
 
-     std::vector<std::string> extrageISBN() const;
+     std::vector<std::string> extrageIdentificatori() const;
 
-     // constructor cu parametruu
-     explicit Comanda(const std::shared_ptr<Client> &client);
+     explicit Comanda(Client& client);
+
+
+
+     //constructor pt load
+     //Comanda(int id, time_t data, std::shared_ptr<Client> client,const std::vector<ArticolComanda>& articole,const std::string& stare);
 
      // destructor
-     ~Comanda();
+     ~Comanda()=default;
 
-     // constructor de copiere
-     Comanda(const Comanda& other)=delete;
+     // constructor de mutare
+     Comanda(const Comanda&& other) noexcept=default;
 
      // operator =
-     Comanda& operator=(Comanda other)=delete;
+     Comanda& operator=(Comanda&& other) =delete;
 
      // functie swap pt opertor <<
      friend  void swap(Comanda& unu,Comanda& doi ) noexcept;
@@ -57,19 +59,18 @@ public:
      [[nodiscard]] int getId() const;
      [[nodiscard]] std::string getDataFormatata() const;
      [[nodiscard]] int getNumarArticole() const;
-     const std::string& getUsernameClient() const{return client->getUsername();}
      const std::vector<ArticolComanda>& getArticole() const;
 
      // functii
      void adaugaArticol(const std::shared_ptr<UnitateVanzare> &articol, int cantitate);
 
+     void stergeArticol(int idx);
+
      [[nodiscard]] double calculeazaTotal() const;
 
-     double finalizareComanda();
+
 
      void valideazaComanda() const;
-
-     void stergeArticol(int idx);
 
      void anuleazaComanda();
 

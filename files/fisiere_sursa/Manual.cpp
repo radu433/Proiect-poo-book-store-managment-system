@@ -13,7 +13,7 @@ static const std::set<std::string> edituri_educationale_top = {
     "Booklet"
 };
 
-Manual::Manual(const std::string &titlu, const std::shared_ptr<Autor> &autor, double pret_baza, int cantitate,
+Manual::Manual(const std::string &titlu, const Autor* autor, double pret_baza, int cantitate,
                const std::string &data_publicatie,
                const std::string &isbn, const int numar_pagini, const std::string &editura, const std::string &materie,
                int clasa)
@@ -30,13 +30,6 @@ Manual::Manual(const std::string &titlu, const std::shared_ptr<Autor> &autor, do
 }
 
 
-std::string Manual::getCicluScolar() const {
-    if (clasa >= 0 && clasa <= 4)
-        return "Primara";
-    else if (clasa >= 5 && clasa <= 8)
-        return "Generala";
-    return "Liceal";
-}
 
 int Manual::getclasa() const { return clasa; }
 
@@ -112,66 +105,6 @@ double Manual::calculeazaPrioritateRestoc() const {
     return prioritate;
 }
 
-double Manual::CalculeazaRelevanta(const int clasa_elev, const std::vector<std::string> &materii_preferate) const {
-    if (clasa_elev < 0 || clasa_elev > 13) {
-        throw DateInvalideException("Clasa elevului invalida!");
-    }
-    // potrivire clase
-    int scor = 0.0;
-
-    if (clasa == clasa_elev)
-        scor += 50.0;
-    else if (std::abs(clasa - clasa_elev) == 1)
-        scor += 25.0;
-    else
-        return 0.0;
-
-    // materia e in prefertinte
-
-    for (const auto &materie_pref: materii_preferate) {
-        if (materie == materie_pref) {
-            scor += 30.0;
-            break;
-        }
-    }
-    // rating
-    const double rating = getRatingMediu();
-    scor += rating * 8.0;
-    //actualitate
-    const std::time_t t = std::time(nullptr);
-    const std::tm *tm_now = std::localtime(&t);
-
-    const int data_actuala = (tm_now->tm_year + 1900) * 10000
-                             + (tm_now->tm_mon + 1) * 100
-                             + tm_now->tm_mday;
-
-    const int data_apritie = Data::parse(data_publicatie).toNumeric();
-    if (data_actuala - data_apritie == 0) {
-        scor += 15.0;
-    } else if (data_actuala - data_apritie <= 2) {
-        scor += 10.0;
-    } else if (data_actuala - data_apritie <= 4) {
-        scor += 5.0;
-    }
-
-
-    //  Disponibilitate
-    if (cantitate > 0) {
-        scor += 10.0;
-    } else {
-        scor *= 0.5;
-    }
-
-    // Bonus pentru bestseller
-    if (esteBesteller()) {
-        scor += 15.0;
-    }
-    if (edituri_educationale_top.contains(editura))
-        scor += 10.0;
-
-    return std::min(scor, 100);
-}
-
 double Manual::calculeaza_valoarea_academica() const {
     double valoare = 0.0;
     if (clasa >= 9) {
@@ -182,8 +115,7 @@ double Manual::calculeaza_valoarea_academica() const {
         valoare += 10.0;
     }
     const std::vector<std::string> materie_imp = {
-        "Matematica", "Fizica", "Limba Romana", "Informatica", "Chimie""Limba Engleza"
-    };
+        "Matematica", "Fizica", "Limba Romana", "Informatica", "Chimie","Limba Engleza"};
     bool este_materie_importanta = false;
     for (const auto &mat_imp: materie_imp) {
         if (materie.find(mat_imp) != std::string::npos) {
@@ -215,10 +147,6 @@ double Manual::calculeaza_valoarea_academica() const {
     return std::min(valoare, 100.0);
 }
 
-int Manual::timp_estimat_lecturii() const {
-    const int min_per_pagina = (clasa >= 9) ? 6 : 4;
-    return nr_pagini * min_per_pagina;
-}
 
 std::string Manual::getTip() const { return materie; }
 
@@ -236,12 +164,8 @@ double Manual::getPretFinal() const {
     return pret;
 }
 
-void Manual::seteazaReducere(int procent, int durata_zilei) {
-    Carte::seteazaReducere(procent, durata_zilei);
-}
-
-bool Manual::areAutor(int idautor) const {
-    return Carte::areAutor(idautor);
+TipPublicatie Manual::getTipPub() const {
+    return TipPublicatie::Manual;
 }
 
 

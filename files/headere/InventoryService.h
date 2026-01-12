@@ -17,6 +17,6 @@ public:
   static void adaugaStoc(Publicatie& p, int cantitate);
   static void scadeStoc (Publicatie& p, int cantitate);
 
-    static std::vector <PrioritateRestoc> calculeazaPrioritateRestoc(const AppState& app);
+  static std::vector <PrioritateRestoc> calculeazaPrioritateRestoc(const AppState& app);
 };
 #endif //OOP_INVENTORYSERVICE_H

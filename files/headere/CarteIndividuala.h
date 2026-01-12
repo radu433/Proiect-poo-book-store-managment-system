@@ -12,7 +12,7 @@ protected:
 
 public:
     // constructor cu parametrii
-    CarteIndividuala(std::shared_ptr<Carte> carte);
+     explicit CarteIndividuala(std::shared_ptr<Carte> carte);
 
     // constructor de copiere
     CarteIndividuala(const CarteIndividuala &other);

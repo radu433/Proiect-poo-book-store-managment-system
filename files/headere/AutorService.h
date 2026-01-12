@@ -12,17 +12,19 @@ class Autor;
 enum class TipTopAutor{PRODUCTIVITATE,SCOR_RENUME,IERARHIE};
 
 struct AutorStat {
-    std::shared_ptr<Autor> autor;
+    const Autor* autor;
     double productivitate;
     double scor_renume;
     std::string ierarhie;
 };
 class AutorService {
 public:
-    static AutorStat getDetaliiAutor(const AppState& app, const std::shared_ptr<Autor>& autor);
+    static AutorStat getDetaliiAutor(const AppState& app, const Autor* autor);
 
-    static std::vector<AutorStat> getTopAutori(AppState& app, TipTopAutor tip);
+    static std::vector<AutorStat> getTopAutori(const AppState& app,  TipTopAutor tip);
 
-    static void adaugaAutor(AppState& app, const std::shared_ptr<Autor>& autor);
+    static void adaugaAutor(AppState& app, const Autor* autor);
+
+    static void asociazaCarte( AppState& app, const std::string& isbn, const std::string& numeA, const std::string& prenumeA);
 };
 #endif //OOP_AUTORSERVICE_H

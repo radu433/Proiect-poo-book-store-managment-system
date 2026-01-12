@@ -27,6 +27,9 @@ public:
     Autor();
     // constructor cu parametrii
     Autor(  const std::string& nume, const std::string& prenume, int varsta);
+    // constructor pt load
+    Autor(int id, const std::string& nume, const std::string& prenume, int varsta);
+
 
     [[nodiscard]] const std::string& getNume() const;
 
@@ -44,7 +47,7 @@ public:
 
     [[nodiscard]] size_t getcarti_scrise()const;
 
-    bool adauga_carte(const std::string& isbn);
+      bool adauga_carte(const  std::string& isbn);
 
     double calcproductivitate()const;
 
@@ -52,6 +55,9 @@ public:
 
     std::string ierarhie_a()const;
     int getidAutor()const;
+    const std::vector<std::string>& getCartiScrise() const;
+    bool areCarte(const std::string& idx) const;
+
 
 
 

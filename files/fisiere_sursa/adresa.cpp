@@ -27,7 +27,7 @@ std::ostream &operator<<(std::ostream &out, const Adresa &a) {
 
 // functii
 
-void Adresa::modificaAdreasa(const std::string &jud, const std::string &o, const std::string &str,
+void Adresa::modificaAdreasa(const std::string &jud, const std::string &o, const std::string &str,const int numarn,
                              const std::string &cp) {
     if (jud.empty() || o.empty() || str.empty()) {
         throw DateInvalideException("Nu puteti actualiza adresa cu campuri goale!");
@@ -46,6 +46,7 @@ void Adresa::modificaAdreasa(const std::string &jud, const std::string &o, const
     this->oras = o;
     this->cod_postal = cp;
     this->judet = jud;
+    this->numar = numarn;
 }
 
 std::string Adresa::getAdresaCompleta() const {
