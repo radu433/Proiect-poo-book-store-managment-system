@@ -3,6 +3,7 @@
 #include "../exceptii/exceptii_headere/DateInvalideException.h"
 #include "../exceptii/exceptii_headere/AutorException.h"
 #include<iostream>
+#include <algorithm>
 int Autor::nextidautor=0;
 // constructor fara parametrii
 Autor::Autor() : nume("NECUNOSCUT"), prenume("NECUNOSCUT"), varsta(0), numar_premii(0), idautor(++nextidautor) {

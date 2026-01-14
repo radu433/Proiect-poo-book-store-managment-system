@@ -3,6 +3,7 @@
 #include "../headere/Manual.h"
 #include "../headere/Revista.h"
 #include "../headere/CarteStiintifica.h"
+#include "../headere/UnitateVanzare.h"
 #include "../exceptii/exceptii_headere/StocException.h"
 #include "../exceptii/exceptii_headere/LibrarieException.h"
 #include "../exceptii/exceptii_headere/DateInvalideException.h"

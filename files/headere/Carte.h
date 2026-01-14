@@ -16,7 +16,7 @@
 
 class Carte : public Publicatie {
 private:
-    const Autor* autor;
+    Autor* autor;
     std::string isbn;
 
     // atribute statice
@@ -72,7 +72,6 @@ public:
     std::string getIdentificator() const override;
 
     // gettere
-    [[nodiscard]] const std::string &getISBN() const;
 
     [[nodiscard]] const Autor *getAutor() const;
 

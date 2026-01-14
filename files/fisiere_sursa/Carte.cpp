@@ -271,11 +271,6 @@ std::string Carte::getIdentificator() const {
     return isbn;
 }
 
-
-const std::string &Carte::getISBN() const {
-    return isbn;
-}
-
 const Autor *Carte::getAutor() const {
     return autor;
 }

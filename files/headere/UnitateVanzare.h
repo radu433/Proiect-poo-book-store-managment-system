@@ -5,9 +5,7 @@
 #include <vector>
 #include <memory>
 #include <iostream>
-// #include "Publicatie.h"
-// #include "Revista.h"
-// #include "Carte.h"
+
 
 #include "../exceptii/exceptii_headere/LibrarieException.h"
 #include "../exceptii/exceptii_headere/DateInvalideException.h"
@@ -18,7 +16,7 @@ class Carte;
 
 class UnitateVanzare {
 private:
-     int id_unic;
+     int id_unic = 0;
     static int id_contor_global;
 
 

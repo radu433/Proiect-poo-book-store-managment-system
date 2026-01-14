@@ -1,5 +1,7 @@
 #include "../headere/UnitateVanzare.h"
 #include "../headere/Revista.h"
+#include "../headere/Carte.h"
+#include "../headere/Publicatie.h"
 
 #include <iomanip>
 

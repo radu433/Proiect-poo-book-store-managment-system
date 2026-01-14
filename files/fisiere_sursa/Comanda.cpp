@@ -37,30 +37,7 @@ Comanda::Comanda(const Client &client1): client(&client1),stare_comanda("Noua"),
 
 
 
-std::vector<std::shared_ptr<Carte>> Comanda::extrageCarti() const {
-    std::vector<std::shared_ptr<Carte>> rezultat;
 
-    for (const auto& art : articole) {
-        auto unitate = art.getUnitate();
-        if (!unitate) continue;
-
-        for (int i = 0; i < art.getCantitate(); ++i) {
-            if (auto pachet = std::dynamic_pointer_cast<PachetSerie>(unitate)) {
-                for (const auto& pub : pachet->getContinut()) {
-                    if (auto carte = std::dynamic_pointer_cast<Carte>(pub)) {
-                        rezultat.push_back(carte);
-                    }
-                }
-            } else {
-                auto pub = unitate->getProdusPrincipal();
-                if (auto carte = std::dynamic_pointer_cast<Carte>(pub)) {
-                    rezultat.push_back(carte);
-                }
-            }
-        }
-    }
-    return rezultat;
-}
 
 
 

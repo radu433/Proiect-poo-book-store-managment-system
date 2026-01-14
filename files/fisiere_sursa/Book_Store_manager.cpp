@@ -847,6 +847,8 @@ void BookStoreManager::meniuCautaPublicatii() {
     std::cout << "Pret: " << pub->getPretFinal() << " lei\n";
     std::cout << "Statut stoc: "<< pub->determinaStatutStoc()<< "\n";
     std::cout << "Stoc disponibil: " << pub->getcantitate() << "\n";
+    std::cout << "Timp estimat lectura: " << pub->timp_estimat_lecturii() << " minute\n";
+    std::cout << "Disponibil (cantitate > 0): " << (pub->este_disponibila() ? "DA" : "NU") << "\n";
 
     if (auto revista = std::dynamic_pointer_cast<Revista>(pub)) {
         std::cout << "\n--- ANALIZA REVISTA ---\n";
@@ -1303,7 +1305,7 @@ void BookStoreManager::adaugaReview_Rating() const {
 
                 const auto pub = app.getPublicatii()[idx];
                 std::string identificator = pub->getIdentificator();
-                const bool esteVerificat =clientCurent->aCumparatPub(identificator);
+                const bool esteVerificat = ReviewService::verificaReview(app, clientCurent->getUsername(), identificator);
 
                 if (!esteVerificat) {
                     std::cout<< "Review NEVERIFICAT (nu ati cumparat aceasta publicatie)\n";
@@ -2131,7 +2133,7 @@ void BookStoreManager::adaugaCarte() const {
 
         auto carte = std::make_shared<Carte>(titlu, autor, cantitate, data_publicatie,isbn, pret_baza, nr_pagini, editura);
 
-        app.adaugaPublicatie(carte);
+        PublicatieService::adaugarePublicatie(app, carte);
 
         AutorService::asociazaCarte(app,isbn,autor->getNume(),autor->getprenume());
 
@@ -2189,7 +2191,7 @@ void BookStoreManager::adaugaManual() const {
             isbn, nr_pagini, editura, materie, clasa
         );
 
-        app.adaugaPublicatie(manual);
+        PublicatieService::adaugarePublicatie(app, manual);
 
         AutorService::asociazaCarte(app,isbn,autor->getNume(),autor->getprenume());
 
@@ -2255,7 +2257,7 @@ void BookStoreManager::adaugaCarteStiintifica() const {
         const auto carte = std::make_shared<CarteStiintifica>(titlu, autor, cantitate, data_publicatie, isbn,pret_baza,
             nr_pagini, editura,domeniu, nivel_academic,nr_referinte, are_formule);
 
-        app.adaugaPublicatie(carte);
+        PublicatieService::adaugarePublicatie(app, carte);
 
         AutorService::asociazaCarte(app,isbn,autor->getNume(),autor->getprenume());
 
@@ -2323,7 +2325,7 @@ void BookStoreManager::adaugaRevista() const {
             are_cadou, tip, issn, editura
         );
 
-        app.adaugaPublicatie(revista);
+        PublicatieService::adaugarePublicatie(app, revista);
 
         double pretFinal = ReducereService::calculeazaPretFinalCuReduceri(app, revista);
 

@@ -28,7 +28,7 @@ std::vector<Review> AppState::getReviewPublicatie(const std::string &identificat
     std::ranges::sort(rezultat,
                       [](const Review& a, const Review& b) {
                           if (a.getVerificat() != b.getVerificat())
-                              return a.getVerificat() > b.getVerificat();
+                              return a.getVerificat() && !b.getVerificat();
                           return a.getData() > b.getData();
                       });
 
@@ -63,18 +63,10 @@ std::shared_ptr<Publicatie> AppState::gasestePublicatie(const std::string &ident
 }
 
 bool AppState::stergePublicatie(const std::string &isbn) {
-    auto result = std::ranges::remove_if(
-    publicatii,[&](const std::shared_ptr<Publicatie>& p) {
+    size_t removed = std::erase_if(publicatii, [&](const std::shared_ptr<Publicatie>& p) {
         return p && p->getIdentificator() == isbn;
-    }
-);
-
-    if (result.begin() == publicatii.end())
-        return false;
-
-    publicatii.erase(result.begin(), publicatii.end());
-    return true;
-
+    });
+    return removed > 0;
 }
 
 void AppState::stergeReviewPublicatie(const std::string &isbn) {

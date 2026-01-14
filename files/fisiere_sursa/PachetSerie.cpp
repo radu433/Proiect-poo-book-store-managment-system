@@ -45,6 +45,7 @@ nume_pachet(nume_pachet),continut(continut), tip_pachet(tip),este_complet(este_c
     if (continut.empty()) {
         throw DateInvalideException("Nu se poate crea un pachet gol (fara continut)!");
     }
+    verificaCompletitudine();
     }
 
 PachetSerie::PachetSerie(const std::vector<std::shared_ptr<UnitateVanzare>> &continutSH) : continut(continutSH),

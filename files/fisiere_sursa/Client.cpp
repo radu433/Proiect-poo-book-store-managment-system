@@ -70,14 +70,7 @@ void Client::plateste(double suma) {
 
 double Client::getSold() const { return sold; }
 
-void Client::adaugacumparaturi(const double suma) {
-    if (suma > 0) {
-        totalcumparaturi += suma;
-        numarcomenzi++;
-        pct_fidelitate += static_cast<int>(suma / 10);
-        std::cout << "Cumparatura adaugara: " << suma << "RON pentru: " << username << std::endl;
-    }
-}
+
 
 double Client::calcdiscountpersonalizat() const {
     double discount = 0;

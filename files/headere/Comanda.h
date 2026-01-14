@@ -23,7 +23,7 @@ private:
      time_t data_comanda;
      // healper
 
-     std::vector<std::shared_ptr<Carte>> extrageCarti() const;
+ 
 
 protected:
 
