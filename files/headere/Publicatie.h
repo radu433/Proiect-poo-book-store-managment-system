@@ -67,6 +67,7 @@ public:
     virtual void afisare(std::ostream& out) const;
 
     friend std::ostream& operator<<(std::ostream& out, const Publicatie& obj);
+    Publicatie(const Publicatie& other) = default;
 
     // operator =
     Publicatie& operator=(const Publicatie& other);

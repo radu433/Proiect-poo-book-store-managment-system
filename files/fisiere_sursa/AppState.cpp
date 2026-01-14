@@ -28,7 +28,7 @@ std::vector<Review> AppState::getReviewPublicatie(const std::string &identificat
     std::ranges::sort(rezultat,
                       [](const Review& a, const Review& b) {
                           if (a.getVerificat() != b.getVerificat())
-                              return a.getVerificat() && !b.getVerificat();
+                              return a.getVerificat()  > b.getVerificat();
                           return a.getData() > b.getData();
                       });
 

@@ -5,6 +5,7 @@
 #include "../headere/Publicatie.h"
 #include "../headere/Client.h"
 #include "../exceptii/exceptii_headere/DateInvalideException.h"
+#include "../exceptii/exceptii_headere/PublicatieException.h"
 
 #include <algorithm>
 #include <stdexcept>
@@ -44,7 +45,7 @@ void PublicatieService::adaugaReview_Rating(AppState &app, const Client &client,
     }
 
     if (rating < 1 || rating > 5) {
-        throw DateInvalideException("Rating invalid");
+        throw RatingInvalidException("Rating invalid");
     }
 
     if (text.empty()) {

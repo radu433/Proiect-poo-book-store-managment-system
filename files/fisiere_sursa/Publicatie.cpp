@@ -1,6 +1,7 @@
 #include "../headere/Publicatie.h"
 #include "../exceptii/exceptii_headere/LibrarieException.h"
 #include "../exceptii/exceptii_headere/DateInvalideException.h"
+#include "../exceptii/exceptii_headere/DataException.h"
 #include "../exceptii/exceptii_headere/PaginareException.h"
 #include "../exceptii/exceptii_headere/PublicatieException.h"
 
@@ -53,7 +54,7 @@ Publicatie::Publicatie( const std::string &titlu,  double pret_baza, int cantita
     }
 
     if (nr_pagini > 10000) {
-        throw PaginareException("Numar pagini nerealist: " + std::to_string(nr_pagini));
+        throw PaginareInconsistentaException("Numar pagini nerealist: " + std::to_string(nr_pagini));
     }
     if (titlu.empty()) {
         throw TitluInvalidException("Titlul nu poate fi gol!");
@@ -63,7 +64,7 @@ Publicatie::Publicatie( const std::string &titlu,  double pret_baza, int cantita
         throw TitluInvalidException("Titlu prea lung (max 200 caractere)");
     }
     if (!este_valida_data(data_publicatie))
-        throw DateInvalideException("Data invalida: " + data_publicatie + " (format corect: ZZ.LL.AAAA)");
+        throw DataException("Data invalida: " + data_publicatie + " (format corect: ZZ.LL.AAAA)");
 
     if (editura.empty())
         throw DateInvalideException("O publicatie trebuie sa aiba o editura!");
@@ -203,6 +204,8 @@ Publicatie & Publicatie::operator=(const Publicatie &other) {
     this->data_publicatie=other.data_publicatie;
     this->nr_pagini = other.nr_pagini;
     this->editura = other.editura;
+    this->numar_vanzari = other.numar_vanzari;
+    this->reducere_procent = other.reducere_procent;
     return *this;
 }
 

@@ -7,6 +7,7 @@
 #include "../exceptii/exceptii_headere/StocException.h"
 #include "../exceptii/exceptii_headere/LibrarieException.h"
 #include "../exceptii/exceptii_headere/DateInvalideException.h"
+#include "../exceptii/exceptii_headere/PublicatieException.h"
 
 #include <ctime>
 #include <iomanip>
@@ -72,7 +73,7 @@ void CarteIndividuala::scadeStoc(const int cantitate) {
     }
     if (auto manual=std::dynamic_pointer_cast<Manual>(carte)) {
         if (manual->StareAprobare() == "Expirat") {
-            throw DateInvalideException(
+            throw PublicatieExpirata(
                 "Blocare vanzare: Manualul '" + manual->getTitlu() +
                 "' este EXPIRAT si nu mai este aprobat de minister!"
             );

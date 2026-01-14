@@ -31,7 +31,7 @@ std::vector<const Review *> ReviewService::getReviewuriSortate(const AppState &a
     std::ranges::sort(rezultat,
                       [](const Review* a, const Review* b) {
                           if (a->getVerificat() != b->getVerificat())
-                              return a->getVerificat() && !b->getVerificat();
+                              return a->getVerificat() > b->getVerificat();
                           return a->getData() > b->getData();
                       });
 

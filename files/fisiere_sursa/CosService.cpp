@@ -76,7 +76,7 @@ void CosService::adaugaPachetCreat(const std::shared_ptr<Client>& clientCurent,s
     comandaActiva->adaugaArticol(pachet, 1);
 }
 
-void CosService::adaugaUnitateVanzare(AppState& app, const std::shared_ptr<Client>& client,std::shared_ptr<Comanda>& comanda,
+void CosService::adaugaUnitateVanzare( const std::shared_ptr<Client>& client,std::shared_ptr<Comanda>& comanda,
     const std::shared_ptr<UnitateVanzare>& unitate) {
     if (!client) throw DateInvalideException("Client invalid!");
     if (!unitate || !unitate->valideazaDisponibilitate()) {

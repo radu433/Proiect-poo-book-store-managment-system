@@ -17,7 +17,7 @@ public :
     static void adaugaPachetCreat(const std::shared_ptr<Client>& clientCurent,std::shared_ptr<Comanda>& comandaActiva,
     const std::shared_ptr<UnitateVanzare> &pachet);
 
-    static void adaugaUnitateVanzare( AppState& app, const std::shared_ptr<Client>& client,std::shared_ptr<Comanda>& comanda,
+    static void adaugaUnitateVanzare( const std::shared_ptr<Client>& client,std::shared_ptr<Comanda>& comanda,
     const std::shared_ptr<UnitateVanzare>& unitate);
 
 };

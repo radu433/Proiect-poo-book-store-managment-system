@@ -6,6 +6,7 @@
 #include <ctime>
 
 #include "../exceptii/exceptii_headere/DateInvalideException.h"
+#include "../exceptii/exceptii_headere/PublicatieException.h"
 
 class Review {
 private:
@@ -21,7 +22,7 @@ public:
        const std::string& text,bool verificat): username(username),identificator_publicatie(identificator_publicatie)
         ,rating(rating),text(text),data(std::time(nullptr)),verificat(verificat) {
         if (rating<1 || rating>5 )
-            throw DateInvalideException("Rating invalid!");
+            throw RatingInvalidException("Rating invalid!");
     }
     const std::string& getUsername() const {return username;}
     const std::string& getIdentificatorPublicatie() const {return identificator_publicatie;}

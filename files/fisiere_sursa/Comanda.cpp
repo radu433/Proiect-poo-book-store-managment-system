@@ -94,7 +94,7 @@ int Comanda::getNumarArticole() const {
 void Comanda::valideazaComanda() const {
 
     if (articole.empty())
-        throw ComandaGoalaException();
+        throw ComandaGoalaFinalizareException();
     if (stare_comanda == "Anulata")
         throw ComandaAnulataException(id_comanda);
     if (stare_comanda == "Finalizata")
