@@ -87,8 +87,6 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         "files/headere/CosService.h"
         "files/fisiere_sursa/CosService.cpp"
         "files/fisiere_sursa/TradeInService.cpp"
-        files/headere/LoadService.h
-        files/fisiere_sursa/LoadService.cpp
         files/headere/PachetSerieService.h
         files/headere/UnitateVanzareFactory.h
 

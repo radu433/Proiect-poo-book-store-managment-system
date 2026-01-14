@@ -16,7 +16,7 @@
 
 class Carte : public Publicatie {
 private:
-    Autor* autor;
+    const  Autor* autor;
     std::string isbn;
 
     // atribute statice
