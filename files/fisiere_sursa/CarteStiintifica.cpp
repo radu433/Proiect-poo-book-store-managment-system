@@ -4,7 +4,7 @@
 #include "../exceptii/exceptii_headere/DateInvalideException.h"
 
 // constructor cu parametrii
-CarteStiintifica::CarteStiintifica(const std::string &titlu,  Autor* autor, int cantitate,
+CarteStiintifica::CarteStiintifica(const std::string &titlu, const  Autor* autor, int cantitate,
                                    const std::string &data_publicatie,
                                    const std::string &isbn, double pret_baza, const int numar_pagini,
                                    const std::string &editura, const std::string &domeniu,

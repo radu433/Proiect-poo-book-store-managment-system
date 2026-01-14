@@ -19,7 +19,7 @@
 #include "../headere/ComandaService.h"
 #include "../headere/CosService.h"
 #include "../headere/PublicatieService.h"
-#include "../headere/SerchService.h"
+#include "../headere/SearchService.h"
 
 #include "../exceptii/exceptii_headere/ComandaExceptions.h"
 #include "../exceptii/exceptii_headere/StocException.h"
@@ -106,6 +106,13 @@ void BookStoreManager::afisareMeniuPrincipal() {
         std::cout << "Optiune: ";
 
         std::cin >> opt;
+        if (std::cin.fail()) {
+            if (std::cin.eof()) break;
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            opt = -1;
+            continue;
+        }
         switch (opt) {
             case 1: {
                 CLIAdministrator();
@@ -149,6 +156,13 @@ void BookStoreManager::CLIAdministrator() {
         std::cout << "Optiune: ";
 
         std::cin >> opt;
+        if (std::cin.fail()) {
+            if (std::cin.eof()) break;
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            opt = -1;
+            continue;
+        }
         switch (opt) {
             case 1: afiseazaReduceriActive();
                 break;
@@ -193,6 +207,13 @@ void BookStoreManager::CLIClient() {
         std::cout << "Optiune: ";
 
         std::cin >> opt;
+        if (std::cin.fail()) {
+            if (std::cin.eof()) break;
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            opt = -1;
+            continue;
+        }
         switch (opt) {
             case 1: afiseazaReduceriActive();
                 break;
@@ -280,7 +301,14 @@ void BookStoreManager::meniuPublicatiiA() const {
         std::cout << "0. Inapoi\n";
         std::cout << "Optiune: ";
 
-        std::cin>>opt;
+        std::cin >> opt;
+        if (std::cin.fail()) {
+            if (std::cin.eof()) break;
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            opt = -1;
+            continue;
+        }
         switch (opt) {
             case 1:adaugaPub(); break;
             case 2: {
@@ -698,7 +726,7 @@ void BookStoreManager::meniuComenziA() const {
                 }
 
                 std::cout << "\n=== LISTA COMENZI ===\n";
-                auto rezultate=SerchService::toateComenzile(app.getComanda());
+                auto rezultate=SearchService::toateComenzile(app.getComanda());
                 for (int idx :rezultate) {
                     const auto& c=app.getComanda()[idx];
                     std::cout<<idx<<"."<< "ID: " << c.getId() <<"| Arriole :"<<
@@ -901,6 +929,7 @@ void BookStoreManager::meniuCautaPublicatii() {
 
                  std::string conditie;
                  std::cout<<"Conditie (Noua/Buna/Acceptabila/Uzata): ";
+                 std::cin >> conditie;
                  int vechime;
                  std::cout << "Vechime:\n";
                  std::cout << "1. < 6 luni\n";
@@ -972,7 +1001,7 @@ void BookStoreManager::meniuCautaPublicatii() {
                  auto unitateSH = app.getStocSH()[idx];
 
                  try {
-                     CosService::adaugaUnitataVanzare(clientCurent,comandaActiva,unitateSH);
+                     CosService::adaugaUnitateVanzare(app,clientCurent,comandaActiva,unitateSH);
 
                      app.stergeDinStoc(idx);
 
@@ -992,7 +1021,6 @@ void BookStoreManager::meniuCautaPublicatii() {
                  }
 
                  std::vector<std::shared_ptr<UnitateVanzare>> continutSH;
-                 ;
 
                  std::cout << "\n=== CREARE PACHET SECOND-HAND ===\n";
                  std::cout << "Selecteaza produse SH. Cand esti gata, apasa 0.\n";
@@ -1037,7 +1065,7 @@ void BookStoreManager::meniuCautaPublicatii() {
                      // cream pachetul SH
                      auto pachetSH = std::make_shared<PachetSerie>(continutSH);
 
-                     CosService::adaugaUnitataVanzare(clientCurent,comandaActiva,pachetSH);
+                     CosService::adaugaUnitateVanzare(app,clientCurent,comandaActiva,pachetSH);
                      std::cout << "Pachetul SH a fost creat si adaugat in cos!\n";
 
                  } catch (const std::exception& e) {
@@ -1120,7 +1148,7 @@ void BookStoreManager::meniuCosCumparaturi() {
                     break;
 
                 try {
-                    CosService::stergeDinCons(comandaActiva, idx);
+                    CosService::stergeDinCos(comandaActiva, idx);
                     std::cout << "Articol sters din cos.\n";
                 }
                 catch (const std::exception& e) {
@@ -1483,9 +1511,9 @@ std::shared_ptr<Client> BookStoreManager::autentificareClientUI() const {
 
     if (opt == 2) {
         creareContClientUI();
+    } else {
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
-
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     std::string identificator;
     std::cout << "Introduceti Email / Telefon / Username: ";
@@ -1589,7 +1617,7 @@ int BookStoreManager::selecteazaPub() const  {
             std::cout << "Introdu titlu (sau parte din titlu): ";
             std::getline(std::cin, text);
 
-            rezultate = SerchService::search<Publicatie>(
+            rezultate = SearchService::search<Publicatie>(
                 app.getPublicatii(),
                 [&](const std::shared_ptr<Publicatie>& p) {
                     return p->getTitlu().find(text) != std::string::npos;
@@ -1615,7 +1643,7 @@ int BookStoreManager::selecteazaPub() const  {
                     std::cout << "Tip (1-Carte 2-Manual 3-Stiintifica 4-Revista): ";
                     std::cin >> tip;
 
-                    rezultate = SerchService::filtreazaPublicatiiDupaTip(app.getPublicatii(), tip);
+                    rezultate = SearchService::filtreazaPublicatiiDupaTip(app.getPublicatii(), tip);
                     break;
                 }
 
@@ -1624,7 +1652,7 @@ int BookStoreManager::selecteazaPub() const  {
                     std::cout << "Nume autor: ";
                     std::getline(std::cin, nume);
 
-                    rezultate = SerchService::filtreazaPublicatiiDupaAutor(app.getPublicatii(), nume);
+                    rezultate = SearchService::filtreazaPublicatiiDupaAutor(app.getPublicatii(), nume);
                     break;
                 }
 
@@ -1689,7 +1717,7 @@ const Autor* BookStoreManager::selecteazaAutor() const {
             std::cout << "Introdu nume/prenume: ";
             std::getline(std::cin, text);
 
-            rezultate = SerchService::filtreazaAutoriNume(app.getAutor(), text);
+            rezultate = SearchService::filtreazaAutoriNume(app.getAutor(), text);
 
             break;
         }
@@ -1756,8 +1784,8 @@ int BookStoreManager::filtreazaClienti() const {
             std::cout << "Introdu username sau email: ";
             std::getline(std::cin, text);
 
-            auto r1=SerchService::filtreazaClientiUsername(app.getClient(), text);
-            auto r2=SerchService::filtreazaClientiEmail(app.getClient(), text);
+            auto r1=SearchService::filtreazaClientiUsername(app.getClient(), text);
+            auto r2=SearchService::filtreazaClientiEmail(app.getClient(), text);
             rezultate.insert(rezultate.end(), r1.begin(), r1.end());
             rezultate.insert(rezultate.end(), r2.begin(), r2.end());
             break;
@@ -1856,7 +1884,7 @@ std::shared_ptr<Publicatie> BookStoreManager::selecteazaPubClient() const {
                 std::cout << "Introdu text (titlu): ";
                 std::getline(std::cin, text);
 
-                rezultate = SerchService::search<Publicatie>(app.getPublicatii(),[&](const std::shared_ptr<Publicatie> &p) {
+                rezultate = SearchService::search<Publicatie>(app.getPublicatii(),[&](const std::shared_ptr<Publicatie> &p) {
                                                                  return p->esteActiva() &&
                                                                         p->getTitlu().find(text) != std::string::npos;
                                                              }
@@ -2040,6 +2068,13 @@ void BookStoreManager::adaugaPub() const {
         std::cout << "Optiune: ";
 
         std::cin >> opt;
+        if (std::cin.fail()) {
+            if (std::cin.eof()) break;
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            opt = -1;
+            continue;
+        }
 
         switch (opt) {
             case 1:
@@ -2094,16 +2129,13 @@ void BookStoreManager::adaugaCarte() const {
 
         auto autor = gasesteSauCreeazaAutorDupaISBN( isbn);
 
-        auto carte = std::make_shared<Carte>(
-            titlu, autor, cantitate, data_publicatie,
-            isbn, pret_baza, nr_pagini, editura
-        );
+        auto carte = std::make_shared<Carte>(titlu, autor, cantitate, data_publicatie,isbn, pret_baza, nr_pagini, editura);
 
         app.adaugaPublicatie(carte);
 
-        AutorService::asociazaCarte(app,autor,isbn);
+        AutorService::asociazaCarte(app,isbn,autor->getNume(),autor->getprenume());
 
-        double pretFinal = ReducereService::calculeazaPretFinalCuReduceri(app, carte);
+        const double pretFinal = ReducereService::calculeazaPretFinalCuReduceri(app, carte);
 
         std::cout << "Carte adaugata cu succes!\n";
         std::cout << "Pret final: " << pretFinal << " lei\n";
@@ -2159,7 +2191,7 @@ void BookStoreManager::adaugaManual() const {
 
         app.adaugaPublicatie(manual);
 
-        AutorService::asociazaCarte(app,autor,isbn);
+        AutorService::asociazaCarte(app,isbn,autor->getNume(),autor->getprenume());
 
         double pretFinal = ReducereService::calculeazaPretFinalCuReduceri(app, manual);
 
@@ -2220,13 +2252,12 @@ void BookStoreManager::adaugaCarteStiintifica() const {
 
         auto autor = gasesteSauCreeazaAutorDupaISBN( isbn);
 
-        auto carte = std::make_shared<CarteStiintifica>(
-            titlu, autor, cantitate, data_publicatie, isbn,pret_baza, nr_pagini, editura,domeniu, nivel_academic,
-            nr_referinte, are_formule);
+        const auto carte = std::make_shared<CarteStiintifica>(titlu, autor, cantitate, data_publicatie, isbn,pret_baza,
+            nr_pagini, editura,domeniu, nivel_academic,nr_referinte, are_formule);
 
         app.adaugaPublicatie(carte);
 
-        AutorService::asociazaCarte(app,autor,isbn);
+        AutorService::asociazaCarte(app,isbn,autor->getNume(),autor->getprenume());
 
         double pretFinal = ReducereService::calculeazaPretFinalCuReduceri(app, carte);
 
@@ -2643,7 +2674,7 @@ void BookStoreManager::meniuTopPublicatiiPopularitate() {
 
         switch (opt) {
             case 1:
-                topPopulariatateoverall();
+                topPopularitateOverall();
                 break;
             case 2:
                 meniuTopPopularitatePeTip();
@@ -2688,7 +2719,7 @@ void BookStoreManager::meniuTopPopularitatePeTip() {
 
 
 
-void BookStoreManager::topPopulariatateoverall() const {
+void BookStoreManager::topPopularitateOverall() const {
     std::vector<std::shared_ptr<Carte>> carti;
 
     for (const auto &p : app.getPublicatii()) {

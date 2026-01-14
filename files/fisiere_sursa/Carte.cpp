@@ -6,13 +6,14 @@
 #include <set>
 #include "../exceptii/exceptii_headere/LibrarieException.h"
 #include "../exceptii/exceptii_headere/DateInvalideException.h"
+#include "../headere/CarteIndividuala.h"
 
 static const std::set<std::string> editura_top = {"Polirom", "Humanitas", "Oxford", "Teora", "Nemira"};
 
 int Carte::total_carti_create = 0;
 double Carte::venituri_totale = 0.0;
 
-bool Carte::vaidareisbn(const std::string &isbn_raw) {
+bool Carte::validareisbn(const std::string &isbn_raw) {
     std::string isbn;
     for (char c: isbn_raw) {
         if (c != '-' && c != ' ') {
@@ -73,10 +74,10 @@ bool Carte::vaidareisbn(const std::string &isbn_raw) {
 
 // constructor cu parametrii
 
-Carte::Carte(const std::string &titlu,  Autor* autor, int cantitate, const std::string &data_publicatie,
+Carte::Carte(const std::string &titlu,  const  Autor* autor, int cantitate, const std::string &data_publicatie,
              const std::string &isbn,
              double pret_baza, const int numar_pagini, const std::string &editura) : Publicatie(titlu, pret_baza,
-    cantitate, data_publicatie, numar_pagini, editura), autor(std::move(autor)), isbn(isbn) {
+    cantitate, data_publicatie, numar_pagini, editura), autor(autor), isbn(isbn) {
     if (pret_baza < 0) {
         throw DateInvalideException("Pretul de baza nu poate fi negativ!");
     }
@@ -86,13 +87,13 @@ Carte::Carte(const std::string &titlu,  Autor* autor, int cantitate, const std::
     if (cantitate < 0) {
         throw DateInvalideException("Stocul initial nu poate fi negativ!");
     }
-    if (!vaidareisbn(isbn)) {
+    if (!validareisbn(isbn)) {
         throw DateInvalideException("ISBN invalid: " + isbn);
     }
     if (!autor) {
         throw DateInvalideException("Autor nullptr la creare Carte!");
     }
-    autor->adauga_carte(isbn);
+    const_cast<Autor*>(autor)->adauga_carte(isbn);
     if (editura.empty())
         throw DateInvalideException("Orice carte trebuie sa aiba o editura!");
 
@@ -123,8 +124,20 @@ std::shared_ptr<Publicatie> Carte::clone() const {
     return std::make_shared < Carte > (*this);
 }
 
+Carte & Carte::operator=(const Carte &other) {
+    if (this!=&other) {
+        Publicatie::operator=(other);
+        this->autor = other.autor;
+        this->isbn = other.isbn;
+        this->editura = other.editura;
+        this->data_publicatie = other.data_publicatie;
+    }
 
-void Carte::adauga_stoc(int nr_buc) {
+    return *this;
+}
+
+
+void Carte::adauga_stoc(const int nr_buc) {
     if (nr_buc >= 0)
         cantitate += nr_buc;
     else
@@ -274,3 +287,5 @@ bool Carte::areAutor(int idautor) const {
 TipPublicatie Carte::getTipPub() const {
     return TipPublicatie::Carte;
 }
+
+

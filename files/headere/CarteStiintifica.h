@@ -12,7 +12,7 @@ private:
 
 public:
     // constructor cu parametrii
-    CarteStiintifica(const std::string &titlu,  Autor* autor, int cantitate,
+    CarteStiintifica(const std::string &titlu, const  Autor* autor, int cantitate,
                      const std::string &data_publicatie, const std::string &isbn, double pret_baza,
                      const int numar_pagini, const std::string &editura, const std::string &domeniu,
                      const std::string &nivel_academic,

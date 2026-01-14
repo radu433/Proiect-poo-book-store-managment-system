@@ -1,21 +1,24 @@
 #ifndef OOP_CARTEINDIVIDUALA_H
 #define OOP_CARTEINDIVIDUALA_H
 #include "UnitateVanzare.h"
+#include "Carte.h"
 #include <ctime>
 #include "../exceptii/exceptii_headere/LibrarieException.h"
 #include "../exceptii/exceptii_headere/DateInvalideException.h"
 
-class CarteIndividuala : public UnitateVanzare {
+class CarteIndividuala :public UnitateVanzare {
 
 protected:
     void afisare(std::ostream &out) const override;
 
 public:
     // constructor cu parametrii
-     explicit CarteIndividuala(std::shared_ptr<Carte> carte);
+     explicit CarteIndividuala(  const std::shared_ptr<Carte>& carte);
 
     // constructor de copiere
-    CarteIndividuala(const CarteIndividuala &other);
+    CarteIndividuala( const CarteIndividuala &other);
+
+    CarteIndividuala& operator=(const CarteIndividuala& other);
 
     // clone
     std::shared_ptr<UnitateVanzare> clone() const override;

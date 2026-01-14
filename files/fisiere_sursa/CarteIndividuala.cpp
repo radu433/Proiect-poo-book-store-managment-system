@@ -14,20 +14,23 @@
 #include <algorithm>
 
 // Constructor
-CarteIndividuala::CarteIndividuala(std::shared_ptr<Carte> carte)
-    : UnitateVanzare(std::move(carte))
+CarteIndividuala::CarteIndividuala(const  std::shared_ptr<Carte>& carte)
+    : UnitateVanzare(std::static_pointer_cast<Carte>(carte))
 {
-    if (conditie_fizica != "Noua" && conditie_fizica != "Buna" &&
-        conditie_fizica != "Acceptabila" && conditie_fizica != "Uzata") {
-        throw DateInvalideException("Conditie fizica necunoscuta: " + conditie_fizica);
-        }
 }
 
 // Constructor de Copiere
-CarteIndividuala::CarteIndividuala(const CarteIndividuala &other)
+CarteIndividuala::CarteIndividuala(const  CarteIndividuala &other)
     : UnitateVanzare(other)
 
 {
+}
+
+CarteIndividuala & CarteIndividuala::operator=(const CarteIndividuala &other) {
+    if (this!=&other) {
+        UnitateVanzare::operator=(other);
+    }
+    return *this;
 }
 
 // Clone

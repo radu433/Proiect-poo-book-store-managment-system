@@ -87,7 +87,7 @@ private:
      void meniuStatisticaDistributieTip() const;
     void meniuTopPublicatiiPopularitate();
      void meniuTopPopularitatePeTip();
-     void topPopulariatateoverall() const;
+     void topPopularitateOverall() const;
     void meniuStatisticiPublicatii();
      void meniuTop();
 

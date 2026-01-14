@@ -193,6 +193,18 @@ bool Publicatie::areAutor(int) const {
     return false;
 }
 
+Publicatie & Publicatie::operator=(const Publicatie &other) {
+    if (this == &other) {
+        return *this;
+    }
+    this->titlu = other.titlu;
+    this->pret_baza = other.pret_baza;
+    this->cantitate = other.cantitate;
+    this->data_publicatie=other.data_publicatie;
+    this->nr_pagini = other.nr_pagini;
+    this->editura = other.editura;
+    return *this;
+}
 
 std::time_t Publicatie::convertesteDatainSecunde() const {
     std::tm tm_pub = {};

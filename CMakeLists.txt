@@ -78,7 +78,7 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         "files/fisiere_sursa/AppState.cpp"
         "files/fisiere_sursa/Book_Store_manager.cpp"
         "files/fisiere_sursa/publicatieService.cpp"
-        "files/fisiere_sursa/SerchService.cpp"
+        "files/fisiere_sursa/SearchService.cpp"
         "files/fisiere_sursa/InventoryService.cpp"
         "files/headere/ReducereService.h"
         "files/fisiere_sursa/AuthenticationService.cpp"

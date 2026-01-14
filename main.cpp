@@ -5,8 +5,8 @@
 int main() {
     try {
         AppState app;
-        BookStoreManager manager;
-        manager.run(app);
+        BookStoreManager manager(app);
+        manager.run();
     }catch (const std::exception& e) {
         std::cout<<"Eroare critica: "<< e.what()<<std::endl;
     }

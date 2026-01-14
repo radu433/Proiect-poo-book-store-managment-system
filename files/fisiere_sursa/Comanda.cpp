@@ -31,7 +31,7 @@ std::vector<std::string> Comanda::extrageIdentificatori() const {
     return idf_list;
 }
 
-Comanda::Comanda(Client &client1): client(&client1),stare_comanda("Noua"),id_comanda(++global_id_comanda),data_comanda(std::time(nullptr))
+Comanda::Comanda(const Client &client1): client(&client1),stare_comanda("Noua"),id_comanda(++global_id_comanda),data_comanda(std::time(nullptr))
 {
 }
 
@@ -155,6 +155,10 @@ const std::vector<ArticolComanda> & Comanda::getArticole() const {
     return articole;
 }
 
+std::string Comanda::getUser() const {
+    return client->getUsername();
+}
+
 void Comanda::adaugaArticol(const std::shared_ptr<UnitateVanzare> &unitate, int cantitate) {
     if (!unitate)
         throw ComandaInvalidaException("Articol invalid");
@@ -177,28 +181,26 @@ double Comanda::calculeazaTotal() const {
     int nrPachete = 0;
     int nrUnitati = 0;
 
-    for (const auto& art : articole) {
-        auto unitate = art.getUnitate();
-        if (!unitate) continue;
-        double pret = unitate->getPretcomanda();
-        if (std::dynamic_pointer_cast<PachetSerie>(unitate)) {
-            pret *= 0.9;
-            nrPachete += art.getCantitate();
-        }
-        total += pret * art.getCantitate();
-        nrUnitati += art.getCantitate();
-    }
+   for (const auto& art : articole) {
+       auto unitate = art.getUnitate();
+       if (!unitate) continue;
+       total += unitate->getPretFinUnitate()* art.getCantitate();
+       if (unitate->estePPredefinit())
+           nrPachete+=art.getCantitate();
+       nrUnitati+=art.getCantitate();
+   }
     if (nrPachete >= 3) {
-        total -= 50.0;
-        std::cout << "Bonus 3+ pachete: -50 RON\n";
-    }
+       total -= 50.0;
+   }
     if (nrUnitati >= 15) {
-        double reducere = total * 0.05;
-        total -= reducere;
-        std::cout << "Reducere volum: -" << reducere << " RON\n";
+        total *= 0.95;
     }
     return total;
 }
 
-
-//...
+std::shared_ptr<Client> Comanda::getClient() const {
+    // Return a copy wrapped in shared_ptr because we only have a raw pointer
+    // and the original object is owned by AppState vector (by value).
+    if (!client) return nullptr;
+    return std::make_shared<Client>(*client);
+}

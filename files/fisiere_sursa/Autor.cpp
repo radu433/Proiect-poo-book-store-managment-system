@@ -55,14 +55,13 @@ size_t Autor::getcarti_scrise() const {
     return carti_scrise.size();
 }
 
-bool Autor::adauga_carte(const std::string &isbn) {
+void Autor::adauga_carte(const std::string &isbn) {
     for (const auto &c: carti_scrise) {
         if (c == isbn) {
-            return false;
+            return;
         }
     }
     carti_scrise.push_back(isbn);
-    return true;
 }
 
 double Autor::calcproductivitate() const {

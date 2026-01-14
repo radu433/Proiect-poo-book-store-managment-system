@@ -12,9 +12,9 @@ int UnitateVanzare::id_contor_global = 0;
 
 //constructori
 
-UnitateVanzare::UnitateVanzare(std::shared_ptr<Publicatie> produs)
+UnitateVanzare::UnitateVanzare(std::shared_ptr<Carte> carte)
     : id_unic(++id_contor_global),
-      produs_principal(std::move(produs))
+      produs_principal(std::move(carte))
 {
     if (!produs_principal) {
         throw DateInvalideException("Eroare critica: UnitateVanzare creata cu un pointer null!");
@@ -56,7 +56,7 @@ std::string UnitateVanzare::getNumeProdus() const {
     return produs_principal->getTitlu();
 }
 
-int UnitateVanzare::getCantitate() const { // Corectat typo
+int UnitateVanzare::getCantitate() const {
     return produs_principal->getcantitate();
 }
 
@@ -69,6 +69,8 @@ bool UnitateVanzare::valideazaDisponibilitate() const {
     return verificaStocSuficient(1);
 }
 
+std::string UnitateVanzare::getTitlu() const {return produs_principal->getTitlu();}
+
 void UnitateVanzare::marcheazaSecondHand(const std::string &conditie, int luni_vechime) {
     este_second_hand = true;
     conditie_fizica = conditie;
@@ -77,6 +79,9 @@ void UnitateVanzare::marcheazaSecondHand(const std::string &conditie, int luni_v
     data_cumparare = acum - luni_vechime * 30 * 24 * 60 * 60;
 }
 
+double UnitateVanzare::getPretFinUnitate() const {
+    return produs_principal->getPretFinal();
+}
 int UnitateVanzare::calculeazaZileDetinere() const {
     time_t acum = std::time(nullptr);
     double sec = std::difftime(acum, data_cumparare);

@@ -106,9 +106,12 @@ void AppState::adaugaAutor(const Autor &autor1) {
     autor.push_back(autor1);
 }
 
-Comanda & AppState::creeazaComanda(Client &client) {
-    return comenzi.emplace_back(client);
+Comanda & AppState::adaugaComanda(const Client &client) {
+    comenzi.emplace_back(client);
+    return comenzi.back();
 }
+
+
 
 
 

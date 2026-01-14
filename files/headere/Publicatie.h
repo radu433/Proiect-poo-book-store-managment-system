@@ -6,6 +6,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
+
+#include "UnitateVanzare.h"
+
 struct Data {
     int zi;
     int luna;
@@ -66,7 +69,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, const Publicatie& obj);
 
     // operator =
-    Publicatie& operator=(const Publicatie&)=delete;
+    Publicatie& operator=(const Publicatie& other);
 
     // functii
 

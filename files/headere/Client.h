@@ -95,6 +95,12 @@ public:
 
     Adresa& getadresa(){return adresa_livrare;}// pt modificat
 
+    void setSold(const double s) { sold = s; }
+    void setNumarComenzi(int n) { numarcomenzi = n; }
+    void setTotalCumparaturi(double t) { totalcumparaturi = t; }
+    void setPctFidelitate(int p) { pct_fidelitate = p; }
+    void setReducereLaUrm(double r) { reducereLaUrmC = r; }
+    void adaugaIdentificatorIstoric(const std::string& id) { istoric_identificatori.push_back(id); }
 
 };
 

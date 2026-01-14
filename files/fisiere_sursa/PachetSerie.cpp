@@ -47,6 +47,11 @@ nume_pachet(nume_pachet),continut(continut), tip_pachet(tip),este_complet(este_c
     }
     }
 
+PachetSerie::PachetSerie(const std::vector<std::shared_ptr<UnitateVanzare>> &continutSH) : continut(continutSH),
+    tip_pachet(TipPachet::Second_Hand),
+    este_complet(false) {
+}
+
 
 PachetSerie::PachetSerie(const PachetSerie &other):UnitateVanzare(other), nume_pachet(other.nume_pachet),
                                                    continut(other.continut), tip_pachet(other.tip_pachet),este_complet(other.este_complet){
@@ -140,6 +145,10 @@ bool PachetSerie::verificaCompletitudine() const {
 
 }
 
+const std::vector<std::shared_ptr<UnitateVanzare>> & PachetSerie::getContinut() const {
+    return this->continut;
+}
+
 std::string PachetSerie::getIdentificator() const {
     return produs_principal->getIdentificator();
 }
@@ -214,8 +223,18 @@ std::string PachetSerie::transforma(const TipPachet tip_pachet) {
         case TipPachet::Educativ: return "Educativ";
         case TipPachet::Mixt: return "Mixt";
         case TipPachet::Personalizat: return "Personalizat";
+        case TipPachet::Second_Hand: return "Second_Hand";
     }
     return "Necunoscut";
+}
+
+double PachetSerie::getPretFinUnitate() const {
+    double total = 0.0;
+    for (const auto& u : continut){
+        if (u)
+            total += u->getPretcomanda();
+    }
+    return total * (1 - calculeazaReducerePachet());
 }
 
 // operator <<

@@ -15,7 +15,7 @@ private:
 
      // date obiecte comandate
      std::vector<ArticolComanda> articole;
-     Client* client;
+      const Client* client;
      std::string stare_comanda;
 
      int id_comanda;
@@ -33,10 +33,7 @@ public:
 
      std::vector<std::string> extrageIdentificatori() const;
 
-     explicit Comanda(Client& client);
-
-
-
+     explicit Comanda(const Client& client);
      //constructor pt load
      //Comanda(int id, time_t data, std::shared_ptr<Client> client,const std::vector<ArticolComanda>& articole,const std::string& stare);
 
@@ -44,7 +41,7 @@ public:
      ~Comanda()=default;
 
      // constructor de mutare
-     Comanda(const Comanda&& other) noexcept=default;
+     Comanda(Comanda&& other) noexcept=default;
 
      // operator =
      Comanda& operator=(Comanda&& other) =delete;
@@ -60,6 +57,7 @@ public:
      [[nodiscard]] std::string getDataFormatata() const;
      [[nodiscard]] int getNumarArticole() const;
      const std::vector<ArticolComanda>& getArticole() const;
+     std::string getUser() const;
 
      // functii
      void adaugaArticol(const std::shared_ptr<UnitateVanzare> &articol, int cantitate);

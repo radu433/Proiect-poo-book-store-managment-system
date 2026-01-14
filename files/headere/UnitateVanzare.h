@@ -5,11 +5,16 @@
 #include <vector>
 #include <memory>
 #include <iostream>
-#include "Publicatie.h"
-#include "Revista.h"
+// #include "Publicatie.h"
+// #include "Revista.h"
+// #include "Carte.h"
 
 #include "../exceptii/exceptii_headere/LibrarieException.h"
 #include "../exceptii/exceptii_headere/DateInvalideException.h"
+
+class Publicatie;
+class Revista;
+class Carte;
 
 class UnitateVanzare {
 private:
@@ -24,26 +29,22 @@ protected:
 
     std::shared_ptr<Publicatie> produs_principal;
 
+    // Helper afișare NVI
+    virtual void afisare(std::ostream& out) const;
+public:
     UnitateVanzare()=default;
-    // Constructor pt derivate de tip carte
-    explicit UnitateVanzare(std::shared_ptr<Publicatie> produs);
 
+    // Constructor pt derivate de tip carte
+    explicit UnitateVanzare(std::shared_ptr<Carte> c);
     // constructor pt derivate de tip revista
     explicit UnitateVanzare(std::shared_ptr<Revista> revista);
     // constructor pt load
     explicit UnitateVanzare(int id, std::shared_ptr<Publicatie> produs);
 
     // Operator=
-    UnitateVanzare& operator=(const UnitateVanzare&) = delete;
-
-    // Helper afișare NVI
-    virtual void afisare(std::ostream& out) const;
-
-    // Constructor de copiere protected
+    UnitateVanzare& operator=(const UnitateVanzare&) = default;
 
 
-
-public:
     UnitateVanzare(const UnitateVanzare& other);
     // getter
     [[nodiscard]] std::shared_ptr<Publicatie> getProdusPrincipal() const;
@@ -76,16 +77,19 @@ public:
 
     //functii
     [[nodiscard]] int calculeazaLuniDetinere() const;
-
-    // Wrapper peste verificaStocSuficient(1)
     [[nodiscard]] bool valideazaDisponibilitate() const;
-    std::string getTitlu() const {return produs_principal->getTitlu();}
-    // Helper pentru ISBN (doar primul ISBN
+    std::string getTitlu() const;
+
+     // Helper pentru ISBN (doar primul ISBN
 
     //functii t trade in
     virtual std::string getConditieFizica() const {return conditie_fizica;}
     virtual bool esteSecondHand() const {return este_second_hand; }
     virtual void marcheazaSecondHand(const std::string& conditie,int luni_vechime);
+
+    virtual double getPretFinUnitate()const ;
+    virtual bool estePPredefinit() const {return false;}
+
 
     // healpere pt data
     [[nodiscard]] int calculeazaZileDetinere() const;

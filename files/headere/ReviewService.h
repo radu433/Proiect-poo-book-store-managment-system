@@ -23,8 +23,8 @@ public:
 
     static void stergeReviewuriNeverificate(AppState& app,const std::string& id_pub,const std::vector<int>& indexuri);
 
-    static double calculeazaRatingPublicatieVerificate(AppState& app,const std::string& identificator_publicatie);
+    static double calculeazaRatingPublicatieVerificate(const AppState& app,const std::string& identificator_publicatie);
 
-    static double calculeazaRatingPublicatieall(AppState& app, const std::string& identificator_publicatie);
+    static double calculeazaRatingPublicatieall(const AppState& app, const std::string& identificator_publicatie);
 };
 #endif //OOP_REVIEWSERVICE_H

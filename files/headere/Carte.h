@@ -9,6 +9,8 @@
 #include <ctime>
 
 #include "Publicatie.h"
+#include "UnitateVanzare.h"
+#include "CarteIndividuala.h"
 #include "../exceptii/exceptii_headere/LibrarieException.h"
 #include "../exceptii/exceptii_headere/DateInvalideException.h"
 
@@ -21,12 +23,12 @@ private:
     static int total_carti_create;
     static double venituri_totale;
 
-    static bool vaidareisbn(const std::string &isbn);
+    static bool validareisbn(const std::string &isbn);
 
 public:
     // constructor cu parametrii
 
-    Carte(const std::string &titlu,  Autor* autor, int cantitate, const std::string &data_publicatie,
+    Carte(const std::string &titlu, const  Autor* autor, int cantitate, const std::string &data_publicatie,
           const std::string &isbn, double pret_baza, int numar_pagini, const std::string &editura);
 
     // destructor virtual
@@ -40,6 +42,7 @@ public:
     //clone
     [[nodiscard]] std::shared_ptr<Publicatie> clone() const override;
 
+    Carte& operator=(const Carte& other);
 
     // functii
 

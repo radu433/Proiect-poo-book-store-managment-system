@@ -13,7 +13,7 @@ static const std::set<std::string> edituri_educationale_top = {
     "Booklet"
 };
 
-Manual::Manual(const std::string &titlu, const Autor* autor, double pret_baza, int cantitate,
+Manual::Manual(const std::string &titlu, const  Autor* autor, double pret_baza, int cantitate,
                const std::string &data_publicatie,
                const std::string &isbn, const int numar_pagini, const std::string &editura, const std::string &materie,
                int clasa)

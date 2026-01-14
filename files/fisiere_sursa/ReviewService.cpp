@@ -9,10 +9,10 @@
 bool ReviewService::verificaReview(const AppState &app, const std::string &username,
     const std::string &id_pub) {
     for (const auto& comanda : app.getComanda()) {
-        if (comanda.getUsernameClient() != username)
+        if (comanda.getUser()!= username)
             continue;
 
-        if (auto isbnuri = comanda.extrageISBN(); std::ranges::find(isbnuri, id_pub) != isbnuri.end()) {
+        if (auto isbnuri = comanda.extrageIdentificatori(); std::ranges::find(isbnuri, id_pub) != isbnuri.end()) {
             return true;
         }
     }
@@ -75,7 +75,7 @@ void ReviewService::stergeReviewuriNeverificate(
     }
 }
 
-double ReviewService::calculeazaRatingPublicatieVerificate(AppState& app,const std::string &identificator_publicatie) {
+double ReviewService::calculeazaRatingPublicatieVerificate(const AppState& app,const std::string &identificator_publicatie) {
     int suma = 0;
     int cnt = 0;
 
@@ -90,7 +90,7 @@ double ReviewService::calculeazaRatingPublicatieVerificate(AppState& app,const s
     return (cnt == 0) ? 0.0 : static_cast<double>(suma) / cnt;
 }
 
-double ReviewService::calculeazaRatingPublicatieall(AppState &app,const std::string& identificator_publicatie) {
+double ReviewService::calculeazaRatingPublicatieall(const AppState &app,const std::string& identificator_publicatie) {
     int suma=0;
     int cnt=0;
 

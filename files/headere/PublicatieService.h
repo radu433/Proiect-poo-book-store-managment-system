@@ -31,8 +31,8 @@ public :
     static void dezactivarePublicatie(const std::shared_ptr<Publicatie> &pub);
 
     // functii pt adaugarea review si rating
-    void adaugaReview_Rating(AppState &app,const Client& client, const std::shared_ptr<Publicatie> &pub,const std::string &text
-        ,int rating);
+    static void adaugaReview_Rating(AppState &app,const Client& client, const std::shared_ptr<Publicatie> &pub,const std::string &text
+                                    ,int rating);
 
 
     // clonare

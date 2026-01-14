@@ -3,7 +3,7 @@
 #ifndef OOP_PACHETSERIE_H
 #define OOP_PACHETSERIE_H
 #include "UnitateVanzare.h"
-enum class TipPachet {Bacalaureat,Trilogie, Stiintific,Literatura,Educativ,Mixt,Personalizat};
+enum class TipPachet {Bacalaureat,Trilogie, Stiintific,Literatura,Educativ,Mixt,Personalizat, Second_Hand};
 class PachetSerie: public UnitateVanzare {
 private:
     std::string nume_pachet;
@@ -61,6 +61,9 @@ protected:
 
     [[nodiscard]] double getPretcomanda() const override;
     static std::string transforma (TipPachet tip_pachet);
+    double getPretFinUnitate() const override;
+
+    bool estePPredefinit() const override {return true;}
 };
 
 

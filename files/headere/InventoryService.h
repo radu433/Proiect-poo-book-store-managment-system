@@ -4,7 +4,6 @@
 #include <vector>
 #include <map>
 #include <memory>
-#include "../headere/SerchService.h"
 #include "../headere/AppState.h"
 
 class Publicatie;
