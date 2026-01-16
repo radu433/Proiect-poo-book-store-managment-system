@@ -59,14 +59,5 @@ std::string Adresa::getAdresaCompleta() const {
     return ss.str();
 }
 
-std::string Adresa::getStrada() const {
-    return strada;
-}
-int Adresa::getNumar() const {
-    return numar;
-}
 
-std::string Adresa::getOras() const {
-    return oras;
-}
 

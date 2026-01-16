@@ -44,7 +44,7 @@ void CosService::adaugaCarteIndividuala( const std::shared_ptr<Client>& clientCu
 
     if (auto carte = std::dynamic_pointer_cast<Carte>(publicatie)) {
          unitate =std::make_shared<CarteIndividuala>(carte);
-        if (esteSH && unitate) {
+        if (esteSH ) {
             unitate->marcheazaSecondHand(conditie, luni);
         }
 

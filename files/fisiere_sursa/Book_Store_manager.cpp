@@ -1075,7 +1075,7 @@ void BookStoreManager::meniuCautaPublicatii() {
                      std::cout << "Eroare la creare pachet SH: " << e.what() << "\n";
 
 
-                     for (auto& u : continutSH)
+                     for ( const auto& u : continutSH)
                          app.adaugaSH(u);
                  }
 
