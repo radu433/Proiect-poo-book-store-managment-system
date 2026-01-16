@@ -362,7 +362,7 @@ void BookStoreManager::meniuPublicatiiA() const {
                 std::cin >> stoc;
 
                 try {
-                    auto& pub=app.getPublicatii()[idx];
+                    const auto& pub=app.getPublicatii()[idx];
                     const auto copie = PublicatieService::cloneazaPublicatie(pub,stoc);
                     std::cout << "Publicatie clonata: "
                             << copie->getTitlu() << "\n";
