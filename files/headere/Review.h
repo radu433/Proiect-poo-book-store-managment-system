@@ -22,7 +22,7 @@ public:
        const std::string& text,bool verificat): username(username),identificator_publicatie(identificator_publicatie)
         ,rating(rating),text(text),data(std::time(nullptr)),verificat(verificat) {
         if (rating<1 || rating>5 )
-            throw RatingInvalidException("Rating invalid!");
+            throw DateInvalideException("Rating invalid!");
     }
     const std::string& getUsername() const {return username;}
     const std::string& getIdentificatorPublicatie() const {return identificator_publicatie;}

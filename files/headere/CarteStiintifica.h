@@ -32,17 +32,10 @@ public:
 
 
     // functii
-    [[nodiscard]] const std::string &getDomeniu() const;
-
     [[nodiscard]] bool esteDeActualitate() const;
 
 
     [[nodiscard]] double calculeazaFactorImpact() const;
-
-
-
-    int getNr_referinte()const{ return nr_referinte; }
-    bool areFormule()const { return are_formule_diagrame; }
 
     //operator <<
     void afisare(std::ostream &out) const override;

@@ -1003,7 +1003,7 @@ void BookStoreManager::meniuCautaPublicatii() {
                  auto unitateSH = app.getStocSH()[idx];
 
                  try {
-                     CosService::adaugaUnitateVanzare(app,clientCurent,comandaActiva,unitateSH);
+                     CosService::adaugaUnitateVanzare(clientCurent,comandaActiva,unitateSH);
 
                      app.stergeDinStoc(idx);
 
@@ -1067,7 +1067,7 @@ void BookStoreManager::meniuCautaPublicatii() {
                      // cream pachetul SH
                      auto pachetSH = std::make_shared<PachetSerie>(continutSH);
 
-                     CosService::adaugaUnitateVanzare(app,clientCurent,comandaActiva,pachetSH);
+                     CosService::adaugaUnitateVanzare(clientCurent,comandaActiva,pachetSH);
                      std::cout << "Pachetul SH a fost creat si adaugat in cos!\n";
 
                  } catch (const std::exception& e) {
@@ -1224,6 +1224,9 @@ void BookStoreManager::meniuCosCumparaturi() {
 
 
                     ComandaService::finalizeazaComanda(*comandaActiva,*clientCurent);
+
+                    // Adaugam comanda in istoricul aplicatiei
+                    app.adaugaComanda(std::move(*comandaActiva));
 
                     std::cout << "\nComanda a fost finalizata cu succes!\n";
                     std::cout << "Total platit: " << total << " lei\n";
@@ -1475,7 +1478,7 @@ void BookStoreManager::meniuDetaliiCont() const {
                     std::getline(std::cin, cod_postal);
 
                     try {
-                        clientCurent->getadresa().modificaAdreasa(judet,oras,strada,numar,cod_postal);
+                        clientCurent->getAdresa().modificaAdreasa(judet,oras,strada,numar,cod_postal);
 
                         std::cout << "Adresa a fost modificata cu succes!\n";
                     }

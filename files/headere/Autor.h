@@ -55,7 +55,6 @@ public:
 
     std::string ierarhie_a()const;
     int getidAutor()const;
-    const std::vector<std::string>& getCartiScrise() const;
     bool areCarte(const std::string& idx) const;
 
 

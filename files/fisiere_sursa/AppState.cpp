@@ -28,7 +28,7 @@ std::vector<Review> AppState::getReviewPublicatie(const std::string &identificat
     std::ranges::sort(rezultat,
                       [](const Review& a, const Review& b) {
                           if (a.getVerificat() != b.getVerificat())
-                              return a.getVerificat()  > b.getVerificat();
+                              return a.getVerificat() ;
                           return a.getData() > b.getData();
                       });
 
@@ -98,9 +98,8 @@ void AppState::adaugaAutor(const Autor &autor1) {
     autor.push_back(autor1);
 }
 
-Comanda & AppState::adaugaComanda(const Client &client) {
-    comenzi.emplace_back(client);
-    return comenzi.back();
+void AppState::adaugaComanda(Comanda &&cmd) {
+    comenzi.push_back(std::move(cmd));
 }
 
 

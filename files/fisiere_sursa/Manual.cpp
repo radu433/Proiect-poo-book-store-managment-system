@@ -30,10 +30,6 @@ Manual::Manual(const std::string &titlu, const  Autor* autor, double pret_baza, 
 }
 
 
-
-int Manual::getclasa() const { return clasa; }
-
-
 std::string Manual::StareAprobare() const {\
     const std::time_t t = std::time(nullptr);
     const std::tm *tm_now = std::localtime(&t);

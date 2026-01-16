@@ -73,7 +73,7 @@ void CarteIndividuala::scadeStoc(const int cantitate) {
     }
     if (auto manual=std::dynamic_pointer_cast<Manual>(carte)) {
         if (manual->StareAprobare() == "Expirat") {
-            throw PublicatieExpirata(
+            throw DateInvalideException(
                 "Blocare vanzare: Manualul '" + manual->getTitlu() +
                 "' este EXPIRAT si nu mai este aprobat de minister!"
             );

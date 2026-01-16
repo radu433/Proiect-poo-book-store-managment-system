@@ -15,12 +15,6 @@ public:
     explicit NumarPaginiInvalidException(int nr_pagini);
 };
 
-class PaginareInconsistentaException : public PaginareException {
-private:
-    int nr_pagini_declarat;
-    int nr_pagini_real;
-public:
-    PaginareInconsistentaException(int declarat, int real);
-};
+
 
 #endif

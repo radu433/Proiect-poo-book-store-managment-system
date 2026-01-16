@@ -104,10 +104,6 @@ int Autor::getidAutor() const {
     return idautor;
 }
 
-const std::vector<std::string> & Autor::getCartiScrise() const {
-    return carti_scrise;
-}
-
 bool Autor::areCarte(const std::string &idx) const{
     return std::ranges::find(carti_scrise,idx) != carti_scrise.end();
 

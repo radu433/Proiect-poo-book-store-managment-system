@@ -91,7 +91,7 @@ public:
     void adaugaSH(const std::shared_ptr<UnitateVanzare> &produs);
     void adaugaClient(const Client &client);
     void adaugaAutor(const Autor &autor1);
-    Comanda& adaugaComanda(const  Client& client);
+    void adaugaComanda(Comanda&& cmd);
 
 
 

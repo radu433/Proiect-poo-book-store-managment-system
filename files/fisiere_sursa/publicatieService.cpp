@@ -45,7 +45,7 @@ void PublicatieService::adaugaReview_Rating(AppState &app, const Client &client,
     }
 
     if (rating < 1 || rating > 5) {
-        throw RatingInvalidException("Rating invalid");
+        throw DateInvalideException("Rating invalid");
     }
 
     if (text.empty()) {

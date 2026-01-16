@@ -54,7 +54,7 @@ Publicatie::Publicatie( const std::string &titlu,  double pret_baza, int cantita
     }
 
     if (nr_pagini > 10000) {
-        throw PaginareInconsistentaException("Numar pagini nerealist: " + std::to_string(nr_pagini));
+        throw DateInvalideException("Numar pagini nerealist: " + std::to_string(nr_pagini));
     }
     if (titlu.empty()) {
         throw TitluInvalidException("Titlul nu poate fi gol!");

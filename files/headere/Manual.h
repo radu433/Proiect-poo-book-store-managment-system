@@ -20,8 +20,6 @@ public:
     // functii
 
 
-    [[nodiscard]] int getclasa()const;
-
     [[nodiscard]] std::string  StareAprobare() const;
 
     [[nodiscard]] double calculeazaPrioritateRestoc() const override;

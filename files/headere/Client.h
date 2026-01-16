@@ -60,47 +60,21 @@ public:
 
 
     double foloseste_pct_fidelitate(int pct_utilizate);
-
+    [[nodiscard]] Adresa getAdresa() const;
     [[nodiscard]] const std::string &getUsername() const;
-
     [[nodiscard]] const std::string &getEmail() const;
-
     [[nodiscard]] int getNumarComenzi() const;
-
     [[nodiscard]] double getTotalCumparaturi() const;
-
     [[nodiscard]] int getPunctedeFideliate() const;
-
     [[nodiscard ]]const  std::string& getTelefon() const;
-
     bool verificaParola(const std::string &parolaIntrodusa) const;
-
     void seteazaParola(std::string &parolac) const;
-
     [[nodiscard]] const std::vector<std::string>& getIstoricIdentificatori() const;
-
     void adaugaPCT(int pct);
-
     void adugaredVit(double reducere);
-
-    bool aCumparatPub(const std::string& identificator) const ;
-
     std::string serialize() const;
 
-    Client deserialize(const std::string &line);
 
-    std::string getP() const {return parola;}
-    const Adresa& getAdresa() const {return adresa_livrare;}//pt afisat
-    double getReducereLaUrm() const { return reducereLaUrmC; }
-
-    Adresa& getadresa(){return adresa_livrare;}// pt modificat
-
-    void setSold(const double s) { sold = s; }
-    void setNumarComenzi(int n) { numarcomenzi = n; }
-    void setTotalCumparaturi(double t) { totalcumparaturi = t; }
-    void setPctFidelitate(int p) { pct_fidelitate = p; }
-    void setReducereLaUrm(double r) { reducereLaUrmC = r; }
-    void adaugaIdentificatorIstoric(const std::string& id) { istoric_identificatori.push_back(id); }
 
 };
 

@@ -50,8 +50,6 @@ public:
 
   std::string getIdentificator() const override;
 
-    int getNrE() const {return numar_editie;}
-    bool areC() const {return are_cadou_suplimentar;}
     TipPublicatie getTipPub() const override;
 
 

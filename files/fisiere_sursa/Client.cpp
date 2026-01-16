@@ -72,6 +72,7 @@ double Client::getSold() const { return sold; }
 
 
 
+
 double Client::calcdiscountpersonalizat() const {
     double discount = 0;
     if (totalcumparaturi > 2000.0)
@@ -145,6 +146,10 @@ double Client::foloseste_pct_fidelitate(int pct_utilizate) {
     return reducere;
 }
 
+Adresa Client::getAdresa() const {
+    return adresa_livrare;
+}
+
 const std::string &Client::getUsername() const {
     return username;
 }
@@ -195,6 +200,11 @@ void Client::adugaredVit(double reducere) {
     reducereLaUrmC+=reducere;
 }
 
-bool Client::aCumparatPub(const std::string &identificator) const {
-    return std::ranges::find(istoric_identificatori,identificator) != istoric_identificatori.end();
+std::string Client::serialize() const {
+    std::stringstream ss;
+    ss << username << "|" << email << "|" << adresa_livrare.getStrada() << "|"
+       << adresa_livrare.getNumar() << "|" << adresa_livrare.getOras() << "|"
+       << telefon << "|" << parola << "|" << sold << "|"
+       << numarcomenzi << "|" << totalcumparaturi << "|" << pct_fidelitate << "|" << reducereLaUrmC;
+    return ss.str();
 }

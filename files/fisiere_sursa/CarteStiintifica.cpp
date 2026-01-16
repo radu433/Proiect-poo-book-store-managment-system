@@ -55,9 +55,6 @@ double CarteStiintifica::getPretFinal() const {
 
 std::string CarteStiintifica::getTip() const { return nivel_academic; }
 
-
-const std::string &CarteStiintifica::getDomeniu() const { return domeniu; }
-
 bool CarteStiintifica::esteDeActualitate() const {
     const std::time_t t = std::time(nullptr);
     const std::tm *tm_now = std::localtime(&t);

@@ -35,12 +35,6 @@ Comanda::Comanda(const Client &client1): client(&client1),stare_comanda("Noua"),
 {
 }
 
-
-
-
-
-
-
 // operator <<
 std::ostream& operator<<(std::ostream& out, const Comanda& cmd) {
     out << "========== COMANDA #" << cmd.id_comanda << " ==========\n";
