@@ -21,14 +21,14 @@ inline void ReducereService::aplicaReducerePublicatii( AppState &app) {
     if (app.getPublicatii().empty())
         return;
 
-    std::time_t t = std::time(nullptr);
-    std::tm* now = std::localtime(&t);
+    const std::time_t t = std::time(nullptr);
+    const std::tm* now = std::localtime(&t);
 
-    int saptamana = now->tm_yday / 7;
-    int procent = std::vector<int>{5, 10, 15}[saptamana % 3];
+    const int saptamana = now->tm_yday / 7;
+    const int procent = std::vector<int>{5, 10, 15}[saptamana % 3];
 
     enum Tip { CARTE, MANUAL, REVISTA, STIINTIFICA };
-    Tip tip = static_cast<Tip>(saptamana % 4);
+    const auto tip = static_cast<Tip>(saptamana % 4);
 
     std::vector<std::shared_ptr<Publicatie>> candidati;
 
@@ -62,8 +62,8 @@ inline void ReducereService::aplicaReducerePublicatii( AppState &app) {
 
     app.stergetoatReducerile();
 
-    std::time_t start = t;
-    std::time_t sfarsit = t + 24 * 60 * 60;
+    const std::time_t start = t;
+    const std::time_t sfarsit = t + 24 * 60 * 60;
 
     for (int i = 0; i < nr; ++i) {
         app.adaugaReduceri(Reducere(candidati[i],procent,start,sfarsit));

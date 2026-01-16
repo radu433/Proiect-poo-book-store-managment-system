@@ -9,12 +9,7 @@
 #include <iostream>
 #include <sstream>
 
-void PachetSerie::adaugaIntern(const std::shared_ptr<UnitateVanzare> &unitate) {
-    if (!unitate)
-        throw DateInvalideException("Unitate NULL in pachet!");
 
-    continut.push_back(unitate);
-}
 
 // afisare
 void PachetSerie::afisare(std::ostream &out) const {

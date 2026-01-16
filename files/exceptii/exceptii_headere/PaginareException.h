@@ -9,8 +9,6 @@ public:
 };
 
 class NumarPaginiInvalidException : public PaginareException {
-private:
-    int nr_pagini_invalid;
 public:
     explicit NumarPaginiInvalidException(int nr_pagini);
 };

@@ -4,7 +4,9 @@
 #define OOP_PACHETSERIESERVICE_H
 #include "PachetSerie.h"
 
-class PachetSerieService {
+class PachetSerieService:public UnitateVanzare{
+    friend class PachetSerieService;
+    std::vector<std::shared_ptr<UnitateVanzare>> pachet;
     public:
     static void adaugaUnitate(PachetSerie &pachet, const std::shared_ptr<UnitateVanzare> &unitate) {
         if (!unitate)
@@ -17,7 +19,7 @@ class PachetSerieService {
                 throw DateInvalideException("Produs deja in pachet");
         }
 
-        pachet.adaugaIntern(unitate);
+        pachet.continut.push_back(unitate);
     }
 };
 #endif //OOP_PACHETSERIESERVICE_H

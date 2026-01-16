@@ -332,6 +332,7 @@ void BookStoreManager::meniuPublicatiiA() const {
                 }catch (const std::exception& e) {
                     std::cout << "Eroare: " << e.what() << "\n";
                 }
+                break;
             }
             case 4: {
                 const int idx =selecteazaPub();
@@ -1058,7 +1059,7 @@ void BookStoreManager::meniuCautaPublicatii() {
                      std::cout << "Un pachet SH trebuie sa contina minim 2 produse.\n";
 
                      // punem produsele inapoi
-                     for (auto& u : continutSH)
+                     for ( const auto& u : continutSH)
                          app.adaugaSH(u);
                      break;
                  }
@@ -1223,10 +1224,7 @@ void BookStoreManager::meniuCosCumparaturi() {
                     }
 
 
-                    ComandaService::finalizeazaComanda(*comandaActiva,*clientCurent);
-
-                    // Adaugam comanda in istoricul aplicatiei
-                    app.adaugaComanda(std::move(*comandaActiva));
+                    ComandaService::finalizeazaComanda(std::move(*comandaActiva),*clientCurent, app);
 
                     std::cout << "\nComanda a fost finalizata cu succes!\n";
                     std::cout << "Total platit: " << total << " lei\n";
@@ -1478,7 +1476,7 @@ void BookStoreManager::meniuDetaliiCont() const {
                     std::getline(std::cin, cod_postal);
 
                     try {
-                        clientCurent->getAdresa().modificaAdreasa(judet,oras,strada,numar,cod_postal);
+                        clientCurent->modificaAdreasa(judet,oras,strada,numar,cod_postal);
 
                         std::cout << "Adresa a fost modificata cu succes!\n";
                     }

@@ -29,8 +29,10 @@ public:
     void modificaAdreasa(const std::string &judet, const std::string &oras,
                         const std::string &strada,const int numar, const std::string &cod_postal);
     [[nodiscard]] std::string getAdresaCompleta() const;
+
     std::string getStrada() const;
     int getNumar() const;
+
     std::string getOras() const;
 };
 

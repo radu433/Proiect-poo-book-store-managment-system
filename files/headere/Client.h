@@ -60,7 +60,7 @@ public:
 
 
     double foloseste_pct_fidelitate(int pct_utilizate);
-    [[nodiscard]] Adresa getAdresa() const;
+    [[nodiscard]] const Adresa& getAdresa() const;
     [[nodiscard]] const std::string &getUsername() const;
     [[nodiscard]] const std::string &getEmail() const;
     [[nodiscard]] int getNumarComenzi() const;
@@ -72,7 +72,8 @@ public:
     [[nodiscard]] const std::vector<std::string>& getIstoricIdentificatori() const;
     void adaugaPCT(int pct);
     void adugaredVit(double reducere);
-    std::string serialize() const;
+    void modificaAdreasa(const std::string &judet, const std::string &oras,const std::string &strada,
+        int numar, const std::string &cod_postal);
 
 
 

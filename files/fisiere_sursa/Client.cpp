@@ -146,7 +146,7 @@ double Client::foloseste_pct_fidelitate(int pct_utilizate) {
     return reducere;
 }
 
-Adresa Client::getAdresa() const {
+const Adresa& Client::getAdresa() const {
     return adresa_livrare;
 }
 
@@ -199,12 +199,10 @@ void Client::adugaredVit(double reducere) {
         throw DateInvalideException("Priocentaj gresit!");
     reducereLaUrmC+=reducere;
 }
+void Client::modificaAdreasa(const std::string &jud, const std::string &o,
+                        const std::string &str,const int nrn, const std::string &cp) {
+    this->adresa_livrare.modificaAdreasa(jud, o, str, nrn, cp);
 
-std::string Client::serialize() const {
-    std::stringstream ss;
-    ss << username << "|" << email << "|" << adresa_livrare.getStrada() << "|"
-       << adresa_livrare.getNumar() << "|" << adresa_livrare.getOras() << "|"
-       << telefon << "|" << parola << "|" << sold << "|"
-       << numarcomenzi << "|" << totalcumparaturi << "|" << pct_fidelitate << "|" << reducereLaUrmC;
-    return ss.str();
 }
+
+

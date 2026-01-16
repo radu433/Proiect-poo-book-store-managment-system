@@ -9,9 +9,6 @@ public:
 };
 
 class PublicatieExpirata : public PublicatieException {
-private:
-    std::string data_expirare;
-    int zile_expirate;
 public:
     PublicatieExpirata(const std::string& data, int zile);
 };
@@ -22,8 +19,6 @@ public:
 };
 
 class RatingInvalidException : public PublicatieException {
-private:
-    int rating_invalid;
 public:
     explicit RatingInvalidException(int rating);
 };

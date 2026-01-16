@@ -17,7 +17,7 @@ class ComandaService {
 public:
     static StatisticiComenzi calculeazaStatistici(const AppState& app);
 
-    static double finalizeazaComanda ( Comanda& cmd,Client& client);
+    static double finalizeazaComanda (Comanda&& cmd,Client& client, AppState& app);
 };
 
 inline StatisticiComenzi ComandaService::calculeazaStatistici(const AppState &app) {
@@ -39,7 +39,7 @@ inline StatisticiComenzi ComandaService::calculeazaStatistici(const AppState &ap
     return s;
 }
 
-inline double ComandaService::finalizeazaComanda( Comanda &cmd, Client &client) {
+inline double ComandaService::finalizeazaComanda(Comanda &&cmd, Client &client, AppState& app) {
     cmd.valideazaComanda();
 
     double total = cmd.calculeazaTotal();
@@ -57,6 +57,8 @@ inline double ComandaService::finalizeazaComanda( Comanda &cmd, Client &client) 
     const auto ids = cmd.extrageIdentificatori();
     client.plateste(total);
     client.finalizeazaComanda(total, ids);
+    
+    app.adaugaComanda(std::move(cmd));
 
     return total;
 }

@@ -11,7 +11,6 @@ private:
     TipPachet tip_pachet;
     bool este_complet;
 
-    void adaugaIntern(const std::shared_ptr<UnitateVanzare> &unitate);
     friend class PachetSerieService;
 
 protected:

@@ -51,7 +51,7 @@ void CosService::adaugaCarteIndividuala( const std::shared_ptr<Client>& clientCu
     } else if (auto revista = std::dynamic_pointer_cast<Revista>(publicatie)) {
          unitate = std::make_shared<RevistaIndividuala>(revista);
 
-        if (esteSH && unitate) {
+        if (esteSH ) {
             unitate->marcheazaSecondHand(conditie, luni);
         }
 
