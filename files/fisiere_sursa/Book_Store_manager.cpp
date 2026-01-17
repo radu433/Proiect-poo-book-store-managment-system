@@ -1665,11 +1665,19 @@ int BookStoreManager::selecteazaPub() const  {
                     break;
                 }
 
-                case 3:
-                    for (int i = 0; i < static_cast<int>(app.getPublicatii().size()); ++i)
-                        rezultate.push_back(i);
+                case 3: {
+                    const int idx = selecteazaPub();
+                    if (idx < 0)
+                        break;
+                    try {
+                        const auto& pub = app.getPublicatii()[idx];
+                        pub->activeaza();
+                        std::cout << "Publicatia a fost reactivata !\n";
+                    } catch (const std::exception& e) {
+                        std::cout << "Eroare: " << e.what() << "\n";
+                    }
                     break;
-
+                }
                 default:
                     std::cout << "Optiune invalida.\n";
                     return -1;
