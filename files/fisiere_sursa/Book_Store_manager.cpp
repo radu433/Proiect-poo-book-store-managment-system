@@ -840,60 +840,60 @@ void BookStoreManager::meniuCautaPublicatii() {
         std::cout<<"Trebuie sa fii autentificat!\n";
         return;
     }
-    auto pub=selecteazaPubClient();
-    if (!pub)
-        return;
-    std::cout << "\n=== DETALII PUBLICATIE ===\n";
-    pub->afisare(std::cout);
-    std::cout << "Pret: " << pub->getPretFinal() << " lei\n";
-    std::cout << "Statut stoc: "<< pub->determinaStatutStoc()<< "\n";
-    std::cout << "Stoc disponibil: " << pub->getcantitate() << "\n";
-    std::cout << "Timp estimat lectura: " << pub->timp_estimat_lecturii() << " minute\n";
-    std::cout << "Disponibil (cantitate > 0): " << (pub->este_disponibila() ? "DA" : "NU") << "\n";
 
-    if (auto revista = std::dynamic_pointer_cast<Revista>(pub)) {
-        std::cout << "\n--- ANALIZA REVISTA ---\n";
+    while (true) {
+        auto pub = selecteazaPubClient();
+        if (!pub)
+            return;
 
-        std::cout << "Frecventa citire (scor): "
-                << revista->calculeaza_frecventa_citire()
-                << "\n";
+        std::cout << "\n=== DETALII PUBLICATIE ===\n";
+        pub->afisare(std::cout);
+        std::cout << "Pret: " << pub->getPretFinal() << " lei\n";
+        std::cout << "Statut stoc: "<< pub->determinaStatutStoc()<< "\n";
+        std::cout << "Stoc disponibil: " << pub->getcantitate() << "\n";
+        std::cout << "Timp estimat lectura: " << pub->timp_estimat_lecturii() << " minute\n";
+        std::cout << "Disponibil (cantitate > 0): " << (pub->este_disponibila() ? "DA" : "NU") << "\n";
 
-        std::cout << "Colectie: "
-                << (revista->este_colectionabila() ? "DA" : "NU")
-                << "\n";
-    }
+        if (auto revista = std::dynamic_pointer_cast<Revista>(pub)) {
+            std::cout << "\n--- ANALIZA REVISTA ---\n";
+            std::cout << "Frecventa citire (scor): "
+                    << revista->calculeaza_frecventa_citire()
+                    << "\n";
+            std::cout << "Colectie: "
+                    << (revista->este_colectionabila() ? "DA" : "NU")
+                    << "\n";
+        }
+        afiseazaReviewuriClient( pub->getIdentificator());
+        int opt = -1;
+        while (opt != 0) {
+            std::cout << "\n1. Adauga in cos\n";
+            std::cout << "0. Inapoi la cautare\n";
+            std::cout << "Optiune: ";
+            std::cin >> opt;
+            if (opt == 1) {
+                int cantitate;
+                std::cout << "Cantitate dorita: ";
+                std::cin >> cantitate;
+                if (cantitate <= 0) {
+                    std::cout << "Cantitate invalida.\n";
+                    continue;
+                }
+                if (cantitate > pub->getcantitate()) {
+                    std::cout << "Stoc insuficient! Disponibil: "
+                            << pub->getcantitate() << "\n";
+                    continue;
+                }
 
-    afiseazaReviewuriClient( pub->getIdentificator());
-
-    int opt;
-    std::cout << "\n1. Adauga in cos\n";
-    std::cout << "0. Inapoi\n";
-    std::cout << "Optiune: ";
-    std::cin >> opt;
-
-    if (opt != 1)
-        return;
-
-    int cantitate;
-    std::cout << "Cantitate dorita: ";
-    std::cin >> cantitate;
-
-    if (cantitate <= 0) {
-        std::cout << "Cantitate invalida.\n";
-        return;
-    }
-
-    if (cantitate > pub->getcantitate()) {
-        std::cout << "Stoc insuficient! Disponibil: "
-                << pub->getcantitate() << "\n";
-        return;
-    }
-
-    try {
-        CosService::adaugaCarteIndividuala(clientCurent,comandaActiva,cantitate,pub,false,"Noua",0);
-        std::cout << "Publicatia a fost adaugata in cos!\n";
-    } catch (const std::exception& e) {
-        std::cout << "Eroare: " << e.what() << "\n";
+                try {
+                    CosService::adaugaCarteIndividuala(clientCurent, comandaActiva, cantitate, pub, false, "", 0);
+                    std::cout << "Produs adaugat in cos!\n";
+                } catch (const std::exception& e) {
+                    std::cout << "Eroare la adaugare: " << e.what() << "\n";
+                }
+            } else if (opt != 0) {
+                std::cout << "Optiune invalida!\n";
+            }
+        }
     }
 }
 
@@ -1500,99 +1500,105 @@ void BookStoreManager::meniuDetaliiCont() const {
     }
 }
 std::shared_ptr<Client> BookStoreManager::autentificareClientUI() const {
-    int opt = -1;
+    while (true) {
+        int opt = -1;
+        std::cout << "\n=== CLIENT ===\n";
+        std::cout << "1. Login\n";
+        std::cout << "2. Creeaza cont\n";
+        std::cout << "0. Inapoi\n";
+        std::cout << "Optiune: ";
+        std::cin >> opt;
 
-    std::cout << "\n=== CLIENT ===\n";
-    std::cout << "1. Login\n";
-    std::cout << "2. Creeaza cont\n";
-    std::cout << "0. Inapoi\n";
-    std::cout << "Optiune: ";
-    std::cin >> opt;
+        if (opt == 0) return nullptr;
 
-    if (opt == 0)
-        return nullptr;
-
-    if (opt == 2) {
-        creareContClientUI();
-    } else {
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    }
-
-    std::string identificator;
-    std::cout << "Introduceti Email / Telefon / Username: ";
-    std::getline(std::cin, identificator);
-
-    int incercari = 0;
-    while (incercari < 5) {
-        std::string parola;
-        std::cout << "Parola (0 pentru iesire): ";
-        std::getline(std::cin, parola);
-
-        if (parola == "0")
-            return nullptr;
-
-        if (auto client = AuthenticatorService::autentifica(app, identificator, parola)) {
-            std::cout << "Autentificare reusita!\n";
-            return client;
+        if (opt == 2) {
+            creareContClientUI();
+            continue;
         }
 
-        incercari++;
-        std::cout << "Parola gresita. Reincercati!\n";
-    }
+        if (opt == 1) {
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::string identificator;
+            std::cout << "Introduceti Email / Telefon / Username: ";
+            std::getline(std::cin, identificator);
 
-    std::cout << "Prea multe incercari esuate.\n";
-    return nullptr;
+            int incercari = 0;
+            while (incercari < 5) {
+                std::string parola;
+                std::cout << "Parola (0 pentru iesire): ";
+                std::getline(std::cin, parola);
+
+                if (parola == "0") break;
+
+                if (auto client = AuthenticatorService::autentifica(app, identificator, parola)) {
+                    std::cout << "Autentificare reusita!\n";
+                    return client;
+                }
+                incercari++;
+                std::cout << "Parola gresita. Reincercati!\n";
+            }
+        } else {
+            std::cout << "Optiune invalida!\n";
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+    }
 }
 void BookStoreManager:: creareContClientUI() const {
-    std::string username, email, telefon, parola;
-    std::string judet, oras, strada, cod_postal;
-    int numar = 0;
+    while (true) {
+        std::string username, email, telefon, parola;
+        std::string judet, oras, strada, cod_postal;
+        int numar = 0;
 
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-    std::cout << "\n=== CREARE CONT CLIENT ===\n";
+        std::cout << "\n=== CREARE CONT CLIENT (0 la Username pentru anulare) ===\n";
+        std::cout << "Username: ";
+        std::getline(std::cin, username);
+        if (username == "0") return;
 
-    std::cout << "Username: ";
-    std::getline(std::cin, username);
+        std::cout << "Email: ";
+        std::getline(std::cin, email);
 
-    std::cout << "Email: ";
-    std::getline(std::cin, email);
+        std::cout << "Telefon: ";
+        std::getline(std::cin, telefon);
 
-    std::cout << "Telefon: ";
-    std::getline(std::cin, telefon);
+        std::cout << "Parola(minim 6 caractere): ";
+        std::getline(std::cin, parola);
 
-    std::cout << "Parola(minim 6 caractere): ";
-    std::getline(std::cin, parola);
+        std::cout << "Judet: ";
+        std::getline(std::cin, judet);
 
-    std::cout << "Judet: ";
-    std::getline(std::cin, judet);
+        std::cout << "Oras: ";
+        std::getline(std::cin, oras);
 
-    std::cout << "Oras: ";
-    std::getline(std::cin, oras);
+        std::cout << "Strada: ";
+        std::getline(std::cin, strada);
 
-    std::cout << "Strada: ";
-    std::getline(std::cin, strada);
+        std::cout << "Numar: ";
+        if (!(std::cin >> numar)) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Numar invalid!\n";
+            continue;
+        }
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-    std::cout << "Numar: ";
-    std::cin >> numar;
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "Cod postal: ";
+        std::getline(std::cin, cod_postal);
 
-    std::cout << "Cod postal: ";
-    std::getline(std::cin, cod_postal);
-
-    try {
-        Adresa adresa(judet, oras, strada, numar, cod_postal);
-
-        AuthenticatorService::creeazaClient(
-            app, username, email, adresa, telefon, parola
-        );
-
-        std::cout << "Cont creat cu succes! Va rugam sa va autentificati.\n";
+        try {
+            Adresa adresa(judet, oras, strada, numar, cod_postal);
+            AuthenticatorService::creeazaClient(app, username, email, adresa, telefon, parola);
+            std::cout << "Cont creat cu succes! Va rugam sa va autentificati.\n";
+            app.adaugaLogs(Tiplog::CONT_CREAT, email, username, "Cont creat din interfata client");
+            break;
+        }
+        catch (const std::exception& e) {
+            std::cout << "Eroare: " << e.what() << "\n";
+            std::cout << "Incercati din nou.\n";
+        }
     }
-    catch (const std::exception& e) {
-        std::cout << "Eroare: " << e.what() << "\n";
-    }
-    app.adaugaLogs(Tiplog::CONT_CREAT,email,username,"Cont creat din interfata client");
 }
 
 // motor cautare publicatii

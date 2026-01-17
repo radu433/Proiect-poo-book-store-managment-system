@@ -24,9 +24,7 @@ Client::Client(const std::string &username, const std::string &email, const Adre
 }
 
 // destructor
-Client::~Client() {
-    std::cout << "Clientul a fost sters" << std::endl;
-}
+Client::~Client() {}
 
 
 // operator <<

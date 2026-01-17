@@ -103,8 +103,8 @@ double Publicatie::CalculeazaScorPopularitate() const {
     if (puncte_vanzare > 40.0) puncte_vanzare = 40.0;
 
 
-    std::time_t now = std::time(nullptr);
-    std::time_t pub_time = convertesteDatainSecunde();
+    const std::time_t now = std::time(nullptr);
+    const std::time_t pub_time = convertesteDatainSecunde();
 
 
     double secunde_vechime = std::difftime(now, pub_time);
