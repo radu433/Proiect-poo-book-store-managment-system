@@ -6,15 +6,31 @@
 #include "../headere/CarteStiintifica.h"
 #include "../headere/Revista.h"
 #include <algorithm>
+#include <ranges>
 #include <sstream>
 
-// constructori cu parametrii
+static std::vector<std::string> split(const std::string& s, char delim) {
+    std::vector<std::string> elems;
+    std::stringstream ss(s);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+    return elems;
+}
 
+
+//constructor pt load
+Client::Client(const std::string &username, const std::string &email, const Adresa &adresa,const std::string &telefon, const std::string &parola, double sold,
+                    int nrComenzi, double totalCump, int pctFid, double reducere,const std::vector<std::string>& istoric)
+         : username(username), email(email), adresa_livrare(adresa), telefon(telefon),parola(parola), sold(sold),
+numarcomenzi(nrComenzi), totalcumparaturi(totalCump),istoric_identificatori(istoric), pct_fidelitate(pctFid), reducereLaUrmC(reducere)
+{}
+
+// constructori cu parametrii
 Client::Client(const std::string &username, const std::string &email, const Adresa &adresa,
-               const std::string &telefon, const std::string &parola) : username(username), email(email),
-                                                                        adresa_livrare(adresa), telefon(telefon),
-                                                                        parola(parola), sold(0.0), numarcomenzi(0),
-                                                                        totalcumparaturi(0), pct_fidelitate(0) {
+               const std::string &telefon, const std::string &parola) : username(username), email(email),adresa_livrare(adresa), telefon(telefon),
+                                                                        parola(parola), sold(0.0), numarcomenzi(0),totalcumparaturi(0), pct_fidelitate(0) {
     if (username.empty()) {
         throw ClientInvalidException("Numele utilizatorului nu poate fi gol!");
     }
@@ -59,17 +75,12 @@ void Client::alimenteazaCont(double suma) {
 
 void Client::plateste(double suma) {
     if (suma > sold) {
-        // Aruncăm excepția specifică de sold
         throw SoldInsuficientException(sold, suma);
     }
     sold -= suma;
 }
 
-
 double Client::getSold() const { return sold; }
-
-
-
 
 double Client::calcdiscountpersonalizat() const {
     double discount = 0;
@@ -201,6 +212,32 @@ void Client::modificaAdreasa(const std::string &jud, const std::string &o,
                         const std::string &str,const int nrn, const std::string &cp) {
     this->adresa_livrare.modificaAdreasa(jud, o, str, nrn, cp);
 
+}
+
+std::string Client::serializare() const {
+    std::stringstream ss;
+    ss << email << "|"<< username << "|"<< telefon << "|"<< parola << "|"<< sold << "|"<< numarcomenzi << "|"<< totalcumparaturi << "|"
+       << pct_fidelitate << "|"<< reducereLaUrmC << "|"<< adresa_livrare.serializare() << "|";
+    for (size_t i = 0; i < istoric_identificatori.size(); ++i) {
+        ss << istoric_identificatori[i];
+        if (i + 1 < istoric_identificatori.size()) {
+            ss << ",";
+        }
+    }
+    return ss.str();
+}
+
+Client Client::deserializare(const std::string &line) {
+    const auto v = split(line, '|');
+    const Adresa adresa_reconstituita = Adresa::deserializare(v[9]);
+
+    std::vector<std::string> istoric;
+    if (v.size() > 10 && !v[10].empty()) {
+        istoric = split(v[10], ',');
+    }
+
+    return Client(v[1],v[0], adresa_reconstituita,v[2],v[3],std::stod(v[4]),std::stoi(v[5]),
+        std::stod(v[6]),std::stoi(v[7]),std::stod(v[8]),istoric);
 }
 
 

@@ -2,8 +2,12 @@
 #include "../headere/Revista.h"
 #include "../headere/Carte.h"
 #include "../headere/Publicatie.h"
+#include "../headere/CarteIndividuala.h"
+#include "../headere/RevistaIndividuala.h"
+#include "../headere/PachetSerie.h"
 
 #include <iomanip>
+#include <vector>
 
 #include "../exceptii/exceptii_headere/LibrarieException.h"
 #include "../exceptii/exceptii_headere/DateInvalideException.h"
@@ -100,4 +104,67 @@ void UnitateVanzare::afisare(std::ostream &out) const {
 std::ostream & operator<<(std::ostream &out, const UnitateVanzare &obj) {
     obj.afisare(out);
     return out;
+}
+
+std::string UnitateVanzare::serializare() const {
+    std::stringstream ss;
+    ss << id_unic << "|" << conditie_fizica << "|" << este_second_hand << "|" << data_cumparare << "|" 
+       << (produs_principal ? produs_principal->getIdentificator() : "");
+    return ss.str();
+}
+
+static std::vector<std::string> split_uv(const std::string& s) {
+    std::vector<std::string> elems;
+    std::stringstream ss(s);
+    std::string item;
+    while (std::getline(ss, item,'|')) {
+        elems.push_back(item);
+    }
+    return elems;
+}
+
+std::shared_ptr<UnitateVanzare> UnitateVanzare::deserializare(const std::string& line, const std::vector<std::shared_ptr<Publicatie>>& publicatii) {
+    const auto v = split_uv(line);
+    // Format: Tip|ID|Conditie|EsteSH|Data|ID_Pub
+    
+    if (v.empty() || v.size() < 6) return nullptr;
+
+    const std::string tip = v[0];
+    int id = std::stoi(v[1]);
+    const std::string conditie = v[2];
+    const bool esteSH = (std::stoi(v[3]) != 0);
+    const time_t data = std::stoll(v[4]);
+    const std::string idPub = v[5];
+    auto findPub = [&](const std::string& id_cautat) -> std::shared_ptr<Publicatie> {
+        for (const auto& p : publicatii) {
+            if (p->getIdentificator() == id_cautat) return p;
+        }
+        return nullptr;
+    };
+
+    const std::shared_ptr<Publicatie> pub = findPub(idPub);
+
+    if (!pub && tip != "PachetSerie") {
+         return nullptr;
+    }
+    std::shared_ptr<UnitateVanzare> uv = nullptr;
+    if (tip == "CarteIndividuala") {
+        if (auto carte = std::dynamic_pointer_cast<Carte>(pub)) {
+            uv = std::make_shared<CarteIndividuala>(id, carte);
+        }
+    }
+    else if (tip == "RevistaIndividuala") {
+        if (auto rev = std::dynamic_pointer_cast<Revista>(pub)) {
+            uv = std::make_shared<RevistaIndividuala>(id, rev);
+        }
+    }
+    else if (tip == "PachetSerie") {
+        uv = PachetSerie::deserializare(line, publicatii);
+    }
+
+    if (uv) {
+        uv->initDateSH(esteSH, conditie, data);
+    }
+    
+    return uv;
 }

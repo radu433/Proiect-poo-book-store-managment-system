@@ -4,6 +4,16 @@
 #include "../exceptii/exceptii_headere/AutorException.h"
 #include<iostream>
 #include <algorithm>
+#include <sstream>
+static std::vector<std::string> split(const std::string& s, char delim) {
+    std::vector<std::string> elems;
+    std::stringstream ss(s);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+    return elems;
+}
 int Autor::nextidautor=0;
 // constructor fara parametrii
 Autor::Autor() : nume("NECUNOSCUT"), prenume("NECUNOSCUT"), varsta(0), numar_premii(0), idautor(++nextidautor) {
@@ -23,8 +33,8 @@ Autor::Autor(const std::string &nume, const std::string &prenume, int varsta) : 
     }
 }
 
-Autor::Autor(int id, const std::string &nume, const std::string &prenume, int varsta) : nume(nume), prenume(prenume),
-varsta(varsta), numar_premii(0), idautor(id)
+Autor::Autor(int id, const std::string &nume, const std::string &prenume, int varsta, int numar_premii, const std::vector<std::string>& carti)
+    : nume(nume), prenume(prenume), varsta(varsta), carti_scrise(carti), numar_premii(numar_premii), idautor(id)
 {
     if (id > nextidautor) nextidautor = id;
 }
@@ -107,4 +117,35 @@ int Autor::getidAutor() const {
 bool Autor::areCarte(const std::string &idx) const{
     return std::ranges::find(carti_scrise,idx) != carti_scrise.end();
 
+}
+
+std::string Autor::serializare() const {
+  std::stringstream ss;
+  ss<<nume<<"|"<<prenume<<"|"<<varsta<<"|";
+    for (size_t i = 0; i < carti_scrise.size(); i++) {
+        ss<<carti_scrise[i];
+        if (i+1<carti_scrise.size()) {
+            ss<<",";
+        }
+    }
+    ss<<"|"<<numar_premii<<"|"<<idautor;
+    return ss.str();
+
+}
+
+Autor Autor::deserializare(const std::string &line) {
+    const auto v=split(line,'|');
+    std::vector<std::string> carti_scrise;
+    if (v.size() > 3 && !v[3].empty()) {
+        carti_scrise = split(v[3], ',');
+    }
+    if (v.size() < 6) {
+        throw LibrarieException("Linie invalida pentru deserializare Autor!");
+    }
+
+    const int varsta = std::stoi(v[2]);
+    const int nr_premii = std::stoi(v[4]);
+    const int id = std::stoi(v[5]);
+
+    return Autor(id, v[0], v[1], varsta, nr_premii, carti_scrise);
 }

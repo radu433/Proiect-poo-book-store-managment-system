@@ -91,6 +91,15 @@ public:
 
     // healpere pt data
     [[nodiscard]] int calculeazaZileDetinere() const;
-};
+    
+    // Metoda pt deserializare pentru a restaura starea completa
+    void initDateSH(bool esteSH, const std::string& conditie, time_t data) {
+        this->este_second_hand = esteSH;
+        this->conditie_fizica = conditie;
+        this->data_cumparare = data;
+    }
 
+    virtual std::string serializare() const;
+    static std::shared_ptr<UnitateVanzare> deserializare(const std::string& line, const std::vector<std::shared_ptr<Publicatie>>& publicatii);
+};
 #endif //OOP_UNITATEVANZARE_H

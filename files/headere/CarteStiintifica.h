@@ -11,6 +11,13 @@ private:
     bool are_formule_diagrame;
 
 public:
+    // constructor pt load
+    CarteStiintifica(const std::string &titlu, const  Autor* autor, int cantitate,
+                     const std::string &data_publicatie, const std::string &isbn, double pret_baza,
+                     const int numar_pagini, const std::string &editura, const std::string &domeniu,
+                     const std::string &nivel_academic,
+                     int nr_referinte, const bool are_formule_diagrame,int nr_vanzari, const std::vector<int>& ratinguri);
+
     // constructor cu parametrii
     CarteStiintifica(const std::string &titlu, const  Autor* autor, int cantitate,
                      const std::string &data_publicatie, const std::string &isbn, double pret_baza,
@@ -40,6 +47,9 @@ public:
     //operator <<
     void afisare(std::ostream &out) const override;
     TipPublicatie getTipPub() const override;
+
+    std::string serializare() const override;
+    static std::shared_ptr<CarteStiintifica> deserializare(const std::string& line, const std::vector<std::shared_ptr<Autor>>& autori);
 
 };
 #endif //OOP_CARTESTIINTIFICA_H

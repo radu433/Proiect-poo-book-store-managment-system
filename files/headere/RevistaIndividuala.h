@@ -14,10 +14,17 @@ protected:
 public:
     // constructor
     explicit RevistaIndividuala(const std::shared_ptr<Revista> &revista);
+    
+    // constructor de load
+    RevistaIndividuala(int id, const std::shared_ptr<Revista> &revista);
+
     // constructor de copiere
     RevistaIndividuala(const RevistaIndividuala& other);
     // clone
     std::shared_ptr<UnitateVanzare> clone() const override;
+    
+    std::string serializare() const override;
+
     //destructor
     ~RevistaIndividuala() override = default;
 

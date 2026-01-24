@@ -40,6 +40,30 @@ struct LogEntry {
 
         return os;
     }
+
+    std::string serializare() const {
+        std::stringstream ss;
+        ss << timestamp << "|" << static_cast<int>(tip) << "|" << email_client << "|" << user << "|" << detalii;
+        return ss.str();
+    }
+
+    static LogEntry deserializare(const std::string& line) {
+        std::stringstream ss(line);
+        std::string item;
+        std::vector<std::string> v;
+        while (std::getline(ss, item, '|')) {
+            v.push_back(item);
+        }
+        if (v.size() < 5) return {0, Tiplog::AUTENTIFICARE_ESUATA, "", "", ""};
+        
+        LogEntry log;
+        log.timestamp = std::stoll(v[0]);
+        log.tip = static_cast<Tiplog>(std::stoi(v[1]));
+        log.email_client = v[2];
+        log.user = v[3];
+        log.detalii = v[4];
+        return log;
+    }
 };
 
 class AppState {
@@ -59,6 +83,7 @@ public:
 
     void adaugaReview(const std::string& username, const std::string& identificator_publicatie,int rating, const std::string& text,
         bool verificat);
+    void incarcaReview(const Review& r) { reviews.push_back(r); }
 
     std::vector<Review>getReviewPublicatie(const std::string& identificator_publicatie) const;
 
@@ -68,6 +93,7 @@ public:
 
 
      void adaugaLogs( const Tiplog tip, const std::string &email,const std::string &user, const std::string &detalii = "");
+    void incarcaLog(const LogEntry& log) { logs.push_back(log); }
 
     // geteri appstate
     const std::vector<std::shared_ptr<Publicatie>>& getPublicatii() const {return publicatii;}
@@ -92,6 +118,7 @@ public:
     void adaugaClient(const Client &client);
     void adaugaAutor(const Autor &autor1);
     void adaugaComanda(Comanda&& cmd);
+    void adaugaPachet(const PachetSerie& p) { pachetePredefinite.push_back(p); }
 
 
 

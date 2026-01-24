@@ -4,6 +4,7 @@
 #include <string>
 #include <set>
 #include <ctime>
+#include <sstream>
 static const std::set<std::string> edituri_educationale_top = {
     "Didactica si Pedagogica",
     "Aramis",
@@ -12,6 +13,14 @@ static const std::set<std::string> edituri_educationale_top = {
     "Paralela 45",
     "Booklet"
 };
+
+Manual::Manual(const std::string &titlu, const Autor *autor, double pret_baza, int cantitate,
+    const std::string &data_publicatie, const std::string &isbn, const int numar_pagini, const std::string &editura,
+    const std::string &materie, int clasa, int nr_vanzari, const std::vector<int> &ratinguri):
+Carte(titlu, autor, cantitate, data_publicatie, isbn, pret_baza, numar_pagini, editura,nr_vanzari,ratinguri),materie(materie),clasa(clasa){
+}
+
+// constructor arametrii
 
 Manual::Manual(const std::string &titlu, const  Autor* autor, double pret_baza, int cantitate,
                const std::string &data_publicatie,
@@ -144,7 +153,7 @@ double Manual::calculeaza_valoarea_academica() const {
 }
 
 
-std::string Manual::getTip() const { return materie; }
+std::string Manual::getTip() const { return "Manual"; }
 
 double Manual::getPretFinal() const {
     double pret = getpretbaza();
@@ -163,6 +172,62 @@ double Manual::getPretFinal() const {
 TipPublicatie Manual::getTipPub() const {
     return TipPublicatie::Manual;
 }
+
+static std::vector<std::string> split_manual(const std::string& s, char delim) {
+    std::vector<std::string> elems;
+    std::stringstream ss(s);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+    return elems;
+}
+
+std::string Manual::serializare() const {
+    std::stringstream ss;
+    ss << Carte::serializare() << "|" << materie << "|" << clasa;
+    return ss.str();
+}
+
+std::shared_ptr<Manual> Manual::deserializare(const std::string &line, const std::vector<std::shared_ptr<Autor>> &autori) {
+    const auto v = split_manual(line, '|');
+    if (v.size() < 13) {
+        throw LibrarieException("Linie invalida pentru deserializare Manual!");
+    }
+    std::string titlu = v[2];
+    double pret = std::stod(v[3]);
+    int cantitate = std::stoi(v[4]);
+    std::string data = v[5];
+    int pagini = std::stoi(v[6]);
+    std::string editura = v[7];
+    int vanzari = std::stoi(v[8]);
+    std::vector<int> ratings;
+    if (!v[9].empty()) {
+        for (const auto r_str = split_manual(v[9], ','); const auto& s : r_str) {
+             if(!s.empty()) ratings.push_back(std::stoi(s));
+        }
+    }
+
+    const int idAutor = std::stoi(v[10]);
+    std::string isbn = v[1];
+    
+    std::string materie = v[11];
+    int clasa = std::stoi(v[12]);
+    const Autor* ptrAutor = nullptr;
+    for (const auto& a : autori) {
+        if (a->getidAutor() == idAutor) {
+            ptrAutor = a.get();
+            break;
+        }
+    }
+
+    if (!ptrAutor) {
+        throw LibrarieException("Autorul ID " + std::to_string(idAutor) + " lipsa pt Manual!");
+    }
+
+    return std::make_shared<Manual>(titlu, ptrAutor, pret, cantitate, data, isbn, pagini, editura, materie, clasa, vanzari, ratings);
+}
+
 
 
 // operator <<

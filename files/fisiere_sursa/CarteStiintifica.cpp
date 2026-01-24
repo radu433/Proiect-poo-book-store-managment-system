@@ -1,7 +1,18 @@
 #include "../headere/CarteStiintifica.h"
 #include <string>
 #include <ctime>
+#include <sstream>
+
 #include "../exceptii/exceptii_headere/DateInvalideException.h"
+
+CarteStiintifica::CarteStiintifica(const std::string &titlu, const Autor *autor, int cantitate,
+    const std::string &data_publicatie, const std::string &isbn, double pret_baza, const int numar_pagini,
+    const std::string &editura, const std::string &domeniu, const std::string &nivel_academic, int nr_referinte,
+    const bool are_formule_diagrame, int nr_vanzari, const std::vector<int> &ratinguri):Carte(titlu, autor,
+        cantitate, data_publicatie, isbn, pret_baza, numar_pagini, editura,nr_vanzari,ratinguri),
+    domeniu(domeniu), nivel_academic(nivel_academic), nr_referinte(nr_referinte),
+    are_formule_diagrame(are_formule_diagrame) {
+}
 
 // constructor cu parametrii
 CarteStiintifica::CarteStiintifica(const std::string &titlu, const  Autor* autor, int cantitate,
@@ -53,7 +64,7 @@ double CarteStiintifica::getPretFinal() const {
     return pret;
 }
 
-std::string CarteStiintifica::getTip() const { return nivel_academic; }
+std::string CarteStiintifica::getTip() const { return "CarteStiintifica"; }
 
 bool CarteStiintifica::esteDeActualitate() const {
     const std::time_t t = std::time(nullptr);
@@ -151,3 +162,67 @@ void CarteStiintifica::afisare(std::ostream &out) const {
 TipPublicatie CarteStiintifica::getTipPub() const {
     return TipPublicatie::Cartestiintifica;
 }
+
+std::string CarteStiintifica::serializare() const {
+    std::stringstream ss;
+    ss << Carte::serializare() << "|" <<domeniu  << "|" <<nivel_academic << "|" <<nr_referinte<< "|" <<are_formule_diagrame;
+    return ss.str();
+}
+
+static std::vector<std::string> split_cs(const std::string& s, char delim) {
+    std::vector<std::string> elems;
+    std::stringstream ss(s);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+    return elems;
+}
+
+std::shared_ptr<CarteStiintifica> CarteStiintifica::deserializare(const std::string &line,
+    const std::vector<std::shared_ptr<Autor>> &autori) {
+    const auto v = split_cs(line, '|');
+    if (v.size() < 15) {
+        throw LibrarieException("Date insuficiente pentru deserializare CarteStiintifica!");
+    }
+
+    std::string titlu = v[2];
+    double pret = std::stod(v[3]);
+    int cantitate = std::stoi(v[4]);
+    std::string data = v[5];
+    int pagini = std::stoi(v[6]);
+    std::string editura = v[7];
+    int vanzari = std::stoi(v[8]);
+    
+    // Ratinguri
+    std::vector<int> ratings;
+    if (!v[9].empty()) {
+        auto r_str = split_cs(v[9], ',');
+        for (const auto& s : r_str) {
+             if(!s.empty()) ratings.push_back(std::stoi(s));
+        }
+    }
+
+    std::string isbn = v[1];
+    int idAutor = std::stoi(v[10]);
+    std::string domeniu = v[11];
+    std::string nivel = v[12];
+    int referinte = std::stoi(v[13]);
+    bool formule = (std::stoi(v[14]) != 0);
+
+    // Cautare autor
+    const Autor* ptrAutor = nullptr;
+    for (const auto& a : autori) {
+        if (a->getidAutor() == idAutor) {
+            ptrAutor = a.get();
+            break;
+        }
+    }
+
+    if (!ptrAutor) {
+        throw LibrarieException("Autorul ID " + std::to_string(idAutor) + " lipsa pt CarteStiintifica!");
+    }
+
+    return std::make_shared<CarteStiintifica>(titlu, ptrAutor, cantitate, data, isbn, pret, pagini, editura, domeniu, nivel, referinte, formule, vanzari, ratings);
+}
+

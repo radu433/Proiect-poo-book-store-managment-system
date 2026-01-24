@@ -21,6 +21,12 @@ CarteIndividuala::CarteIndividuala(const  std::shared_ptr<Carte>& carte)
 {
 }
 
+// Constructor Load
+CarteIndividuala::CarteIndividuala(int id, const std::shared_ptr<Carte>& carte)
+    : UnitateVanzare(id, std::static_pointer_cast<Carte>(carte))
+{
+}
+
 // Constructor de Copiere
 CarteIndividuala::CarteIndividuala(const  CarteIndividuala &other)
     : UnitateVanzare(other)
@@ -98,6 +104,9 @@ std::string CarteIndividuala::getIdentificator() const {
     return produs_principal->getIdentificator();
 }
 
+std::string CarteIndividuala::serializare() const {
+    return "CarteIndividuala|" + UnitateVanzare::serializare();
+}
 
 // Informații
 std::vector<std::string> CarteIndividuala::getListaIdentificatori() const {

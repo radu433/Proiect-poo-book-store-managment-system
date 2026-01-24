@@ -26,7 +26,7 @@ struct Data {
 
 };
 
-enum class TipPublicatie{Carte,Manual,Cartestiintifica,Revista, Necunoscut };
+enum class TipPublicatie{Carte,Manual, Cartestiintifica,Revista, Necunoscut };
 
 class Publicatie {
 private:
@@ -51,7 +51,9 @@ protected:
     // constructor cu parametrii
     Publicatie(const std::string &titlu, double pret_baza, int cantitate, const std::string& data_publicatie, const int nr_pagini,
         const std::string& editura);
-
+    //constructor pt load
+    Publicatie(const std::string &titlu, double pret_baza, int cantitate, const std::string& data_publicatie, const int nr_pagini,
+         int numar_vanzari,const std::string& editura,const std::vector<int> &rating_clienti);
     int reducere_procent=0;
     std::time_t reducere_expirare=0;
 
@@ -138,6 +140,8 @@ public:
     void activeaza() { activa = true; }
     virtual TipPublicatie getTipPub() const=0;
 
+    virtual std::string serializare() const;
+    static std::shared_ptr<Publicatie> deserializare(const std::string& line, const std::vector<std::shared_ptr<class Autor>>& autori);
 
 
 

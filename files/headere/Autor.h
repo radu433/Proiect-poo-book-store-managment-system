@@ -28,7 +28,7 @@ public:
     // constructor cu parametrii
     Autor(  const std::string& nume, const std::string& prenume, int varsta);
     // constructor pt load
-    Autor(int id, const std::string& nume, const std::string& prenume, int varsta);
+    Autor(int id, const std::string& nume, const std::string& prenume, int varsta, int numar_premii, const std::vector<std::string>& carti);
 
 
     [[nodiscard]] const std::string& getNume() const;
@@ -56,6 +56,8 @@ public:
     std::string ierarhie_a()const;
     int getidAutor()const;
     bool areCarte(const std::string& idx) const;
+    std::string serializare() const;
+    static Autor deserializare(const std::string& line);
 
 
 

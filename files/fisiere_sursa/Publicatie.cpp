@@ -4,15 +4,16 @@
 #include "../exceptii/exceptii_headere/DataException.h"
 #include "../exceptii/exceptii_headere/PaginareException.h"
 #include "../exceptii/exceptii_headere/PublicatieException.h"
+#include "../headere/Carte.h"
+#include "../headere/Manual.h"
+#include "../headere/Revista.h"
+#include "../headere/CarteStiintifica.h"
 
 #include <iomanip>
 #include <numeric>
 #include <ctime>
 #include <string>
 #include <cstdio>
-
-int Publicatie::numar_total_publicatii=0;
-
 
 bool Publicatie::este_valida_data(const std::string& data) {
     int zi, luna, an;
@@ -43,12 +44,15 @@ bool Publicatie::este_valida_data(const std::string& data) {
     return true;
 }
 
+
+int Publicatie::numar_total_publicatii=0;
+
 // constructor
 Publicatie::Publicatie( const std::string &titlu,  double pret_baza, int cantitate, const std::string &data_publicatie  ,
-    const int nr_pagini, const std::string& editura) : titlu(
-                                                           titlu), pret_baza(pret_baza), cantitate(cantitate),
-                                                       data_publicatie(data_publicatie), nr_pagini(nr_pagini),
-                                                       numar_vanzari(0), editura(editura){
+                        const int nr_pagini, const std::string& editura) : titlu(
+                                                                               titlu), pret_baza(pret_baza), cantitate(cantitate),
+                                                                           data_publicatie(data_publicatie), nr_pagini(nr_pagini),
+                                                                           numar_vanzari(0), editura(editura){
     if (nr_pagini <= 0) {
         throw NumarPaginiInvalidException(nr_pagini);
     }
@@ -70,24 +74,88 @@ Publicatie::Publicatie( const std::string &titlu,  double pret_baza, int cantita
         throw DateInvalideException("O publicatie trebuie sa aiba o editura!");
     numar_total_publicatii++;
 }
-
+// constructor pt load
+Publicatie::Publicatie( const std::string &titlu,  double pret_baza, int cantitate, const std::string &data_publicatie ,
+                        const int nr_pagini,int numar_vanzari,const std::string& editura,const std::vector<int> &rating_clienti) : titlu(
+        titlu), pret_baza(pret_baza), cantitate(cantitate),
+    data_publicatie(data_publicatie), nr_pagini(nr_pagini),
+    numar_vanzari(numar_vanzari), rating_clienti(rating_clienti),editura(editura){}
 // destructor
 Publicatie::~Publicatie() {
-numar_total_publicatii--;
+    numar_total_publicatii--;
 }
 
 // afisare
 void Publicatie::afisare(std::ostream &out) const {
     const std::string tip=getTip();
     out <<"\n===========================\n"<<
-        "TIP: "<< tip<<"\n"<<
+            "TIP: "<< tip<<"\n"<<
             "\n===========================\n"<<"Titlu:        " << titlu << "\n"
-        <<"Editura:"<<editura<<"\n"
-        << "Data Publicare: " << data_publicatie << "\n"
-        << "Nr. Pagini:   " << nr_pagini << "\n"
-        << "Pret Baza:    " << std::fixed << std::setprecision(2) << pret_baza << " RON\n"
-        << "Stoc:         " << cantitate << " buc.\n"
-    << "Rating mediu: " << getRatingMediu() << "/5\n";
+            <<"Editura:"<<editura<<"\n"
+            << "Data Publicare: " << data_publicatie << "\n"
+            << "Nr. Pagini:   " << nr_pagini << "\n"
+            << "Pret Baza:    " << std::fixed << std::setprecision(2) << pret_baza << " RON\n"
+            << "Stoc:         " << cantitate << " buc.\n"
+            << "Rating mediu: " << getRatingMediu() << "/5\n";
+}
+
+std::ostream& operator<<(std::ostream& out, const Publicatie& obj) {
+    obj.afisare(out);
+    return out ;
+}
+
+Publicatie & Publicatie::operator=(const Publicatie &other) {
+    if (this == &other) {
+        return *this;
+    }
+    this->titlu = other.titlu;
+    this->pret_baza = other.pret_baza;
+    this->cantitate = other.cantitate;
+    this->data_publicatie=other.data_publicatie;
+    this->nr_pagini = other.nr_pagini;
+    this->editura = other.editura;
+    this->numar_vanzari = other.numar_vanzari;
+    this->reducere_procent = other.reducere_procent;
+    return *this;
+}
+
+std::time_t Publicatie::convertesteDatainSecunde() const {
+    std::tm tm_pub = {};
+    int zi, luna, an;
+
+
+    sscanf(data_publicatie.c_str(), "%d.%d.%d", &zi, &luna, &an);
+
+    tm_pub.tm_year = an - 1900;
+    tm_pub.tm_mon = luna - 1;
+    tm_pub.tm_mday = zi;
+    tm_pub.tm_isdst = -1;
+
+    return std::mktime(&tm_pub);
+}
+
+
+std::string Publicatie::determinaStatutStoc() const {
+    if (cantitate == 0) {
+        return "EPUIZAT";
+    } else if (cantitate <= 5) {
+        return "STOC CRITIC";
+    } else if (cantitate <= 20) {
+        return "STOC REDUS";
+    } else if (cantitate <= 50) {
+        return "DISPONIBIL";
+    } else {
+        return "STOC ABUNDENT";
+    }
+}
+
+double Publicatie::getRatingMediu() const {
+    if (rating_clienti.empty()) {
+        return 0.0;
+    }
+
+    const double suma = std::accumulate(rating_clienti.begin(), rating_clienti.end(), 0.0);
+    return static_cast<double>(suma) / rating_clienti.size();
 }
 
 double Publicatie::CalculeazaScorPopularitate() const {
@@ -145,6 +213,7 @@ void Publicatie::adauga_stoc(int nr_buc) {
 }
 
 
+
 int Publicatie::getcantitate() const {
     return cantitate;
 }
@@ -179,8 +248,6 @@ bool Publicatie::Scade_stoc(int bucati) {
     return true;
 }
 
-
-
 double Publicatie::reducere(int procent) {
     if (procent < 0 || procent > 100) {
         throw DateInvalideException("Discount invalid (0–100%)!");
@@ -194,62 +261,52 @@ bool Publicatie::areAutor(int) const {
     return false;
 }
 
-Publicatie & Publicatie::operator=(const Publicatie &other) {
-    if (this == &other) {
-        return *this;
+std::string Publicatie::serializare() const {
+    std::stringstream ss;
+    ss << getTip() << "|" << getIdentificator() << "|" << titlu << "|" << pret_baza << "|" 
+       << cantitate << "|" << data_publicatie << "|" << nr_pagini << "|" << editura << "|" 
+       << numar_vanzari << "|";
+    for (size_t i = 0; i < rating_clienti.size(); ++i) {
+        ss << rating_clienti[i];
+        if (i < rating_clienti.size() - 1) {
+            ss << ",";
+        }
     }
-    this->titlu = other.titlu;
-    this->pret_baza = other.pret_baza;
-    this->cantitate = other.cantitate;
-    this->data_publicatie=other.data_publicatie;
-    this->nr_pagini = other.nr_pagini;
-    this->editura = other.editura;
-    this->numar_vanzari = other.numar_vanzari;
-    this->reducere_procent = other.reducere_procent;
-    return *this;
+    return ss.str();
 }
 
-std::time_t Publicatie::convertesteDatainSecunde() const {
-    std::tm tm_pub = {};
-    int zi, luna, an;
-
-
-  sscanf(data_publicatie.c_str(), "%d.%d.%d", &zi, &luna, &an);
-
-    tm_pub.tm_year = an - 1900;
-    tm_pub.tm_mon = luna - 1;
-    tm_pub.tm_mday = zi;
-    tm_pub.tm_isdst = -1;
-
-    return std::mktime(&tm_pub);
-}
-
-std::string Publicatie::determinaStatutStoc() const {
-    if (cantitate == 0) {
-        return "EPUIZAT";
-    } else if (cantitate <= 5) {
-        return "STOC CRITIC";
-    } else if (cantitate <= 20) {
-        return "STOC REDUS";
-    } else if (cantitate <= 50) {
-        return "DISPONIBIL";
-    } else {
-        return "STOC ABUNDENT";
+static std::vector<std::string> split(const std::string& s) {
+    std::vector<std::string> elems;
+    std::stringstream ss(s);
+    std::string item;
+    while (std::getline(ss, item, '|')) {
+        elems.push_back(item);
     }
+    return elems;
 }
 
-double Publicatie::getRatingMediu() const {
-    if (rating_clienti.empty()) {
-        return 0.0;
+std::shared_ptr<Publicatie> Publicatie::deserializare(const std::string &line,
+    const std::vector<std::shared_ptr<class Autor>> &autori) {
+    
+    const auto v = split(line);
+    if (v.empty()) return nullptr;
+
+    const std::string& tip = v[0];
+
+    if (tip == "Carte") {
+        return Carte::deserializare(line, autori);
+    }
+    else if (tip == "Manual") {
+        return Manual::deserializare(line, autori);
+    }
+    else if (tip == "CarteStiintifica") {
+        return CarteStiintifica::deserializare(line, autori);
+    }
+    else if (tip == "Revista") {
+        return Revista::deserializare(line);
     }
 
-    const double suma = std::accumulate(rating_clienti.begin(), rating_clienti.end(), 0.0);
-    return static_cast<double>(suma) / rating_clienti.size();
-}
-
-std::ostream& operator<<(std::ostream& out, const Publicatie& obj) {
-    obj.afisare(out);
-    return out ;
+    throw LibrarieException("Tip publicatie necunoscut la deserializare: " + tip);
 }
 
 

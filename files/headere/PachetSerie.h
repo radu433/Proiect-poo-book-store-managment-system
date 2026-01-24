@@ -63,6 +63,9 @@ protected:
     double getPretFinUnitate() const override;
 
     bool estePPredefinit() const override {return true;}
+
+    std::string serializare() const override;
+    static std::shared_ptr<PachetSerie> deserializare(const std::string& line, const std::vector<std::shared_ptr<Publicatie>>& publicatii);
 };
 
 

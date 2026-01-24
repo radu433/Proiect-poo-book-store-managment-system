@@ -30,6 +30,9 @@ public:
                         const std::string &strada,const int numar, const std::string &cod_postal);
     [[nodiscard]] std::string getAdresaCompleta() const;
 
+    // functii pt load and save
+   static  Adresa deserializare(const std::string& data);
+    std::string serializare() const;
 };
 
 #endif //OOP_ADRESA_H

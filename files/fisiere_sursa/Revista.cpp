@@ -3,6 +3,7 @@
 
 #include <set>
 #include <ctime>
+#include <sstream>
 
 namespace {
     static const std::set<std::string> divertisment = {"Fashion", "Cancan", "Sport", "Lifestyle"};
@@ -12,30 +13,14 @@ namespace {
     static const std::set<std::string> edituri_top = {"Polirom", "Humanitas", "Oxford", "Teora", "Nemira"};
 }
     // constructor cu parametrii
-
-
-Revista::Revista(const std::string &titlu, int cantitate, const std::string& data_publicatie,const int nr_pagini,
-                double pret_baza,const std::string &frecventa,  int numar_editie,
-                 const bool are_cadou_suplimentar, const std::string& tip, const std::string& ISSN, const std::string& editura) :
-Publicatie(titlu,pret_baza,cantitate,data_publicatie,nr_pagini, editura),
-    frecventa(frecventa), numar_editie(numar_editie),
-    are_cadou_suplimentar(are_cadou_suplimentar), tip(tip),
-    ISSN(ISSN) {
-    if (numar_editie < 0) {
-        throw DateInvalideException("Numarul editiei nu poate fi negativ!");
+static std::vector<std::string> split(const std::string& s, char delim) {
+    std::vector<std::string> elems;
+    std::stringstream ss(s);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        elems.push_back(item);
     }
-    if (tip.empty()) {
-        throw DateInvalideException("Tipul revistei nu poate fi gol!");
-    }
-    if (editura.empty()) {
-        throw DateInvalideException("Revista trebuie sa apartina unei edituri!");
-    }
-    if (!verificareISSN(ISSN))
-        throw DateInvalideException("ISSN-ul este introdus gresit!");
-}
-// clone
-std::shared_ptr<Publicatie> Revista::clone() const {
-    return std::make_shared<Revista>(*this);
+    return elems;
 }
 
 bool Revista::verificareISSN(const std::string& ISSN) {
@@ -53,29 +38,62 @@ bool Revista::verificareISSN(const std::string& ISSN) {
     char cif_control;
     if (s%11==0)
         cif_control='0';
-      else {
-          int v=11-s%11;
-          if (v==10)
-              cif_control='X';
-          else {
-              cif_control=v+'0';
-          }
-      }
+    else {
+        int v=11-s%11;
+        if (v==10)
+            cif_control='X';
+        else {
+            cif_control=v+'0';
+        }
+    }
     if (cif_control=='X') {
         return (ISSN[8]=='X'|| ISSN[8]=='x');
     }else {
         return ISSN[8]==cif_control;
     }
 }
-
 // afisare
 void Revista::afisare(std::ostream &out) const {
-   Publicatie::afisare(out);
-        out<< "ISSN:          " << ISSN << "\n"
-        << "Frecventa:     " << frecventa << "\n"
-        << "Numar editie:  " << numar_editie << "\n"
-        << "Cadou suplimentar:   " << (are_cadou_suplimentar ? "DA" : "NU") << "\n"
-        << "Tip Revista:   " << tip << "\n";
+    Publicatie::afisare(out);
+    out<< "ISSN:          " << ISSN << "\n"
+            << "Frecventa:     " << frecventa << "\n"
+            << "Numar editie:  " << numar_editie << "\n"
+            << "Cadou suplimentar:   " << (are_cadou_suplimentar ? "DA" : "NU") << "\n"
+            << "Tip Revista:   " << tip << "\n";
+}
+
+Revista::Revista(const std::string &titlu, int cantitate, const std::string &data_publicatie, const int nr_pagini,
+                 double pret_baza, const std::string &frecventa, const int nr_editie, const bool are_cadou_suplimentar,
+                 const std::string &tip, const std::string &ISSN, const std::string &editura, int nr_vanzari,
+                 const std::vector<int> &ratinguri):Publicatie(titlu,pret_baza,cantitate,data_publicatie,nr_pagini, nr_vanzari,editura,ratinguri),
+                                                    frecventa(frecventa), numar_editie(nr_editie),
+                                                    are_cadou_suplimentar(are_cadou_suplimentar), tip(tip),
+                                                    ISSN(ISSN) {
+}
+
+Revista::Revista(const std::string &titlu, int cantitate, const std::string& data_publicatie,const int nr_pagini,
+                 double pret_baza,const std::string &frecventa,  int numar_editie,
+                 const bool are_cadou_suplimentar, const std::string& tip, const std::string& ISSN, const std::string& editura) :
+    Publicatie(titlu,pret_baza,cantitate,data_publicatie,nr_pagini, editura),
+    frecventa(frecventa), numar_editie(numar_editie),
+    are_cadou_suplimentar(are_cadou_suplimentar), tip(tip),
+    ISSN(ISSN) {
+    if (numar_editie < 0) {
+        throw DateInvalideException("Numarul editiei nu poate fi negativ!");
+    }
+    if (tip.empty()) {
+        throw DateInvalideException("Tipul revistei nu poate fi gol!");
+    }
+    if (editura.empty()) {
+        throw DateInvalideException("Revista trebuie sa apartina unei edituri!");
+    }
+    if (!verificareISSN(ISSN))
+        throw DateInvalideException("ISSN-ul este introdus gresit!");
+}
+
+// clone
+std::shared_ptr<Publicatie> Revista::clone() const {
+    return std::make_shared<Revista>(*this);
 }
 
 // functii virtuale
@@ -106,7 +124,7 @@ double Revista::getPretFinal() const {
     return pret;
 }
 
-std::string Revista::getTip() const {return tip;}
+std::string Revista::getTip() const {return "Revista";}
 
 double Revista::calculeaza_valoarea_academica() const {
     double valoare=0.0;
@@ -274,6 +292,42 @@ std::string Revista::getIdentificator() const {
 
 TipPublicatie Revista::getTipPub() const {
     return TipPublicatie::Revista;
+}
+
+std::string Revista::serializare() const {
+    std::stringstream ss;
+    ss << Publicatie::serializare() << "|" << frecventa << "|" << numar_editie << "|" << are_cadou_suplimentar << "|" << tip;
+    return ss.str();
+}
+
+std::shared_ptr<Revista> Revista::deserializare(const std::string& line) {
+    const auto v = split(line, '|');
+
+    if (v.size() < 14) {
+        throw LibrarieException("Date insuficiente pentru deserializare Revista!");
+    }
+
+    std::string titlu = v[2];
+    double pret = std::stod(v[3]);
+    int cantitate = std::stoi(v[4]);
+    std::string data = v[5];
+    int pagini = std::stoi(v[6]);
+    std::string editura = v[7];
+    int vanzari = std::stoi(v[8]);
+    
+    // Ratinguri
+    std::vector<int> ratings;
+    if (!v[9].empty()) {
+        for (const auto r_str = split(v[9], ','); const auto& s : r_str) {
+             if(!s.empty()) ratings.push_back(std::stoi(s));
+        }
+    }
+    std::string issn = v[1];
+    std::string frecventa = v[10];
+    int nr_editie = std::stoi(v[11]);
+    bool cadou = (std::stoi(v[12]) != 0);
+    std::string tipRev = v[13];
+    return std::make_shared<Revista>(titlu, cantitate, data, pagini, pret, frecventa, nr_editie, cadou, tipRev, issn, editura, vanzari, ratings);
 }
 
 

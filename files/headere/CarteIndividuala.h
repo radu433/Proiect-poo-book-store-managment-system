@@ -14,11 +14,16 @@ protected:
 public:
     // constructor cu parametrii
      explicit CarteIndividuala(  const std::shared_ptr<Carte>& carte);
+     
+    // Constructor Load
+    CarteIndividuala(int id, const std::shared_ptr<Carte>& carte);
 
     // constructor de copiere
     CarteIndividuala( const CarteIndividuala &other);
 
     CarteIndividuala& operator=(const CarteIndividuala& other);
+
+    std::string serializare() const override;
 
     // clone
     std::shared_ptr<UnitateVanzare> clone() const override;

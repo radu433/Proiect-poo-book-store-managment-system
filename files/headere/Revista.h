@@ -16,6 +16,13 @@ private:
 protected:
     void afisare(std::ostream &out) const override;
 public:
+    // constructor load
+    Revista(const std::string& titlu,  int cantitate,
+         const std::string& data_publicatie,const int nr_pagini,double pret_baza,const std::string& frecventa,
+        const int nr_editie,const bool are_cadou_suplimentar, const std::string& tip, const std::string& ISSN, const std::string& editura,
+        int nr_vanzari, const std::vector<int>& ratinguri);
+
+    // constructor parametri
     Revista(const std::string& titlu,  int cantitate,
          const std::string& data_publicatie,const int nr_pagini,double pret_baza,const std::string& frecventa,
         const int nr_editie,const bool are_cadou_suplimentar, const std::string& tip, const std::string& ISSN, const std::string& editura);
@@ -52,7 +59,9 @@ public:
 
     TipPublicatie getTipPub() const override;
 
+    std::string serializare() const override;
 
+    static std::shared_ptr<Revista> deserializare(const std::string& line);
 };
 
 #endif //OOP_REVISTA_H

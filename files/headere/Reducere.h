@@ -22,5 +22,7 @@ public:
     int getProcent() const;
     std::shared_ptr<Publicatie> getPublicatie() const;
 
+    std::string serializare() const;
+    static Reducere deserializare(const std::string& line, const std::vector<std::shared_ptr<Publicatie>>& publicatii);
 };
 #endif //OOP_REDUCERE_H

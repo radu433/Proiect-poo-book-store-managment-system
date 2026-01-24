@@ -86,10 +86,8 @@ double ReviewService::calculeazaRatingPublicatieVerificate(const AppState& app,c
             cnt++;
             }
     }
-
     return (cnt == 0) ? 0.0 : static_cast<double>(suma) / cnt;
 }
-
 double ReviewService::calculeazaRatingPublicatieall(const AppState &app,const std::string& identificator_publicatie) {
     int suma=0;
     int cnt=0;
@@ -99,7 +97,6 @@ double ReviewService::calculeazaRatingPublicatieall(const AppState &app,const st
             suma += r.getRating();
             cnt++;
         }
-
     }
     return (cnt == 0) ? 0.0 : static_cast<double>(suma) / cnt;
 }

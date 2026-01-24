@@ -28,7 +28,7 @@
 #include "../headere/RevistaIndividuala.h"
 #include "../headere/UnitateVanzareFactory.h"
 #
-// statististici admin`
+// statististici admin
 template<typename T>
 void BookStoreManager::topPopularitatePeTip(const std::string &numeTip) {
     std::vector<std::shared_ptr<T>> lista;

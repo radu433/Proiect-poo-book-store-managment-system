@@ -34,8 +34,9 @@ public:
      std::vector<std::string> extrageIdentificatori() const;
 
      explicit Comanda(const Client& client);
-     //constructor pt load
-     //Comanda(int id, time_t data, std::shared_ptr<Client> client,const std::vector<ArticolComanda>& articole,const std::string& stare);
+     
+     // Constructor pt LOAD
+     Comanda(int id, time_t data, const Client* client, const std::string& stare, const std::vector<ArticolComanda>& articole);
 
      // destructor
      ~Comanda()=default;
@@ -73,5 +74,8 @@ public:
      void anuleazaComanda();
 
      std::shared_ptr<Client> getClient() const;
+
+     std::string serializare() const;
+     static Comanda deserializare(const std::string& line, const std::vector<Client>& clienti, const std::vector<std::shared_ptr<UnitateVanzare>>& stoc);
 };
 #endif //OOP_COMANDA_H

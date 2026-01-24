@@ -8,6 +8,11 @@ RevistaIndividuala::RevistaIndividuala(const std::shared_ptr<Revista> &revista) 
     if (!revista)
         throw DateInvalideException("Revista invalida(nullptr)");
 }
+
+RevistaIndividuala::RevistaIndividuala(int id, const std::shared_ptr<Revista> &revista) : UnitateVanzare(id, revista)
+{
+}
+
 //constructor de copiere
 RevistaIndividuala::RevistaIndividuala(const RevistaIndividuala &other):UnitateVanzare(other)
  {
@@ -47,6 +52,9 @@ std::string RevistaIndividuala::getIdentificator() const {
     return produs_principal->getIdentificator();
 }
 
+std::string RevistaIndividuala::serializare() const {
+    return "RevistaIndividuala|" + UnitateVanzare::serializare();
+}
 
 
 // afisare

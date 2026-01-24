@@ -26,8 +26,10 @@ private:
     static bool validareisbn(const std::string &isbn);
 
 public:
+    // constructor load
+    Carte(const std::string &titlu, const Autor* autor, int cantitate, const std::string &data_publicatie,
+const std::string &isbn, double pret_baza, int numar_pagini, const std::string &editura,int nr_vanzari, const std::vector<int>& ratinguri);
     // constructor cu parametrii
-
     Carte(const std::string &titlu, const  Autor* autor, int cantitate, const std::string &data_publicatie,
           const std::string &isbn, double pret_baza, int numar_pagini, const std::string &editura);
 
@@ -78,5 +80,9 @@ public:
     bool areAutor(int idautor) const override;
 
     TipPublicatie getTipPub() const override ;
+
+    std::string serializare() const override;
+
+    static std::shared_ptr<Carte> deserializare(const std::string &line, const std::vector<std::shared_ptr<Autor>> &autori);
 };
 #endif //OOP_CARTE_H

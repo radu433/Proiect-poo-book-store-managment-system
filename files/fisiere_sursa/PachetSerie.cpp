@@ -6,6 +6,8 @@
 #include "../headere/Revista.h"
 #include "../headere/CarteStiintifica.h"
 #include "../headere/Carte.h"
+#include "../headere/CarteIndividuala.h"
+#include "../headere/RevistaIndividuala.h"
 #include <iostream>
 #include <sstream>
 
@@ -151,7 +153,6 @@ std::string PachetSerie::getIdentificator() const {
 
 std::vector<std::string> PachetSerie::getListaIdentificatori() const {
     std::vector<std::string> identificatori;
-    // continut este vectorul de shared_ptr<Carte> din PachetSerie
     for (const auto& volum : continut) {
         if (volum) {
             identificatori.push_back(volum->getIdentificator());
@@ -237,4 +238,58 @@ double PachetSerie::getPretFinUnitate() const {
 std::ostream & operator<<(std::ostream &out, const PachetSerie &p) {
     p.afisare(out);
     return out;
+}
+
+static std::vector<std::string> split_ps(const std::string& s, char delim) {
+    std::vector<std::string> elems;
+    std::stringstream ss(s);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+    return elems;
+}
+
+std::string PachetSerie::serializare() const {
+    std::stringstream ss;
+    ss << "PachetSerie|" << nume_pachet << "|" << static_cast<int>(tip_pachet) << "|" << este_complet << "|";
+    const auto ids = getListaIdentificatori();
+    for(size_t i=0; i<ids.size(); ++i) {
+        ss << ids[i];
+        if(i < ids.size()-1) ss << ",";
+    }
+    return ss.str();
+}
+
+
+
+std::shared_ptr<PachetSerie> PachetSerie::deserializare(const std::string& line, const std::vector<std::shared_ptr<Publicatie>>& publicatii) {
+    auto v = split_ps(line, '|');
+    if (v.size() < 5) throw LibrarieException("Date pachet invalide!");
+    std::string nume = v[1];
+    int tipInt = std::stoi(v[2]);
+    bool complet = (std::stoi(v[3]) != 0);
+    const std::string listaIsbn = v[4];
+    const auto isbns = split_ps(listaIsbn, ',');
+    std::vector<std::shared_ptr<UnitateVanzare>> continutNou;
+    for(const auto& id : isbns) {
+        if(id.empty()) continue;
+
+        std::shared_ptr<Publicatie> pubGasita = nullptr;
+        for(const auto& p : publicatii) {
+            if(p->getIdentificator() == id) {
+                pubGasita = p;
+                break;
+            }
+        }
+        
+        if(!pubGasita) continue;
+        if(auto c = std::dynamic_pointer_cast<Carte>(pubGasita)) {
+            continutNou.push_back(std::make_shared<CarteIndividuala>(c));
+        } else if(auto r = std::dynamic_pointer_cast<Revista>(pubGasita)) {
+            continutNou.push_back(std::make_shared<RevistaIndividuala>(r));
+        }
+    }
+    
+    return std::make_shared<PachetSerie>(continutNou, nume, static_cast<TipPachet>(tipInt), complet);
 }

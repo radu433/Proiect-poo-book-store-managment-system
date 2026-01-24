@@ -24,6 +24,11 @@ private:
     std::vector<std::string> istoric_identificatori;
     int pct_fidelitate;
     double reducereLaUrmC=0.0;
+    // cosructor pt load
+    Client(const std::string &username, const std::string &email, const Adresa &adresa,
+        const std::string &telefon, const std::string &parola, double sold,int nrComenzi,
+   double totalCump, int pctFid, double reducere,const std::vector<std::string>& istoric);
+
 
 public:
     // constrctor cu parametrii
@@ -75,7 +80,9 @@ public:
     void modificaAdreasa(const std::string &judet, const std::string &oras,const std::string &strada,
         int numar, const std::string &cod_postal);
 
-
+//
+    static Client deserializare(const std::string& line);
+    std::string serializare() const;
 
 };
 

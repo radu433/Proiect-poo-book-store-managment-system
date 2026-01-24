@@ -71,9 +71,29 @@ bool Carte::validareisbn(const std::string &isbn_raw) {
 
     return false;
 }
+#include <sstream>
+
+static std::vector<std::string> split(const std::string& s, char delim) {
+    std::vector<std::string> elems;
+    std::stringstream ss(s);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+    return elems;
+}
+
+// constructor pt load
+Carte::Carte(const std::string &titlu, const Autor* autor, int cantitate, const std::string &data_publicatie,
+             const std::string &isbn, double pret_baza, int numar_pagini, const std::string &editura,
+             int nr_vanzari, const std::vector<int>& ratinguri)
+    : Publicatie(titlu, pret_baza, cantitate, data_publicatie, numar_pagini, nr_vanzari, editura, ratinguri),
+      autor(autor), isbn(isbn)
+{
+    total_carti_create++;
+}
 
 // constructor cu parametrii
-
 Carte::Carte(const std::string &titlu,  const  Autor* autor, int cantitate, const std::string &data_publicatie,
              const std::string &isbn,
              double pret_baza, const int numar_pagini, const std::string &editura) : Publicatie(titlu, pret_baza,
@@ -281,6 +301,52 @@ bool Carte::areAutor(int idautor) const {
 
 TipPublicatie Carte::getTipPub() const {
     return TipPublicatie::Carte;
+}
+
+std::string Carte::serializare() const {
+    std::stringstream ss;
+    ss << Publicatie::serializare() << autor->getidAutor();
+    return ss.str();
+}
+
+std::shared_ptr<Carte> Carte::deserializare(const std::string &line, const std::vector<std::shared_ptr<Autor>> &autori) {
+    const auto v = split(line, '|');
+    if (v.size() < 11) {
+        throw LibrarieException("Linie invalida pentru deserializare Carte (campuri insuficiente)!");
+    }
+
+    std::string titlu = v[2];
+    double pret = std::stod(v[3]);
+    int cantitate = std::stoi(v[4]);
+    std::string data = v[5];
+    int pagini = std::stoi(v[6]);
+    std::string editura = v[7];
+    int vanzari = std::stoi(v[8]);
+    
+    // Parsare ratinguri (v[9])
+    std::vector<int> ratings;
+    if (!v[9].empty()) {
+        for (auto r_str = split(v[9], ','); const auto& s : r_str) {
+            if(!s.empty()) ratings.push_back(std::stoi(s));
+        }
+    }
+
+    const int idAutor = std::stoi(v[10]);
+
+    // Cautam autorul in lista
+    const Autor* ptrAutor = nullptr;
+    for (const auto& a : autori) {
+        if (a->getidAutor() == idAutor) {
+            ptrAutor = a.get();
+            break;
+        }
+    }
+
+    if (!ptrAutor) {
+        throw LibrarieException("Autorul cu ID " + std::to_string(idAutor) + " nu a fost gasit la deserializarea cartii!");
+    }
+
+    return std::make_shared<Carte>(titlu, ptrAutor, cantitate, data, v[1], pret, pagini, editura, vanzari, ratings);
 }
 
 

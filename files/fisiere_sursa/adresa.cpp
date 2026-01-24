@@ -1,5 +1,7 @@
 #include "../headere/adresa.h"
 #include <sstream>
+#include <vector>
+
 #include "../exceptii/exceptii_headere/DateInvalideException.h"
 
 Adresa::Adresa(std::string const &judet, const std::string &oras, const std::string &strada, const int numar,
@@ -58,6 +60,24 @@ std::string Adresa::getAdresaCompleta() const {
 
     return ss.str();
 }
+
+Adresa Adresa::deserializare(const std::string &data) {
+    std::stringstream ss(data);
+    std::string segment;
+    std::vector<std::string> v;
+    while (std::getline(ss,segment,'|')) {
+        v.push_back(segment);
+    }
+    if(v.size() < 5) throw DateInvalideException("Date adresa invalide!");
+    return Adresa(v[0], v[1], v[2], std::stoi(v[3]), v[4]);
+}
+
+std::string Adresa::serializare() const {
+    std::ostringstream out;
+    out<<judet<<"|"<<oras<<"|"<<strada<<"|"<<numar<<"|"<<cod_postal;
+    return out.str();
+}
+
 
 
 
