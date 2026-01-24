@@ -65,7 +65,7 @@ protected:
     bool estePPredefinit() const override {return true;}
 
     std::string serializare() const override;
-    static std::shared_ptr<PachetSerie> deserializare(const std::string& line, const std::vector<std::shared_ptr<Publicatie>>& publicatii);
+    static std::shared_ptr<PachetSerie> dinString(const std::string& line, const std::vector<std::shared_ptr<Publicatie>>& publicatii);
 };
 
 

@@ -300,7 +300,7 @@ std::string Revista::serializare() const {
     return ss.str();
 }
 
-std::shared_ptr<Revista> Revista::deserializare(const std::string& line) {
+std::shared_ptr<Revista> Revista::dinString(const std::string& line) {
     const auto v = split(line, '|');
 
     if (v.size() < 14) {

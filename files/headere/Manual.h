@@ -36,12 +36,16 @@ public:
     [[nodiscard]]  double getPretFinal()const override;
     TipPublicatie getTipPub() const override;
 
-    std::string serializare() const override;
-    static std::shared_ptr<Manual> deserializare(const std::string& line, const std::vector<std::shared_ptr<Autor>>& autori);
+        // Serializare
 
-    // operator <<
-    void afisare (std::ostream& out) const override;
+        std::string serializare() const override;
 
+        static std::shared_ptr<Manual> dinString(const std::string& line, const std::vector<std::shared_ptr<Autor>>& autori);
+
+    
+
+        // operator <<
+   void afisare(std::ostream &out) const override;
 
 };
 

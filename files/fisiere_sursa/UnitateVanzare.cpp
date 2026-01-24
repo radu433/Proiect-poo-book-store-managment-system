@@ -157,7 +157,7 @@ std::shared_ptr<UnitateVanzare> UnitateVanzare::fabricare(const std::string& lin
         }
     }
     else if (tip == "PachetSerie") {
-        uv = PachetSerie::deserializare(line, publicatii);
+        uv = PachetSerie::dinString(line, publicatii);
     }
 
     if (uv) {

@@ -309,7 +309,7 @@ std::string Carte::serializare() const {
     return ss.str();
 }
 
-std::shared_ptr<Carte> Carte::deserializare(const std::string &line, const std::vector<std::shared_ptr<Autor>> &autori) {
+std::shared_ptr<Carte> Carte::dinString(const std::string &line, const std::vector<std::shared_ptr<Autor>> &autori) {
     const auto v = split(line, '|');
     if (v.size() < 11) {
         throw LibrarieException("Linie invalida pentru deserializare Carte (campuri insuficiente)!");

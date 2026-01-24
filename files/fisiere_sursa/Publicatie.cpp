@@ -295,16 +295,16 @@ std::shared_ptr<Publicatie> Publicatie::fabricare(const std::string &line,
     const std::string& tip = v[0];
 
     if (tip == "Carte") {
-        return Carte::deserializare(line, autori);
+        return Carte::dinString(line, autori);
     }
     else if (tip == "Manual") {
-        return Manual::deserializare(line, autori);
+        return Manual::dinString(line, autori);
     }
     else if (tip == "CarteStiintifica") {
-        return CarteStiintifica::deserializare(line, autori);
+        return CarteStiintifica::dinString(line, autori);
     }
     else if (tip == "Revista") {
-        return Revista::deserializare(line);
+        return Revista::dinString(line);
     }
 
     throw LibrarieException("Tip publicatie necunoscut la deserializare: " + tip);

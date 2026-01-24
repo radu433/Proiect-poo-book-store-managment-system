@@ -179,8 +179,12 @@ static std::vector<std::string> split_cs(const std::string& s, char delim) {
     return elems;
 }
 
-std::shared_ptr<CarteStiintifica> CarteStiintifica::deserializare(const std::string &line,
+std::shared_ptr<CarteStiintifica> CarteStiintifica::dinString(const std::string &line,
+
     const std::vector<std::shared_ptr<Autor>> &autori) {
+
+    
+
     const auto v = split_cs(line, '|');
     if (v.size() < 15) {
         throw LibrarieException("Date insuficiente pentru deserializare CarteStiintifica!");

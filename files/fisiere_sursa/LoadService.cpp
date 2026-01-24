@@ -202,7 +202,7 @@ void LoadService::incarcaPachete(AppState &app) {
     while(std::getline(in, line)) {
         if(line.empty()) continue;
         try {
-            if(auto p = PachetSerie::deserializare(line, app.getPublicatii())) {
+            if(auto p = PachetSerie::dinString(line, app.getPublicatii())) {
                 app.adaugaPachet(*p);
             }
         } catch(const std::exception& e) {

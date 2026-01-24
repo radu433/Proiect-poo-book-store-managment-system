@@ -263,7 +263,10 @@ std::string PachetSerie::serializare() const {
 
 
 
-std::shared_ptr<PachetSerie> PachetSerie::deserializare(const std::string& line, const std::vector<std::shared_ptr<Publicatie>>& publicatii) {
+#include "../headere/CarteIndividuala.h"
+#include "../headere/RevistaIndividuala.h"
+
+std::shared_ptr<PachetSerie> PachetSerie::dinString(const std::string& line, const std::vector<std::shared_ptr<Publicatie>>& publicatii) {
     auto v = split_ps(line, '|');
     if (v.size() < 5) throw LibrarieException("Date pachet invalide!");
     std::string nume = v[1];

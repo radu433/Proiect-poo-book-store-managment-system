@@ -59,9 +59,9 @@ public:
 
     TipPublicatie getTipPub() const override;
 
+    // Serializare
     std::string serializare() const override;
-
-    static std::shared_ptr<Revista> deserializare(const std::string& line);
+    static std::shared_ptr<Revista> dinString(const std::string& line);
 };
 
 #endif //OOP_REVISTA_H

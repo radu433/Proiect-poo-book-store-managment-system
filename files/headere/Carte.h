@@ -82,7 +82,8 @@ const std::string &isbn, double pret_baza, int numar_pagini, const std::string &
     TipPublicatie getTipPub() const override ;
 
     std::string serializare() const override;
+    static std::shared_ptr<Carte> dinString(const std::string& line, const std::vector<std::shared_ptr<Autor>>& autori);
 
-    static std::shared_ptr<Carte> deserializare(const std::string &line, const std::vector<std::shared_ptr<Autor>> &autori);
+    // functii
 };
 #endif //OOP_CARTE_H
