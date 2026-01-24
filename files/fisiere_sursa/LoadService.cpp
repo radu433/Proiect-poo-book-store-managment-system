@@ -95,7 +95,7 @@ void LoadService::incarcaPublicatii(AppState &app) {
         if (line.empty()) continue;
         try {
             // Aici apelam Factory-ul centralizat
-            if (auto pub = Publicatie::deserializare(line, autoriPtrs)) {
+            if (auto pub = Publicatie::fabricare(line, autoriPtrs)) {
                 app.adaugaPublicatie(pub);
             }
         } catch (const DateInvalideException& e) {
@@ -177,7 +177,7 @@ void LoadService::incarcaStocSH(AppState &app) {
     while(std::getline(in, line)) {
         if(line.empty()) continue;
         try {
-            if(auto u = UnitateVanzare::deserializare(line, app.getPublicatii())) {
+            if(auto u = UnitateVanzare::fabricare(line, app.getPublicatii())) {
                 app.adaugaSH(u);
             }
         } catch(const std::exception& e) {

@@ -14,6 +14,7 @@
 #include <ctime>
 #include <string>
 #include <cstdio>
+#include <sstream>
 
 bool Publicatie::este_valida_data(const std::string& data) {
     int zi, luna, an;
@@ -285,7 +286,7 @@ static std::vector<std::string> split(const std::string& s) {
     return elems;
 }
 
-std::shared_ptr<Publicatie> Publicatie::deserializare(const std::string &line,
+std::shared_ptr<Publicatie> Publicatie::fabricare(const std::string &line,
     const std::vector<std::shared_ptr<class Autor>> &autori) {
     
     const auto v = split(line);

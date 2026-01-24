@@ -141,7 +141,7 @@ public:
     virtual TipPublicatie getTipPub() const=0;
 
     virtual std::string serializare() const;
-    static std::shared_ptr<Publicatie> deserializare(const std::string& line, const std::vector<std::shared_ptr<class Autor>>& autori);
+    static std::shared_ptr<Publicatie> fabricare(const std::string& line, const std::vector<std::shared_ptr<class Autor>>& autori);
 
 
 

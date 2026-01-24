@@ -100,6 +100,6 @@ public:
     }
 
     virtual std::string serializare() const;
-    static std::shared_ptr<UnitateVanzare> deserializare(const std::string& line, const std::vector<std::shared_ptr<Publicatie>>& publicatii);
+    static std::shared_ptr<UnitateVanzare> fabricare(const std::string& line, const std::vector<std::shared_ptr<Publicatie>>& publicatii);
 };
 #endif //OOP_UNITATEVANZARE_H

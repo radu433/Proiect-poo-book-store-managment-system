@@ -123,10 +123,8 @@ static std::vector<std::string> split_uv(const std::string& s) {
     return elems;
 }
 
-std::shared_ptr<UnitateVanzare> UnitateVanzare::deserializare(const std::string& line, const std::vector<std::shared_ptr<Publicatie>>& publicatii) {
+std::shared_ptr<UnitateVanzare> UnitateVanzare::fabricare(const std::string& line, const std::vector<std::shared_ptr<Publicatie>>& publicatii) {
     const auto v = split_uv(line);
-    // Format: Tip|ID|Conditie|EsteSH|Data|ID_Pub
-    
     if (v.empty() || v.size() < 6) return nullptr;
 
     const std::string tip = v[0];
