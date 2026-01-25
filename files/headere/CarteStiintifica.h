@@ -49,7 +49,7 @@ public:
     TipPublicatie getTipPub() const override;
 
     std::string serializare() const override;
-    static std::shared_ptr<CarteStiintifica> dinString(const std::string& line, const std::vector<std::shared_ptr<Autor>>& autori);
+    static std::shared_ptr<CarteStiintifica> dinString2(const std::string& line, const std::vector<std::shared_ptr<Autor>>& autori);
 
 };
 #endif //OOP_CARTESTIINTIFICA_H

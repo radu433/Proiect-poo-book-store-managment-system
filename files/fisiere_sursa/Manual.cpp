@@ -189,7 +189,7 @@ std::string Manual::serializare() const {
     return ss.str();
 }
 
-std::shared_ptr<Manual> Manual::dinString(const std::string &line, const std::vector<std::shared_ptr<Autor>> &autori) {
+std::shared_ptr<Manual> Manual::dinString2(const std::string &line, const std::vector<std::shared_ptr<Autor>> &autori) {
     const auto v = split_manual(line, '|');
     if (v.size() < 13) {
         throw LibrarieException("Linie invalida pentru deserializare Manual!");

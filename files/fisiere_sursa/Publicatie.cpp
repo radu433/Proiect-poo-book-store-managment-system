@@ -298,10 +298,10 @@ std::shared_ptr<Publicatie> Publicatie::fabricare(const std::string &line,
         return Carte::dinString(line, autori);
     }
     else if (tip == "Manual") {
-        return Manual::dinString(line, autori);
+        return Manual::dinString2(line, autori);
     }
     else if (tip == "CarteStiintifica") {
-        return CarteStiintifica::dinString(line, autori);
+        return CarteStiintifica::dinString2(line, autori);
     }
     else if (tip == "Revista") {
         return Revista::dinString(line);

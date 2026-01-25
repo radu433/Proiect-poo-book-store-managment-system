@@ -179,7 +179,7 @@ static std::vector<std::string> split_cs(const std::string& s, char delim) {
     return elems;
 }
 
-std::shared_ptr<CarteStiintifica> CarteStiintifica::dinString(const std::string &line,
+std::shared_ptr<CarteStiintifica> CarteStiintifica::dinString2(const std::string &line,
 
     const std::vector<std::shared_ptr<Autor>> &autori) {
 

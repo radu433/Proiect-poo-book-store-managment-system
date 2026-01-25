@@ -40,7 +40,7 @@ public:
 
         std::string serializare() const override;
 
-        static std::shared_ptr<Manual> dinString(const std::string& line, const std::vector<std::shared_ptr<Autor>>& autori);
+        static std::shared_ptr<Manual> dinString2(const std::string& line, const std::vector<std::shared_ptr<Autor>>& autori);
 
     
 
