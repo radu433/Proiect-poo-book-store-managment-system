@@ -16,6 +16,9 @@ private:
 protected:
     void afisare(std::ostream &out) const override;
 public:
+    // constructor default
+    Revista();
+
     // constructor load
     Revista(const std::string& titlu,  int cantitate,
          const std::string& data_publicatie,const int nr_pagini,double pret_baza,const std::string& frecventa,
@@ -58,10 +61,15 @@ public:
   std::string getIdentificator() const override;
 
     TipPublicatie getTipPub() const override;
+    
+    void afisareDetaliiSuplimentare(std::ostream& out) const override;
 
     // Serializare
     std::string serializare() const override;
     static std::shared_ptr<Revista> dinString(const std::string& line);
+    void citire(std::istream &in) override;
+
+    std::shared_ptr<UnitateVanzare> creeazaUnitateVanzareSH() override;
 };
 
 #endif //OOP_REVISTA_H

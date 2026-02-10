@@ -7,6 +7,8 @@
 #include "../exceptii/exceptii_headere/LibrarieException.h"
 #include "../exceptii/exceptii_headere/DateInvalideException.h"
 #include "../headere/CarteIndividuala.h"
+#include <limits>
+#include <sstream>
 
 static const std::set<std::string> editura_top = {"Polirom", "Humanitas", "Oxford", "Teora", "Nemira"};
 
@@ -21,11 +23,9 @@ bool Carte::validareisbn(const std::string &isbn_raw) {
         }
     }
 
-
     if (isbn.length() != 10 && isbn.length() != 13) {
         return false;
     }
-
     // --- CAZUL ISBN-10 ---
     if (isbn.length() == 10) {
         int suma = 0;
@@ -47,7 +47,6 @@ bool Carte::validareisbn(const std::string &isbn_raw) {
         suma += lastDigit;
         return (suma % 11 == 0);
     }
-
     // --- CAZUL ISBN-13 ---
     if (isbn.length() == 13) {
         int suma = 0;
@@ -71,7 +70,7 @@ bool Carte::validareisbn(const std::string &isbn_raw) {
 
     return false;
 }
-#include <sstream>
+
 
 static std::vector<std::string> split(const std::string& s, char delim) {
     std::vector<std::string> elems;
@@ -81,6 +80,11 @@ static std::vector<std::string> split(const std::string& s, char delim) {
         elems.push_back(item);
     }
     return elems;
+}
+
+// constructor default
+Carte::Carte() : Publicatie(), autor(nullptr) {
+    total_carti_create++;
 }
 
 // constructor pt load
@@ -123,11 +127,34 @@ Carte::Carte(const std::string &titlu,  const  Autor* autor, int cantitate, cons
 
 Carte::~Carte()=default;
 
+// citire
+void Carte::citire(std::istream& in) {
+    Publicatie::citire(in);
+    std::cout << "ISBN: ";
+    if (in.peek() == '\n') in.ignore();
+    std::getline(in, isbn);
+    if (!validareisbn(isbn)) {
+        throw DateInvalideException("ISBN invalid: " + isbn);
+    }
+}
+
+void Carte::setAutor(const Autor* a) {
+    this->autor = a;
+    if (autor && !isbn.empty()) {
+        const_cast<Autor*>(autor)->adauga_carte(isbn);
+    }
+}
+
 
 void Carte::afisare(std::ostream &out) const {
     Publicatie::afisare(out);
-    out << "Autor: "
-            << autor->getNume() << " " << autor->getprenume() << "\n"
+    out << "Autor: ";
+    if(autor)
+        out << autor->getNume() << " " << autor->getprenume();
+    else
+        out << "N/A";
+    
+    out << "\n"
             << "ISBN: " << isbn << "\n"
             << "Bestseller: " << (esteBesteller() ? "DA" : "NU") << "\n";
 }
@@ -218,7 +245,7 @@ double Carte::calculeazaPrioritateRestoc() const {
     } else if (vechime >= 150000) {
         prioritate *= 0.7; // carte foarte veche
     }
-    static const std::set<std::string> edituri_top =
+    static const std::set<std::string> edituri_top = 
             {"Polirom", "Humanitas", "Oxford", "Teora", "Nemira"};
 
     if (edituri_top.contains(editura))
@@ -349,4 +376,7 @@ std::shared_ptr<Carte> Carte::dinString(const std::string &line, const std::vect
     return std::make_shared<Carte>(titlu, ptrAutor, cantitate, data, v[1], pret, pagini, editura, vanzari, ratings);
 }
 
-
+std::shared_ptr<UnitateVanzare> Carte::creeazaUnitateVanzareSH() {
+    auto self = std::static_pointer_cast<Carte>(shared_from_this());
+    return std::make_shared<CarteIndividuala>(self);
+}

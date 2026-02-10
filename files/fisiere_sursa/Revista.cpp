@@ -1,9 +1,13 @@
 #include "../headere/Revista.h"
 #include "../exceptii/exceptii_headere/DateInvalideException.h"
+#include "../headere/RevistaIndividuala.h"
 
 #include <set>
 #include <ctime>
 #include <sstream>
+#include <limits>
+#include <iostream>
+#include <algorithm>
 
 namespace {
     static const std::set<std::string> divertisment = {"Fashion", "Cancan", "Sport", "Lifestyle"};
@@ -62,6 +66,9 @@ void Revista::afisare(std::ostream &out) const {
             << "Tip Revista:   " << tip << "\n";
 }
 
+// constructor default
+Revista::Revista() : Publicatie(), numar_editie(0), are_cadou_suplimentar(false) {}
+
 Revista::Revista(const std::string &titlu, int cantitate, const std::string &data_publicatie, const int nr_pagini,
                  double pret_baza, const std::string &frecventa, const int nr_editie, const bool are_cadou_suplimentar,
                  const std::string &tip, const std::string &ISSN, const std::string &editura, int nr_vanzari,
@@ -89,6 +96,37 @@ Revista::Revista(const std::string &titlu, int cantitate, const std::string& dat
     }
     if (!verificareISSN(ISSN))
         throw DateInvalideException("ISSN-ul este introdus gresit!");
+}
+
+// citire
+void Revista::citire(std::istream &in) {
+    Publicatie::citire(in); // Titlu, Editura, Pagini, Data, Pret, Cantitate
+
+    std::cout << "Frecventa: ";
+    if (in.peek() == '\n') in.ignore();
+    std::getline(in, frecventa);
+
+    std::cout << "Numar editie: ";
+    in >> numar_editie;
+
+    std::string raspuns;
+    std::cout << "Are cadou suplimentar? (da/nu): ";
+    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::getline(in, raspuns);
+    std::ranges::transform(raspuns, raspuns.begin(), ::tolower);
+    are_cadou_suplimentar = (raspuns == "da");
+
+    std::cout << "Tip revista: ";
+    std::getline(in, tip);
+    if (tip.empty()) {
+        throw DateInvalideException("Tipul revistei nu poate fi gol!");
+    }
+
+    std::cout << "ISSN: ";
+    std::getline(in, ISSN);
+    if (!verificareISSN(ISSN)) {
+        throw DateInvalideException("ISSN invalid!");
+    }
 }
 
 // clone
@@ -294,6 +332,12 @@ TipPublicatie Revista::getTipPub() const {
     return TipPublicatie::Revista;
 }
 
+void Revista::afisareDetaliiSuplimentare(std::ostream& out) const {
+    out << "\n--- ANALIZA REVISTA ---\n";
+    out << "Frecventa citire (scor): " << calculeaza_frecventa_citire() << "\n";
+    out << "Colectie: " << (este_colectionabila() ? "DA" : "NU") << "\n";
+}
+
 std::string Revista::serializare() const {
     std::stringstream ss;
     ss << Publicatie::serializare() << "|" << frecventa << "|" << numar_editie << "|" << are_cadou_suplimentar << "|" << tip;
@@ -330,6 +374,7 @@ std::shared_ptr<Revista> Revista::dinString(const std::string& line) {
     return std::make_shared<Revista>(titlu, cantitate, data, pagini, pret, frecventa, nr_editie, cadou, tipRev, issn, editura, vanzari, ratings);
 }
 
-
-
-
+std::shared_ptr<UnitateVanzare> Revista::creeazaUnitateVanzareSH() {
+    auto self = std::static_pointer_cast<Revista>(shared_from_this());
+    return std::make_shared<RevistaIndividuala>(self);
+}

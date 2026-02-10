@@ -26,6 +26,9 @@ private:
     static bool validareisbn(const std::string &isbn);
 
 public:
+    // constructor default
+    Carte();
+
     // constructor load
     Carte(const std::string &titlu, const Autor* autor, int cantitate, const std::string &data_publicatie,
 const std::string &isbn, double pret_baza, int numar_pagini, const std::string &editura,int nr_vanzari, const std::vector<int>& ratinguri);
@@ -48,6 +51,8 @@ const std::string &isbn, double pret_baza, int numar_pagini, const std::string &
 
     // functii
 
+    void setAutor(const Autor* a);
+    void citire(std::istream& in) override;
 
     void adauga_stoc(int nr_buc) override;
 
@@ -83,6 +88,8 @@ const std::string &isbn, double pret_baza, int numar_pagini, const std::string &
 
     std::string serializare() const override;
     static std::shared_ptr<Carte> dinString(const std::string& line, const std::vector<std::shared_ptr<Autor>>& autori);
+
+    std::shared_ptr<UnitateVanzare> creeazaUnitateVanzareSH() override;
 
     // functii
 };

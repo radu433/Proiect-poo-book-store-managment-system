@@ -2,8 +2,14 @@
 #include <string>
 #include <ctime>
 #include <sstream>
+#include <iostream>
+#include <algorithm>
+#include <limits>
 
 #include "../exceptii/exceptii_headere/DateInvalideException.h"
+
+// constructor default
+CarteStiintifica::CarteStiintifica() : Carte(), nr_referinte(0), are_formule_diagrame(false) {}
 
 CarteStiintifica::CarteStiintifica(const std::string &titlu, const Autor *autor, int cantitate,
     const std::string &data_publicatie, const std::string &isbn, double pret_baza, const int numar_pagini,
@@ -34,6 +40,25 @@ CarteStiintifica::CarteStiintifica(const std::string &titlu, const  Autor* autor
     if (nr_referinte < 0) {
         throw DateInvalideException("Numarul de referinte nu poate fi negativ: " + std::to_string(nr_referinte));
     }
+}
+
+// citire
+void CarteStiintifica::citire(std::istream &in) {
+    Carte::citire(in);
+    std::cout << "Domeniu: ";
+    if (in.peek() == '\n') in.ignore();
+    std::getline(in, domeniu);
+    std::cout << "Nivel academic: ";
+    std::getline(in, nivel_academic);
+
+    std::cout << "Numar referinte: ";
+    in >> nr_referinte;
+    std::string raspuns;
+    std::cout << "Contine formule/grafice? (da/nu): ";
+    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::getline(in, raspuns);
+    std::ranges::transform(raspuns, raspuns.begin(), ::tolower);
+    are_formule_diagrame = (raspuns == "da");
 }
 
 int scorNivel(const std::string &nivel) {
@@ -183,13 +208,10 @@ std::shared_ptr<CarteStiintifica> CarteStiintifica::dinString2(const std::string
 
     const std::vector<std::shared_ptr<Autor>> &autori) {
 
-    
-
     const auto v = split_cs(line, '|');
     if (v.size() < 15) {
         throw LibrarieException("Date insuficiente pentru deserializare CarteStiintifica!");
     }
-
     std::string titlu = v[2];
     double pret = std::stod(v[3]);
     int cantitate = std::stoi(v[4]);
@@ -229,4 +251,3 @@ std::shared_ptr<CarteStiintifica> CarteStiintifica::dinString2(const std::string
 
     return std::make_shared<CarteStiintifica>(titlu, ptrAutor, cantitate, data, isbn, pret, pagini, editura, domeniu, nivel, referinte, formule, vanzari, ratings);
 }
-

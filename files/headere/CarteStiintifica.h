@@ -11,6 +11,9 @@ private:
     bool are_formule_diagrame;
 
 public:
+    // constructor default
+    CarteStiintifica();
+
     // constructor pt load
     CarteStiintifica(const std::string &titlu, const  Autor* autor, int cantitate,
                      const std::string &data_publicatie, const std::string &isbn, double pret_baza,
@@ -46,6 +49,7 @@ public:
 
     //operator <<
     void afisare(std::ostream &out) const override;
+    void citire(std::istream &in) override;
     TipPublicatie getTipPub() const override;
 
     std::string serializare() const override;

@@ -5,18 +5,18 @@
 #include <set>
 #include <ctime>
 #include <sstream>
-static const std::set<std::string> edituri_educationale_top = {
-    "Didactica si Pedagogica",
-    "Aramis",
-    "Corint",
-    "Art",
-    "Paralela 45",
-    "Booklet"
-};
+#include <limits>
+#include <iostream>
+
+static const std::set<std::string> edituri_educationale_top = {"Didactica si Pedagogica","Aramis","Corint","Art"
+    ,"Paralela 45","Booklet"};
+
+// constructor default
+Manual::Manual() : Carte(), clasa(0) {}
 
 Manual::Manual(const std::string &titlu, const Autor *autor, double pret_baza, int cantitate,
     const std::string &data_publicatie, const std::string &isbn, const int numar_pagini, const std::string &editura,
-    const std::string &materie, int clasa, int nr_vanzari, const std::vector<int> &ratinguri):
+    const std::string &materie, int clasa, int nr_vanzari, const std::vector<int> &ratinguri): 
 Carte(titlu, autor, cantitate, data_publicatie, isbn, pret_baza, numar_pagini, editura,nr_vanzari,ratinguri),materie(materie),clasa(clasa){
 }
 
@@ -38,8 +38,26 @@ Manual::Manual(const std::string &titlu, const  Autor* autor, double pret_baza, 
     }
 }
 
+// citire
+void Manual::citire(std::istream &in) {
+    Carte::citire(in);
+    
+    std::cout << "Materie: ";
+    if (in.peek() == '\n') in.ignore();
+    std::getline(in, materie);
+    if (materie.empty()) {
+        throw DateInvalideException("Materia nu poate fi goala!");
+    }
 
-std::string Manual::StareAprobare() const {\
+    std::cout << "Clasa: ";
+    in >> clasa;
+    if (clasa < 0 || clasa > 13) {
+        throw DateInvalideException("Clasa invalida (0-13)!");
+    }
+}
+
+
+std::string Manual::StareAprobare() const { 
     const std::time_t t = std::time(nullptr);
     const std::tm *tm_now = std::localtime(&t);
 

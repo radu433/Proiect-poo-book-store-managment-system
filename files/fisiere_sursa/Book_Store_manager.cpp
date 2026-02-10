@@ -854,15 +854,8 @@ void BookStoreManager::meniuCautaPublicatii() {
         std::cout << "Timp estimat lectura: " << pub->timp_estimat_lecturii() << " minute\n";
         std::cout << "Disponibil (cantitate > 0): " << (pub->este_disponibila() ? "DA" : "NU") << "\n";
 
-        if (auto revista = std::dynamic_pointer_cast<Revista>(pub)) {
-            std::cout << "\n--- ANALIZA REVISTA ---\n";
-            std::cout << "Frecventa citire (scor): "
-                    << revista->calculeaza_frecventa_citire()
-                    << "\n";
-            std::cout << "Colectie: "
-                    << (revista->este_colectionabila() ? "DA" : "NU")
-                    << "\n";
-        }
+        pub->afisareDetaliiSuplimentare(std::cout);
+
         afiseazaReviewuriClient( pub->getIdentificator());
         int opt = -1;
         while (opt != 0) {
@@ -917,15 +910,9 @@ void BookStoreManager::meniuCautaPublicatii() {
                      break;
                  }
                  auto pub = app.getPublicatii()[idx];
-                 std::shared_ptr<UnitateVanzare> unitate;
+                 std::shared_ptr<UnitateVanzare> unitate = pub->creeazaUnitateVanzareSH();
 
-                 if (auto carte = std::dynamic_pointer_cast<Carte>(pub)) {
-                     unitate = std::make_shared<CarteIndividuala>(carte);
-                 }
-                 else if (auto revista = std::dynamic_pointer_cast<Revista>(pub)) {
-                     unitate = std::make_shared<RevistaIndividuala>(revista);
-                 }
-                 else {
+                 if (!unitate) {
                      std::cout << "Acest tip de publicatie nu este acceptat la trade-in.\n";
                      break;
                  }
@@ -1939,10 +1926,11 @@ std::shared_ptr<Publicatie> BookStoreManager::selecteazaPubClient() const {
                                 const auto& p = app.getPublicatii()[i];
                                 if (!p->esteActiva()) continue;
 
-                                if ((t == 1 && dynamic_cast<Carte*>(p.get())) ||
-                                    (t == 2 && dynamic_cast<Manual*>(p.get())) ||
-                                    (t == 3 && dynamic_cast<CarteStiintifica*>(p.get())) ||
-                                    (t == 4 && dynamic_cast<Revista*>(p.get())))
+                                const TipPublicatie tp = p->getTipPub();
+                                if ((t == 1 && (tp == TipPublicatie::Carte || tp == TipPublicatie::Manual || tp == TipPublicatie::Cartestiintifica)) ||
+                                    (t == 2 && tp == TipPublicatie::Manual) ||
+                                    (t == 3 && tp == TipPublicatie::Cartestiintifica) ||
+                                    (t == 4 && tp == TipPublicatie::Revista))
                                     rezultate.push_back(i);
                             }
                             break;
@@ -2116,41 +2104,15 @@ void BookStoreManager::adaugaPub() const {
 // meniu pt adaugare publicatii+ functiile aferente
 void BookStoreManager::adaugaCarte() const {
     try {
-        std::string titlu, isbn, editura, data_publicatie;
-        int nr_pagini, cantitate;
-        double pret_baza;
+        auto carte = std::make_shared<Carte>();
+        std::cin >> *carte;
 
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-        std::cout << "Titlu: ";
-        std::getline(std::cin, titlu);
-
-        std::cout << "ISBN: ";
-        std::getline(std::cin, isbn);
-
-        std::cout << "Editura: ";
-        std::getline(std::cin, editura);
-
-        std::cout << "Numar pagini: ";
-        std::cin >> nr_pagini;
-
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Data aparitie (dd.mm.yyyy): ";
-        std::getline(std::cin, data_publicatie);
-
-        std::cout << "Pret de baza: ";
-        std::cin >> pret_baza;
-
-        std::cout << "Cantitate: ";
-        std::cin >> cantitate;
-
-        auto autor = gasesteSauCreeazaAutorDupaISBN( isbn);
-
-        auto carte = std::make_shared<Carte>(titlu, autor, cantitate, data_publicatie,isbn, pret_baza, nr_pagini, editura);
+        auto autor = gasesteSauCreeazaAutorDupaISBN(carte->getIdentificator());
+        carte->setAutor(autor);
 
         PublicatieService::adaugarePublicatie(app, carte);
 
-        AutorService::asociazaCarte(app,isbn,autor->getNume(),autor->getprenume());
+        AutorService::asociazaCarte(app, carte->getIdentificator(), autor->getNume(), autor->getprenume());
 
         const double pretFinal = ReducereService::calculeazaPretFinalCuReduceri(app, carte);
 
@@ -2164,51 +2126,15 @@ void BookStoreManager::adaugaCarte() const {
 
 void BookStoreManager::adaugaManual() const {
     try {
-        std::string titlu, isbn, editura, data_publicatie, materie;
-        int clasa, nr_pagini, cantitate;
-        double pret_baza;
+        auto manual = std::make_shared<Manual>();
+        std::cin >> *manual;
 
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-        std::cout << "Titlu: ";
-        std::getline(std::cin, titlu);
-
-        std::cout << "ISBN: ";
-        std::getline(std::cin, isbn);
-
-        std::cout << "Editura: ";
-        std::getline(std::cin, editura);
-
-        std::cout << "Numar pagini: ";
-        std::cin >> nr_pagini;
-
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Data aparitie (dd.mm.yyyy): ";
-        std::getline(std::cin, data_publicatie);
-
-        std::cout << "Pret de baza: ";
-        std::cin >> pret_baza;
-
-        std::cout << "Cantitate: ";
-        std::cin >> cantitate;
-
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Materie: ";
-        std::getline(std::cin, materie);
-
-        std::cout << "Clasa: ";
-        std::cin >> clasa;
-
-        auto autor = gasesteSauCreeazaAutorDupaISBN( isbn);
-
-        auto manual = std::make_shared<Manual>(
-            titlu, autor, pret_baza, cantitate, data_publicatie,
-            isbn, nr_pagini, editura, materie, clasa
-        );
+        auto autor = gasesteSauCreeazaAutorDupaISBN(manual->getIdentificator());
+        manual->setAutor(autor);
 
         PublicatieService::adaugarePublicatie(app, manual);
 
-        AutorService::asociazaCarte(app,isbn,autor->getNume(),autor->getprenume());
+        AutorService::asociazaCarte(app, manual->getIdentificator(), autor->getNume(), autor->getprenume());
 
         double pretFinal = ReducereService::calculeazaPretFinalCuReduceri(app, manual);
 
@@ -2222,59 +2148,15 @@ void BookStoreManager::adaugaManual() const {
 
 void BookStoreManager::adaugaCarteStiintifica() const {
     try {
-        std::string titlu, isbn, editura, data_publicatie;
-        std::string domeniu, nivel_academic, raspuns;
-        int cantitate, nr_pagini, nr_referinte;
-        double pret_baza;
+        auto carte = std::make_shared<CarteStiintifica>();
+        std::cin >> *carte;
 
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-        std::cout << "Titlu: ";
-        std::getline(std::cin, titlu);
-
-        std::cout << "Domeniu: ";
-        std::getline(std::cin, domeniu);
-
-        std::cout << "Nivel academic: ";
-        std::getline(std::cin, nivel_academic);
-
-        std::cout << "Numar referinte: ";
-        std::cin >> nr_referinte;
-
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Contine formule/grafice? (da/nu): ";
-        std::getline(std::cin, raspuns);
-
-        std::ranges::transform(raspuns, raspuns.begin(), ::tolower);
-        bool are_formule = (raspuns == "da");
-
-        std::cout << "ISBN: ";
-        std::getline(std::cin, isbn);
-
-        std::cout << "Editura: ";
-        std::getline(std::cin, editura);
-
-        std::cout << "Numar pagini: ";
-        std::cin >> nr_pagini;
-
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Data aparitie (dd.mm.yyyy): ";
-        std::getline(std::cin, data_publicatie);
-
-        std::cout << "Pret de baza: ";
-        std::cin >> pret_baza;
-
-        std::cout << "Cantitate: ";
-        std::cin >> cantitate;
-
-        auto autor = gasesteSauCreeazaAutorDupaISBN( isbn);
-
-        const auto carte = std::make_shared<CarteStiintifica>(titlu, autor, cantitate, data_publicatie, isbn,pret_baza,
-            nr_pagini, editura,domeniu, nivel_academic,nr_referinte, are_formule);
+        auto autor = gasesteSauCreeazaAutorDupaISBN(carte->getIdentificator());
+        carte->setAutor(autor);
 
         PublicatieService::adaugarePublicatie(app, carte);
 
-        AutorService::asociazaCarte(app,isbn,autor->getNume(),autor->getprenume());
+        AutorService::asociazaCarte(app, carte->getIdentificator(), autor->getNume(), autor->getprenume());
 
         double pretFinal = ReducereService::calculeazaPretFinalCuReduceri(app, carte);
 
@@ -2288,57 +2170,8 @@ void BookStoreManager::adaugaCarteStiintifica() const {
 
 void BookStoreManager::adaugaRevista() const {
     try {
-        std::string titlu, data_publicatie, frecventa, tip, issn, editura, raspuns;
-        int cantitate, nr_pagini, numar_editie;
-        double pret_baza;
-
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-        std::cout << "Titlu: ";
-        std::getline(std::cin, titlu);
-
-        std::cout << "Data aparitie (dd.mm.yyyy): ";
-        std::getline(std::cin, data_publicatie);
-
-        std::cout << "Numar pagini: ";
-        std::cin >> nr_pagini;
-
-        std::cout << "Pret de baza: ";
-        std::cin >> pret_baza;
-
-        std::cout << "Cantitate: ";
-        std::cin >> cantitate;
-
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-        std::cout << "Frecventa: ";
-        std::getline(std::cin, frecventa);
-
-        std::cout << "Numar editie: ";
-        std::cin >> numar_editie;
-
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-        std::cout << "Are cadou suplimentar? (da/nu): ";
-        std::getline(std::cin, raspuns);
-
-        std::ranges::transform(raspuns, raspuns.begin(), ::tolower);
-        bool are_cadou = (raspuns == "da");
-
-        std::cout << "Tip revista: ";
-        std::getline(std::cin, tip);
-
-        std::cout << "ISSN: ";
-        std::getline(std::cin, issn);
-
-        std::cout << "Editura: ";
-        std::getline(std::cin, editura);
-
-        auto revista = std::make_shared<Revista>(
-            titlu, cantitate, data_publicatie, nr_pagini,
-            pret_baza, frecventa, numar_editie,
-            are_cadou, tip, issn, editura
-        );
+        auto revista = std::make_shared<Revista>();
+        std::cin >> *revista;
 
         PublicatieService::adaugarePublicatie(app, revista);
 

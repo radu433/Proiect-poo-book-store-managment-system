@@ -10,6 +10,9 @@ private:
     int clasa;
 
 public:
+    // constructor default
+    Manual();
+
     // cnstructor pt load
     Manual(const std::string& titlu, const Autor* autor,double pret_baza,int cantitate,const std::string& data_publicatie,
         const std::string& isbn,const int numar_pagini,const std::string& editura, const std::string& materie,int clasa,
@@ -46,6 +49,7 @@ public:
 
         // operator <<
    void afisare(std::ostream &out) const override;
+   void citire(std::istream &in) override;
 
 };
 

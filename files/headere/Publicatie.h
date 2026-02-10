@@ -28,7 +28,7 @@ struct Data {
 
 enum class TipPublicatie{Carte,Manual, Cartestiintifica,Revista, Necunoscut };
 
-class Publicatie {
+class Publicatie : public std::enable_shared_from_this<Publicatie> {
 private:
     static bool este_valida_data( const std::string& data);
 protected:
@@ -47,6 +47,9 @@ protected:
 
     // membru static
     static int numar_total_publicatii;
+    
+    // constructor default
+    Publicatie();
 
     // constructor cu parametrii
     Publicatie(const std::string &titlu, double pret_baza, int cantitate, const std::string& data_publicatie, const int nr_pagini,
@@ -64,6 +67,10 @@ public:
 
     //clone
     [[nodiscard]] virtual std::shared_ptr<Publicatie > clone() const=0;
+
+    // citire
+    virtual void citire(std::istream& in);
+    friend std::istream& operator>>(std::istream& in, Publicatie& obj);
 
     // oprerator <<
     virtual void afisare(std::ostream& out) const;
@@ -134,6 +141,10 @@ public:
         return titlu;
     }
     virtual bool areAutor(int idautor)const;
+
+    virtual void afisareDetaliiSuplimentare([[maybe_unused]] std::ostream& out) const {}
+
+    virtual std::shared_ptr<class UnitateVanzare> creeazaUnitateVanzareSH();
 
     bool esteActiva() const {return activa;}
     void dezactiveaza() { activa = false; }

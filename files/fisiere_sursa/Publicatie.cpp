@@ -15,6 +15,8 @@
 #include <string>
 #include <cstdio>
 #include <sstream>
+#include <limits>
+#include <iostream>
 
 bool Publicatie::este_valida_data(const std::string& data) {
     int zi, luna, an;
@@ -47,6 +49,11 @@ bool Publicatie::este_valida_data(const std::string& data) {
 
 
 int Publicatie::numar_total_publicatii=0;
+
+// constructor default
+Publicatie::Publicatie() : pret_baza(0), cantitate(0), nr_pagini(0), numar_vanzari(0) {
+    numar_total_publicatii++;
+}
 
 // constructor
 Publicatie::Publicatie( const std::string &titlu,  double pret_baza, int cantitate, const std::string &data_publicatie  ,
@@ -86,12 +93,58 @@ Publicatie::~Publicatie() {
     numar_total_publicatii--;
 }
 
+// citire
+void Publicatie::citire(std::istream& in) {
+    std::cout << "Titlu: ";
+    if (in.peek() == '\n') in.ignore(); 
+    std::getline(in, titlu);
+    if (titlu.empty()) {
+        throw TitluInvalidException("Titlul nu poate fi gol!");
+    }
+
+    std::cout << "Editura: ";
+    std::getline(in, editura);
+    if (editura.empty()) {
+        throw DateInvalideException("O publicatie trebuie sa aiba o editura!");
+    }
+
+    std::cout << "Numar pagini: ";
+    in >> nr_pagini;
+    if (nr_pagini <= 0) {
+        throw NumarPaginiInvalidException(nr_pagini);
+    }
+
+    std::cout << "Data aparitie (dd.mm.yyyy): ";
+    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::getline(in, data_publicatie);
+    if (!este_valida_data(data_publicatie)) {
+        throw DataException("Data invalida: " + data_publicatie);
+    }
+
+    std::cout << "Pret de baza: ";
+    in >> pret_baza;
+    if (pret_baza < 0) {
+        throw DateInvalideException("Pretul nu poate fi negativ!");
+    }
+
+    std::cout << "Cantitate: ";
+    in >> cantitate;
+    if (cantitate < 0) {
+        throw DateInvalideException("Stocul nu poate fi negativ!");
+    }
+}
+
+std::istream& operator>>(std::istream& in, Publicatie& obj) {
+    obj.citire(in);
+    return in;
+}
+
 // afisare
 void Publicatie::afisare(std::ostream &out) const {
     const std::string tip=getTip();
     out <<"\n===========================\n"<<
-            "TIP: "<< tip<<"\n"<<
-            "\n===========================\n"<<"Titlu:        " << titlu << "\n"
+            "TIP: "<< tip<<"\n"
+            <<"\n===========================\n"<<"Titlu:        " << titlu << "\n"
             <<"Editura:"<<editura<<"\n"
             << "Data Publicare: " << data_publicatie << "\n"
             << "Nr. Pagini:   " << nr_pagini << "\n"
@@ -251,7 +304,7 @@ bool Publicatie::Scade_stoc(int bucati) {
 
 double Publicatie::reducere(int procent) {
     if (procent < 0 || procent > 100) {
-        throw DateInvalideException("Discount invalid (0–100%)!");
+        throw DateInvalideException("Discount invalid (0–100%)");
     }
 
     pret_baza *= (1.0 - procent / 100.0);
@@ -310,4 +363,6 @@ std::shared_ptr<Publicatie> Publicatie::fabricare(const std::string &line,
     throw LibrarieException("Tip publicatie necunoscut la deserializare: " + tip);
 }
 
-
+std::shared_ptr<UnitateVanzare> Publicatie::creeazaUnitateVanzareSH() {
+    return nullptr;
+}
